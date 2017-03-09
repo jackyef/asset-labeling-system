@@ -374,15 +374,13 @@ class Master extends CI_Controller
         // and then redirect to /master/item-type
 
         $this->load->model('Supplier_model');
-        $is_assembled = ($this->input->post('is_assembled') != null) ? 1 : 0;
         $data = [
-            'name' => $this->input->post('name'),
-            'is_assembled' => $is_assembled
+            'name' => $this->input->post('name')
         ];
 
         if ($this->Supplier_model->insert($data)) {
             //success inserting data
-            redirect(base_url() . 'master/item-type');
+            redirect(base_url() . 'master/supplier');
         } else {
             //show errors
         }
@@ -417,7 +415,167 @@ class Master extends CI_Controller
 
         if ($this->Supplier_model->update($data, $id)) {
             //success inserting data
-            redirect(base_url() . 'master/item-type');
+            redirect(base_url() . 'master/supplier');
+        } else {
+            //show errors
+        }
+    }
+
+    public function company(){
+        // this shows the list of the companies in the master database
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Company';
+        $this->parser->parse('templates/header.php', $data);
+
+        $this->load->model('Company_model');
+        $data['records'] = $this->Company_model->select_all();
+        $this->parser->parse('masters/companies/index.php', $data);
+
+        $this->parser->parse('templates/footer.php', $data);
+    }
+
+    public function company_insert_form(){
+        // this shows the form for inserting a new company
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Company';
+        $this->parser->parse('templates/header.php', $data);
+
+        $this->parser->parse('masters/companies/insert_form.php', $data);
+
+        $this->parser->parse('templates/footer.php', $data);
+    }
+
+    public function company_insert(){
+        // this insert a new company to the database
+        // and then redirect to /master/item-type
+
+        $this->load->model('Company_model');
+        $data = [
+            'name' => $this->input->post('name')
+        ];
+
+        if ($this->Company_model->insert($data)) {
+            //success inserting data
+            redirect(base_url() . 'master/company');
+        } else {
+            //show errors
+        }
+    }
+    public function company_update_form(){
+        // this shows the form for updating an company
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Company';
+        $this->parser->parse('templates/header.php', $data);
+
+        $id = $this->uri->segment('4');
+
+        $query = $this->db->get_where('companies', array('id' => $id));
+        $data['record'] = $query->result()[0];
+        $data['id'] = $id;
+        $this->load->view('masters/companies/update_form.php', $data);
+
+        $this->load->view('templates/footer.php');
+    }
+
+    public function company_update(){
+        // this updates a company in the database
+        // and then redirect to /master/item-type
+
+        $this->load->model('Company_model');
+        $data = [
+            'name' => $this->input->post('name')
+        ];
+        $id = $this->uri->segment('5');
+
+        if ($this->Company_model->update($data, $id)) {
+            //success inserting data
+            redirect(base_url() . 'master/company');
+        } else {
+            //show errors
+        }
+    }
+
+    public function location(){
+        // this shows the list of the locations in the master database
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Location';
+        $this->parser->parse('templates/header.php', $data);
+
+        $this->load->model('Location_model');
+        $data['records'] = $this->Location_model->select_all();
+        $this->parser->parse('masters/locations/index.php', $data);
+
+        $this->parser->parse('templates/footer.php', $data);
+    }
+
+    public function location_insert_form(){
+        // this shows the form for inserting a new location
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Location';
+        $this->parser->parse('templates/header.php', $data);
+
+        $this->parser->parse('masters/locations/insert_form.php', $data);
+
+        $this->parser->parse('templates/footer.php', $data);
+    }
+
+    public function location_insert(){
+        // this insert a new location to the database
+        // and then redirect to /master/item-type
+
+        $this->load->model('Location_model');
+        $data = [
+            'name' => $this->input->post('name')
+        ];
+
+        if ($this->Location_model->insert($data)) {
+            //success inserting data
+            redirect(base_url() . 'master/location');
+        } else {
+            //show errors
+        }
+    }
+    public function location_update_form(){
+        // this shows the form for updating an location
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Location';
+        $this->parser->parse('templates/header.php', $data);
+
+        $id = $this->uri->segment('4');
+
+        $query = $this->db->get_where('locations', array('id' => $id));
+        $data['record'] = $query->result()[0];
+        $data['id'] = $id;
+        $this->load->view('masters/locations/update_form.php', $data);
+
+        $this->load->view('templates/footer.php');
+    }
+
+    public function location_update(){
+        // this updates a location in the database
+        // and then redirect to /master/item-type
+
+        $this->load->model('Location_model');
+        $data = [
+            'name' => $this->input->post('name')
+        ];
+        $id = $this->uri->segment('5');
+
+        if ($this->Location_model->update($data, $id)) {
+            //success inserting data
+            redirect(base_url() . 'master/location');
         } else {
             //show errors
         }

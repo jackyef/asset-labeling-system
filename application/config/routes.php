@@ -86,3 +86,23 @@ $route['master/model/new'] = 'master/model_insert_form';
 $route['master/model/new/submit'] = 'master/model_insert';
 $route['master/model/edit/:num'] = 'master/model_update_form/:num';
 $route['master/model/edit/submit/:num'] = 'master/model_update/:num';
+
+$route['master/supplier'] = 'master/supplier';
+$route['master/supplier/new'] = 'master/supplier_insert_form';
+$route['master/supplier/new/submit'] = 'master/supplier_insert';
+$route['master/supplier/edit/:num'] = 'master/supplier_update_form/:num';
+$route['master/supplier/edit/submit/:num'] = 'master/supplier_update/:num';
+
+
+$route['master/company'] = 'master/company';
+$route['master/company/new'] = 'master/company_insert_form';
+$route['master/company/new/submit'] = 'master/company_insert';
+$route['master/company/edit/:num'] = 'master/company_update_form/:num';
+$route['master/company/edit/submit/:num'] = 'master/company_update/:num';
+
+
+$route['master/location'] = 'master/location';
+$route['master/location/new'] = 'master/location_insert_form';
+$route['master/location/new/submit'] = 'master/location_insert';
+$route['master/location/edit/:num'] = 'master/location_update_form/:num';
+$route['master/location/edit/submit/:num'] = 'master/location_update/:num';
