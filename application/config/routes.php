@@ -106,3 +106,21 @@ $route['master/location/new'] = 'master/location_insert_form';
 $route['master/location/new/submit'] = 'master/location_insert';
 $route['master/location/edit/:num'] = 'master/location_update_form/:num';
 $route['master/location/edit/submit/:num'] = 'master/location_update/:num';
+
+$route['master/fsub-location'] = 'master/first_sub_location';
+$route['master/fsub-location/new'] = 'master/first_sub_location_insert_form';
+$route['master/fsub-location/new/submit'] = 'master/first_sub_location_insert';
+$route['master/fsub-location/edit/:num'] = 'master/first_sub_location_update_form/:num';
+$route['master/fsub-location/edit/submit/:num'] = 'master/first_sub_location_update/:num';
+
+$route['master/ssub-location'] = 'master/second_sub_location';
+$route['master/ssub-location/new'] = 'master/second_sub_location_insert_form';
+$route['master/ssub-location/new/submit'] = 'master/second_sub_location_insert';
+$route['master/ssub-location/edit/:num'] = 'master/second_sub_location_update_form/:num';
+$route['master/ssub-location/edit/submit/:num'] = 'master/second_sub_location_update/:num';
+
+$route['master/mutation-status'] = 'master/mutation_status';
+$route['master/mutation-status/new'] = 'master/mutation_status_insert_form';
+$route['master/mutation-status/new/submit'] = 'master/mutation_status_insert';
+$route['master/mutation-status/edit/:num'] = 'master/mutation_status_update_form/:num';
+$route['master/mutation-status/edit/submit/:num'] = 'master/mutation_status_update/:num';

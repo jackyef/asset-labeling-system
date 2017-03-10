@@ -22,7 +22,7 @@
         <div class="form-group">
             <label class="control-label col-sm-2" for="name">Item type - Brand:</label>
             <div class="col-sm-10">
-                <select class="form-control" name="brand_id" id="brand_id">
+                <select class="form-control selectpicker" name="brand_id" id="brand_id" data-live-search="true">
                     <?php foreach($brands as $brand){ ?>
                         <option value="<?= $brand->id?>" <?= $brand->id == $record->brand_id ? 'selected' : '' ?>>
                             <?= $brand->item_type_name.' / '.$brand->name ?>
@@ -35,12 +35,12 @@
             <label class="control-label col-sm-2" for="name">Capacity/Size:</label>
             <div class="col-sm-3">
                 <input type="text" class="form-control" id="capacity_size" name="capacity_size" placeholder="500, 1000, 17, etc (Optional)"
-                       value="<?= $record->capacity_size ?>" required>
+                       value="<?= $record->capacity_size ?>"!!1>
             </div>
             <label class="control-label col-sm-1" for="name">Units:</label>
             <div class="col-sm-3">
                 <input type="text" class="form-control" id="units" name="units" placeholder="TB, GB, Inch, etc (Optional)"
-                       value="<?= $record->units ?>" required>
+                       value="<?= $record->units ?>">
             </div>
         </div>
         <div class="form-group">
