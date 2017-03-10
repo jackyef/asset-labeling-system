@@ -21,12 +21,17 @@ class Master extends CI_Controller
         $this->load->database();
         $this->output->enable_profiler(FALSE);
 
+        $data = $this->get_session_data();
+        if ($data['is_admin'] != 1){
+            redirect(base_url().'home');
+        }
+
     }
 
     public function get_session_data(){
         // TODO: use real session data
         // remember use xss_clean
-        $data['username'] = 'MockUser';
+        $data['username'] = 'John-Doe';
         $data['user_id'] = '123';
         $data['is_admin'] = 1;
         return $data;
@@ -755,6 +760,7 @@ class Master extends CI_Controller
         $data['record'] = $query->result()[0];
         $data['id'] = $id;
 
+        $this->db->reset_query();
         $this->db->select('f.*, l.name as location_name');
         $this->db->from('first_sub_locations f, locations l');
         $this->db->where('l.id = f.location_id');
@@ -860,6 +866,204 @@ class Master extends CI_Controller
         if ($this->Mutation_status_model->update($data, $id)) {
             //success inserting data
             redirect(base_url() . 'master/mutation-status');
+        } else {
+            //show errors
+        }
+    }
+
+    public function employee(){
+        // this shows the list of the employees in the master database
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Employee';
+        $this->parser->parse('templates/header.php', $data);
+
+        $this->db->select('e.*, c.name as company_name');
+        $this->db->from('employees e, companies c');
+        $this->db->where('c.id = e.company_id');
+//        $this->db->order_by('l.name, f.name asc');
+        $data['records'] = $this->db->get()->result();
+
+        $this->db->reset_query();
+        $this->db->select('l.* ');
+        $this->db->from('locations l');
+        foreach($this->db->get()->result() as $location){
+            $data['locations'][$location->id] = $location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('f.* ');
+        $this->db->from('first_sub_locations f');
+        foreach($this->db->get()->result() as $first_sub_location){
+            $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('s.* ');
+        $this->db->from('second_sub_locations s');
+        foreach($this->db->get()->result() as $second_sub_location){
+            $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
+        }
+
+        $this->parser->parse('masters/employees/index.php', $data);
+
+        $this->parser->parse('templates/footer.php', $data);
+    }
+
+    public function employee_insert_form(){
+        // this shows the form for inserting a new employee
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Employee';
+        $this->parser->parse('templates/header.php', $data);
+
+        $this->db->select('c.*');
+        $this->db->from('companies c');
+//        $this->db->where('');
+        $this->db->order_by('c.name asc');
+        $data['companies'] = $this->db->get()->result();
+
+        $this->db->reset_query();
+        $this->db->select('l.* ');
+        $this->db->from('locations l');
+        $this->db->order_by('l.name asc');
+        foreach($this->db->get()->result() as $location){
+            $data['locations'][$location->id] = $location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('f.* ');
+        $this->db->from('first_sub_locations f');
+        $this->db->order_by('f.name asc');
+        foreach($this->db->get()->result() as $first_sub_location){
+            $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('s.* ');
+        $this->db->from('second_sub_locations s');
+        $this->db->order_by('s.name asc');
+        foreach($this->db->get()->result() as $second_sub_location){
+            $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
+        }
+
+//        echo json_encode($data['locations']);
+
+        $this->parser->parse('masters/employees/insert_form.php', $data);
+
+        $this->parser->parse('templates/footer.php', $data);
+    }
+
+    public function employee_insert(){
+        // this insert a new employee to the database
+        // and then redirect to /master/item-type
+
+        $this->load->model('Employee_model');
+        $locs = $this->input->post('location_id');
+        $locs_id = explode(',',$locs);
+        $location_id = $locs_id[0];
+        $first_sub_location_id = $locs_id[1];
+        $second_sub_location_id = $locs_id[2];
+
+        $is_working = ($this->input->post('is_working') != null) ? 1 : 0;
+
+        $data = [
+            'name' => $this->input->post('name', TRUE),
+            'company_id' => $this->input->post('company_id', TRUE),
+            'is_working' => $is_working,
+            'location_id' => $location_id,
+            'first_sub_location_id' => $first_sub_location_id,
+            'second_sub_location_id' => $second_sub_location_id
+        ];
+
+        if ($this->Employee_model->insert($data)) {
+            //success inserting data
+            redirect(base_url() . 'master/employee');
+        } else {
+            //show errors
+        }
+    }
+    public function employee_update_form(){
+        // this shows the form for updating an employee
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Employee';
+        $this->parser->parse('templates/header.php', $data);
+
+        $id = $this->uri->segment('4');
+
+        $query = $this->db->get_where('employees', array('id' => $id));
+        $data['record'] = $query->result()[0];
+        $data['id'] = $id;
+
+        $this->db->select('c.*');
+        $this->db->from('companies c');
+//        $this->db->where('');
+        $this->db->order_by('c.name asc');
+        $data['companies'] = $this->db->get()->result();
+
+        $this->db->reset_query();
+        $this->db->select('l.* ');
+        $this->db->from('locations l');
+        $this->db->order_by('l.name asc');
+        foreach($this->db->get()->result() as $location){
+            $data['locations'][$location->id] = $location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('f.* ');
+        $this->db->from('first_sub_locations f');
+        $this->db->order_by('f.name asc');
+        foreach($this->db->get()->result() as $first_sub_location){
+            $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('s.* ');
+        $this->db->from('second_sub_locations s');
+        $this->db->order_by('s.name asc');
+        foreach($this->db->get()->result() as $second_sub_location) {
+            $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
+        }
+
+        $this->load->view('masters/employees/update_form.php', $data);
+
+        $this->load->view('templates/footer.php');
+    }
+
+    public function employee_update(){
+        // this updates a employee in the database
+        // and then redirect to /master/item-type
+
+        $this->load->model('Employee_model');
+        $locs = $this->input->post('location_id');
+        $locs_id = explode(',',$locs);
+        $location_id = $locs_id[0];
+        $first_sub_location_id = $locs_id[1];
+        $second_sub_location_id = $locs_id[2];
+
+        $is_working = ($this->input->post('is_working') != null) ? 1 : 0;
+
+        $data = [
+            'name' => $this->input->post('name', TRUE),
+            'company_id' => $this->input->post('company_id', TRUE),
+            'is_working' => $is_working,
+            'location_id' => $location_id,
+            'first_sub_location_id' => $first_sub_location_id,
+            'second_sub_location_id' => $second_sub_location_id
+        ];
+
+        $id = $this->uri->segment('5');
+//        echo json_encode($data);
+//        echo '<br>';
+//        echo $id;
+
+        if ($this->Employee_model->update($data, $id)) {
+            //success updating data
+            redirect(base_url() . 'master/employee');
         } else {
             //show errors
         }

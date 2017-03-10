@@ -124,3 +124,9 @@ $route['master/mutation-status/new'] = 'master/mutation_status_insert_form';
 $route['master/mutation-status/new/submit'] = 'master/mutation_status_insert';
 $route['master/mutation-status/edit/:num'] = 'master/mutation_status_update_form/:num';
 $route['master/mutation-status/edit/submit/:num'] = 'master/mutation_status_update/:num';
+
+$route['master/employee'] = 'master/employee';
+$route['master/employee/new'] = 'master/employee_insert_form';
+$route['master/employee/new/submit'] = 'master/employee_insert';
+$route['master/employee/edit/:num'] = 'master/employee_update_form/:num';
+$route['master/employee/edit/submit/:num'] = 'master/employee_update/:num';
