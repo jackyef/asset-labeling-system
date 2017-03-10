@@ -1,0 +1,15 @@
+0. Pikirkan mengenai operating system, bagaimana seharusnya?
+1. Pastikan mengenai employee punya current location, mungkin ke depannya tambahkan history mutasi employee.
+
+2. Bagaimana item code seharusnya, dirubah apakah tidak apa?
+Mengapa harus ada item type id? Bukankah sebenarnya item_id sendiri sudah cukup?
+
+3. Mutasi barang yang tidak langsung sampai, apakah bakal lebih baik jika dimasukkan tabel delivery, lalu hanya
+masukkan ke catatan mutasi ketika barang sampai? Setiap history delivery dicatat.
+Tujuannya agar ada informasi lebih jelas kapan sebuah barang sampai. Bukan hanya kapan dikirim.
+Karena saat ini, ketika barang received, yang dilakukan adalah update status mutasi dari on delivery ke received.
+
+Solusi yg mungkin:
+Tabel mutasi ada tanggal delivered dan tanggal received.
+Utk kasus lsg received, kedua kolom ini isinya sama.
+Utk kasus tidak lsg, maka bisa berbeda.

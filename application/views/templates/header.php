@@ -10,11 +10,13 @@
 <head>
     <title> {title} </title>
     <link rel="stylesheet" href="<?= base_url() ?>css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?= base_url() ?>css/bootstrap-select.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>css/font-awesome.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>css/sidenav.css">
     <script src="<?= base_url() ?>js/jquery.js"></script>
     <script src="<?= base_url() ?>js/bootstrap.min.js"></script>
+    <script src="<?= base_url() ?>js/bootstrap-select.js"></script>
     <script src="<?= base_url() ?>js/jquery.dataTables.min.js"></script>
     <script src="<?= base_url() ?>js/dataTables.bootstrap.min.js"></script>
 
@@ -51,13 +53,13 @@
                         <li><a href="<?= base_url()?>master/employee">Employee</a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="<?= base_url()?>master/location">Location <span class="label label-success">done</span></a></li>
-                        <li><a href="<?= base_url()?>master/fsub-location">1st Sub-location</a></li>
-                        <li><a href="<?= base_url()?>master/ssub-location">2nd Sub-location</a></li>
+                        <li><a href="<?= base_url()?>master/fsub-location">1st Sub-location <span class="label label-success">done</span></a></li>
+                        <li><a href="<?= base_url()?>master/ssub-location">2nd Sub-location <span class="label label-success">done</span></a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="<?= base_url()?>master/item-type">Item type <span class="label label-success">done</span></a></li>
                         <li><a href="<?= base_url()?>master/brand">Brand <span class="label label-success">done</span></a></li>
                         <li><a href="<?= base_url()?>master/model">Model <span class="label label-success">done</span></a></li>
-                        <li><a href="<?= base_url()?>master/mutation-status">Mutation Status</a></li>
+                        <li><a href="<?= base_url()?>master/mutation-status">Mutation Status <span class="label label-success">done</span></a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="<?= base_url()?>master/user">User</a></li>
                     </ul>

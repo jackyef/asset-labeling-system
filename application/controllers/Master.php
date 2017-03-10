@@ -580,4 +580,288 @@ class Master extends CI_Controller
             //show errors
         }
     }
+
+
+    public function first_sub_location(){
+        // this shows the list of the item types in the master database
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - 1st Sub Location';
+        $this->parser->parse('templates/header.php', $data);
+
+        $this->db->select('f.*, l.name as location_name');
+        $this->db->from('first_sub_locations f, locations l');
+        $this->db->where('l.id = f.location_id');
+        $query = $this->db->get();
+        $data['records'] = $query->result();
+
+//        echo json_encode($data);
+        $this->parser->parse('masters/first_sub_locations/index.php', $data);
+
+        $this->parser->parse('templates/footer.php', $data);
+    }
+
+    public function first_sub_location_insert_form(){
+        // this shows the form for inserting a first_sub_location
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - First_sub_location';
+        $this->parser->parse('templates/header.php', $data);
+
+        $this->db->select('*');
+        $this->db->from('locations l');
+        $this->db->order_by('name asc');
+        $data['locations'] = $this->db->get()->result();
+        $this->parser->parse('masters/first_sub_locations/insert_form.php', $data);
+
+        $this->parser->parse('templates/footer.php', $data);
+    }
+
+    public function first_sub_location_insert(){
+        // this insert a new first_sub_location to the database
+        // and then redirect to /master/item-type
+
+        $this->load->model('First_sub_location_model');
+        $data = [
+            'name' => $this->input->post('name'),
+            'location_id' => $this->input->post('location_id')
+        ];
+
+        if ($this->First_sub_location_model->insert($data)) {
+            //success inserting data
+            redirect(base_url() . 'master/fsub-location');
+        } else {
+            //show errors
+        }
+    }
+    public function first_sub_location_update_form(){
+        // this shows the form for updating an item type
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - First Sub Location';
+        $this->parser->parse('templates/header.php', $data);
+
+        $id = $this->uri->segment('4');
+
+        $this->db->select('f.*');
+        $this->db->from('first_sub_locations f, locations l');
+        $this->db->where('l.id = f.location_id');
+        $query = $this->db->get_where('first_sub_locations', array('f.id' => $id));
+        $data['record'] = $query->result()[0];
+        $data['id'] = $id;
+
+        $this->db->reset_query();
+        $this->db->select('*');
+        $this->db->from('locations l');
+        $this->db->order_by('name asc');
+        $data['locations'] = $this->db->get()->result();
+
+        $this->load->view('masters/first_sub_locations/update_form.php', $data);
+
+        $this->load->view('templates/footer.php');
+    }
+
+    public function first_sub_location_update(){
+        // this updates a first_sub_location in the database
+        // and then redirect to /master/item-type
+
+        $this->load->model('First_sub_location_model');
+        $data = [
+            'name' => $this->input->post('name'),
+            'location_id' => $this->input->post('location_id')
+        ];
+        $id = $this->uri->segment('5');
+
+        if ($this->First_sub_location_model->update($data, $id)) {
+            //success inserting data
+            redirect(base_url() . 'master/fsub-location');
+        } else {
+            //show errors
+        }
+    }
+
+    public function second_sub_location(){
+        // this shows the list of the item types in the master database
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - 2nd Sub Location';
+        $this->parser->parse('templates/header.php', $data);
+
+        $this->db->select('s.*, f.name as first_sub_location_name, l.name as location_name');
+        $this->db->from('second_sub_locations s, first_sub_locations f, locations l');
+        $this->db->where('l.id = f.location_id and f.id = s.first_sub_location_id');
+        $query = $this->db->get();
+        $data['records'] = $query->result();
+
+//        echo json_encode($data);
+        $this->parser->parse('masters/second_sub_locations/index.php', $data);
+
+        $this->parser->parse('templates/footer.php', $data);
+    }
+
+    public function second_sub_location_insert_form(){
+        // this shows the form for inserting a second_sub_location
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Second_sub_location';
+        $this->parser->parse('templates/header.php', $data);
+
+        $this->db->select('f.*, l.name as location_name');
+        $this->db->from('first_sub_locations f, locations l');
+        $this->db->where('l.id = f.location_id');
+        $this->db->order_by('l.name, f.name asc');
+        $data['first_sub_locations'] = $this->db->get()->result();
+        $this->parser->parse('masters/second_sub_locations/insert_form.php', $data);
+
+        $this->parser->parse('templates/footer.php', $data);
+    }
+
+    public function second_sub_location_insert(){
+        // this insert a new second_sub_location to the database
+        // and then redirect to /master/item-type
+
+        $this->load->model('Second_sub_location_model');
+        $data = [
+            'name' => $this->input->post('name'),
+            'first_sub_location_id' => $this->input->post('first_sub_location_id')
+        ];
+
+        if ($this->Second_sub_location_model->insert($data)) {
+            //success inserting data
+            redirect(base_url() . 'master/ssub-location');
+        } else {
+            //show errors
+        }
+    }
+    public function second_sub_location_update_form(){
+        // this shows the form for updating an item type
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - First Sub Location';
+        $this->parser->parse('templates/header.php', $data);
+
+        $id = $this->uri->segment('4');
+
+        $this->db->select('s.*');
+        $this->db->from('second_sub_locations s, first_sub_locations f');
+        $this->db->where('f.id = s.first_sub_location_id');
+        $query = $this->db->get_where('second_sub_locations', array('s.id' => $id));
+        $data['record'] = $query->result()[0];
+        $data['id'] = $id;
+
+        $this->db->select('f.*, l.name as location_name');
+        $this->db->from('first_sub_locations f, locations l');
+        $this->db->where('l.id = f.location_id');
+        $this->db->order_by('l.name, f.name asc');
+        $data['first_sub_locations'] = $this->db->get()->result();
+
+        $this->load->view('masters/second_sub_locations/update_form.php', $data);
+
+        $this->load->view('templates/footer.php');
+    }
+
+    public function second_sub_location_update(){
+        // this updates a second_sub_location in the database
+        // and then redirect to /master/item-type
+
+        $this->load->model('Second_sub_location_model');
+        $data = [
+            'name' => $this->input->post('name'),
+            'first_sub_location_id' => $this->input->post('first_sub_location_id')
+        ];
+        $id = $this->uri->segment('5');
+
+        if ($this->Second_sub_location_model->update($data, $id)) {
+            //success inserting data
+            redirect(base_url() . 'master/ssub-location');
+        } else {
+            //show errors
+        }
+    }
+
+    public function mutation_status(){
+        // this shows the list of the mutation statuses in the master database
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Mutation status';
+        $this->parser->parse('templates/header.php', $data);
+
+        $this->load->model('Mutation_status_model');
+        $data['records'] = $this->Mutation_status_model->select_all();
+        $this->parser->parse('masters/mutation_statuses/index.php', $data);
+
+        $this->parser->parse('templates/footer.php', $data);
+    }
+
+    public function mutation_status_insert_form(){
+        // this shows the form for inserting a new mutation status
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Mutation status';
+        $this->parser->parse('templates/header.php', $data);
+
+        $this->parser->parse('masters/mutation_statuses/insert_form.php', $data);
+
+        $this->parser->parse('templates/footer.php', $data);
+    }
+
+    public function mutation_status_insert(){
+        // this insert a new mutation_status to the database
+        // and then redirect to /master/item-type
+
+        $this->load->model('Mutation_status_model');
+        $data = [
+            'name' => $this->input->post('name')
+        ];
+
+        if ($this->Mutation_status_model->insert($data)) {
+            //success inserting data
+            redirect(base_url() . 'master/mutation-status');
+        } else {
+            //show errors
+        }
+    }
+    public function mutation_status_update_form(){
+        // this shows the form for updating an item
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Mutation status';
+        $this->parser->parse('templates/header.php', $data);
+
+        $id = $this->uri->segment('4');
+
+        $query = $this->db->get_where('mutation_statuses', array('id' => $id));
+        $data['record'] = $query->result()[0];
+        $data['id'] = $id;
+        $this->load->view('masters/mutation_statuses/update_form.php', $data);
+
+        $this->load->view('templates/footer.php');
+    }
+
+    public function mutation_status_update(){
+        // this updates a mutation_status in the database
+        // and then redirect to /master/mutation-status
+
+        $this->load->model('Mutation_status_model');
+        $data = [
+            'name' => $this->input->post('name')
+        ];
+        $id = $this->uri->segment('5');
+
+        if ($this->Mutation_status_model->update($data, $id)) {
+            //success inserting data
+            redirect(base_url() . 'master/mutation-status');
+        } else {
+            //show errors
+        }
+    }
 }

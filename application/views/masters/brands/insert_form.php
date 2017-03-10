@@ -21,7 +21,7 @@
         <div class="form-group">
             <label class="control-label col-sm-2" for="name">Item type:</label>
             <div class="col-sm-10">
-                <select class="form-control" name="item_type_id" id="item_type_id">
+                <select class="form-control selectpicker" name="item_type_id" id="item_type_id" data-live-search="true">
                     <?php foreach($item_types as $item_type){ ?>
                         <option value="<?= $item_type->id?>"><?= $item_type->name ?></option>
                     <?php } ?>
