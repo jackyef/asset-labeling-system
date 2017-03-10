@@ -50,7 +50,7 @@
                     <ul class="dropdown-menu">
                         <li><a href="<?= base_url()?>master/supplier">Supplier <span class="label label-success">done</span></a></li>
                         <li><a href="<?= base_url()?>master/company">Company <span class="label label-success">done</span></a></li>
-                        <li><a href="<?= base_url()?>master/employee">Employee</a></li>
+                        <li><a href="<?= base_url()?>master/employee">Employee <span class="label label-success">done</span></a></li>
                         <li role="separator" class="divider"></li>
                         <li><a href="<?= base_url()?>master/location">Location <span class="label label-success">done</span></a></li>
                         <li><a href="<?= base_url()?>master/fsub-location">1st Sub-location <span class="label label-success">done</span></a></li>
