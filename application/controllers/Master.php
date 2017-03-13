@@ -99,7 +99,7 @@ class Master extends CI_Controller
         $this->load->model('Item_type_model');
         $is_assembled = ($this->input->post('is_assembled') != null) ? 1 : 0;
         $data = [
-            'name' => $this->input->post('name'),
+            'name' => $this->input->post('name', TRUE),
             'is_assembled' => $is_assembled
         ];
 
@@ -134,7 +134,7 @@ class Master extends CI_Controller
 
         $this->load->model('Item_type_model');
         $data = [
-            'name' => $this->input->post('name')
+            'name' => $this->input->post('name', TRUE)
         ];
         $id = $this->uri->segment('5');
 
@@ -189,8 +189,8 @@ class Master extends CI_Controller
 
         $this->load->model('Brand_model');
         $data = [
-            'name' => $this->input->post('name'),
-            'item_type_id' => $this->input->post('item_type_id')
+            'name' => $this->input->post('name', TRUE),
+            'item_type_id' => $this->input->post('item_type_id', TRUE)
         ];
 
         if ($this->Brand_model->insert($data)) {
@@ -234,8 +234,8 @@ class Master extends CI_Controller
 
         $this->load->model('Brand_model');
         $data = [
-            'name' => $this->input->post('name'),
-            'item_type_id' => $this->input->post('item_type_id')
+            'name' => $this->input->post('name', TRUE),
+            'item_type_id' => $this->input->post('item_type_id', TRUE)
         ];
         $id = $this->uri->segment('5');
 
@@ -294,10 +294,10 @@ class Master extends CI_Controller
 
         $this->load->model('Model_model');
         $data = [
-            'name' => $this->input->post('name'),
-            'brand_id' => $this->input->post('brand_id'),
-            'capacity_size' => $this->input->post('capacity_size'),
-            'units' => $this->input->post('units'),
+            'name' => $this->input->post('name', TRUE),
+            'brand_id' => $this->input->post('brand_id', TRUE),
+            'capacity_size' => $this->input->post('capacity_size', TRUE),
+            'units' => $this->input->post('units', TRUE),
 
         ];
         if ($this->Model_model->insert($data)) {
@@ -344,10 +344,10 @@ class Master extends CI_Controller
 
         $this->load->model('Model_model');
         $data = [
-            'name' => $this->input->post('name'),
-            'capacity_size' => $this->input->post('capacity_size'),
-            'units' => $this->input->post('units'),
-            'brand_id' => $this->input->post('brand_id')
+            'name' => $this->input->post('name', TRUE),
+            'capacity_size' => $this->input->post('capacity_size', TRUE),
+            'units' => $this->input->post('units', TRUE),
+            'brand_id' => $this->input->post('brand_id', TRUE)
         ];
         $id = $this->uri->segment('5');
 
@@ -393,7 +393,7 @@ class Master extends CI_Controller
 
         $this->load->model('Supplier_model');
         $data = [
-            'name' => $this->input->post('name')
+            'name' => $this->input->post('name', TRUE)
         ];
 
         if ($this->Supplier_model->insert($data)) {
@@ -427,7 +427,7 @@ class Master extends CI_Controller
 
         $this->load->model('Supplier_model');
         $data = [
-            'name' => $this->input->post('name')
+            'name' => $this->input->post('name', TRUE)
         ];
         $id = $this->uri->segment('5');
 
@@ -473,7 +473,7 @@ class Master extends CI_Controller
 
         $this->load->model('Company_model');
         $data = [
-            'name' => $this->input->post('name')
+            'name' => $this->input->post('name', TRUE)
         ];
 
         if ($this->Company_model->insert($data)) {
@@ -507,7 +507,7 @@ class Master extends CI_Controller
 
         $this->load->model('Company_model');
         $data = [
-            'name' => $this->input->post('name')
+            'name' => $this->input->post('name', TRUE)
         ];
         $id = $this->uri->segment('5');
 
@@ -553,7 +553,7 @@ class Master extends CI_Controller
 
         $this->load->model('Location_model');
         $data = [
-            'name' => $this->input->post('name')
+            'name' => $this->input->post('name', TRUE)
         ];
 
         if ($this->Location_model->insert($data)) {
@@ -587,7 +587,7 @@ class Master extends CI_Controller
 
         $this->load->model('Location_model');
         $data = [
-            'name' => $this->input->post('name')
+            'name' => $this->input->post('name', TRUE)
         ];
         $id = $this->uri->segment('5');
 
@@ -643,8 +643,8 @@ class Master extends CI_Controller
 
         $this->load->model('First_sub_location_model');
         $data = [
-            'name' => $this->input->post('name'),
-            'location_id' => $this->input->post('location_id')
+            'name' => $this->input->post('name', TRUE),
+            'location_id' => $this->input->post('location_id', TRUE)
         ];
 
         if ($this->First_sub_location_model->insert($data)) {
@@ -688,8 +688,8 @@ class Master extends CI_Controller
 
         $this->load->model('First_sub_location_model');
         $data = [
-            'name' => $this->input->post('name'),
-            'location_id' => $this->input->post('location_id')
+            'name' => $this->input->post('name', TRUE),
+            'location_id' => $this->input->post('location_id', TRUE)
         ];
         $id = $this->uri->segment('5');
 
@@ -745,8 +745,8 @@ class Master extends CI_Controller
 
         $this->load->model('Second_sub_location_model');
         $data = [
-            'name' => $this->input->post('name'),
-            'first_sub_location_id' => $this->input->post('first_sub_location_id')
+            'name' => $this->input->post('name', TRUE),
+            'first_sub_location_id' => $this->input->post('first_sub_location_id', TRUE)
         ];
 
         if ($this->Second_sub_location_model->insert($data)) {
@@ -791,8 +791,8 @@ class Master extends CI_Controller
 
         $this->load->model('Second_sub_location_model');
         $data = [
-            'name' => $this->input->post('name'),
-            'first_sub_location_id' => $this->input->post('first_sub_location_id')
+            'name' => $this->input->post('name', TRUE),
+            'first_sub_location_id' => $this->input->post('first_sub_location_id', TRUE)
         ];
         $id = $this->uri->segment('5');
 
@@ -838,7 +838,7 @@ class Master extends CI_Controller
 
         $this->load->model('Mutation_status_model');
         $data = [
-            'name' => $this->input->post('name')
+            'name' => $this->input->post('name', TRUE)
         ];
 
         if ($this->Mutation_status_model->insert($data)) {
@@ -872,7 +872,7 @@ class Master extends CI_Controller
 
         $this->load->model('Mutation_status_model');
         $data = [
-            'name' => $this->input->post('name')
+            'name' => $this->input->post('name', TRUE)
         ];
         $id = $this->uri->segment('5');
 
@@ -974,7 +974,7 @@ class Master extends CI_Controller
         // and then redirect to /master/item-type
 
         $this->load->model('Employee_model');
-        $locs = $this->input->post('location_id');
+        $locs = $this->input->post('location_id', TRUE);
         $locs_id = explode(',',$locs);
         $location_id = $locs_id[0];
         $first_sub_location_id = $locs_id[1];
@@ -1052,7 +1052,7 @@ class Master extends CI_Controller
         // and then redirect to /master/item-type
 
         $this->load->model('Employee_model');
-        $locs = $this->input->post('location_id');
+        $locs = $this->input->post('location_id', TRUE);
         $locs_id = explode(',',$locs);
         $location_id = $locs_id[0];
         $first_sub_location_id = $locs_id[1];
@@ -1132,8 +1132,8 @@ class Master extends CI_Controller
         } else if ($method == 'post'){
             //check for errors
             $errors = [];
-            $username = $this->input->post('username');
-            $password = $this->input->post('password');
+            $username = $this->input->post('username', TRUE);
+            $password = $this->input->post('password', TRUE);
             $is_admin = ($this->input->post('is_admin') != null) ? 1 : 0;
 
             if (!ctype_alnum($username)){
@@ -1224,8 +1224,8 @@ class Master extends CI_Controller
         } else if ($method == 'post'){
             //check for errors
             $errors = [];
-            $username = $this->input->post('username');
-            $password = $this->input->post('password');
+            $username = $this->input->post('username', TRUE);
+            $password = $this->input->post('password', TRUE);
             $is_admin = ($this->input->post('is_admin') != null) ? 1 : 0;
             $id = $this->uri->segment('5');
 
