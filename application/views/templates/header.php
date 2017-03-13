@@ -27,7 +27,12 @@
     </script>
 </head>
 <body>
-<nav class="navbar navbar-default navbar-static-top">
+<?//= json_encode($is_logged_in) ?>
+<?//= json_encode($session_is_admin) ?>
+<?//= json_encode($session_user_id) ?>
+<?//= json_encode($session_username) ?>
+
+<nav class="navbar navbar-inverse navbar-static-top">
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
@@ -37,14 +42,15 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">Als</a>
+            <a class="navbar-brand" href="<?= base_url()?>">ALS</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <!-- this Masters dropdown is admin-only -->
-                <?php if ($is_admin == 1): ?>
+                <?php if ($is_logged_in == 1): ?>
+                <?php if ($session_is_admin == 1): ?>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Masters <span class="caret"></span></a>
                     <ul class="dropdown-menu">
@@ -61,29 +67,43 @@
                         <li><a href="<?= base_url()?>master/model">Model <span class="label label-success">done</span></a></li>
                         <li><a href="<?= base_url()?>master/mutation-status">Mutation Status <span class="label label-success">done</span></a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="<?= base_url()?>master/user">User</a></li>
+                        <li><a href="<?= base_url()?>master/user">User <span class="label label-success">done</span></a></li>
                     </ul>
                 </li>
                 <?php endif; ?>
 
-                <!-- The ones below can be accessed by any users -->
+                <!-- The ones below can be accessed by any users as long as they're logged in-->
                 <li><a href="#">Item</a></li>
                 <li><a href="#">Assembled Item</a></li>
                 <li><a href="#">Mutation History</a></li>
                 <li><a href="#">Company</a></li>
                 <li><a href="#">Employee</a></li>
+                <?php else: ?>
+                <!-- If not admin, and not logged in, then only show Home, Help, About, etc. -->
+                <li><a href="<?= base_url() ?>">Home</a></li>
+                <li><a href="<?= base_url().'help' ?>">Help</a></li>
+                <li><a href="<?= base_url().'about' ?>">About</a></li>
+                <?php endif; ?>
             </ul>
 
 
             <!-- this is the right part of the nav-bar -->
             <ul class="nav navbar-nav navbar-right">
+                <?php if ($is_logged_in == 1): ?>
                 <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Hi, {username}! <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Hi, {session_username}! <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="<?= base_url().'user/chpass/'.$user_id ?>"><span class="fa fa-pencil"></span> Change password</a></li>
-                        <li><a href="#"><span class="fa fa-sign-out"></span> Logout</a></li>
+                        <li><a href="<?= base_url().'user/chpass/'.$session_user_id ?>"><span class="fa fa-pencil"></span> Change password</a></li>
+                        <li><a href="<?= base_url().'logout' ?>"><span class="fa fa-sign-out"></span> Logout</a></li>
                     </ul>
                 </li>
+                <?php else: ?>
+                <li class="">
+                    <a href="#" class="" role="button" aria-haspopup="true" aria-expanded="false"><span class="fa fa-warning"></span> You are currently not logged in.</a>
+                    <ul class="dropdown-menu">
+                    </ul>
+                </li>
+                <?php endif; ?>
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->

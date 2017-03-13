@@ -18,12 +18,14 @@ class Master extends CI_Controller
         // mdate() take an unix timestamp or a date string, convert to mysql formatted date
 
         $this->load->library('parser');
+        $this->load->library('session');
         $this->load->database();
         $this->output->enable_profiler(FALSE);
 
         $data = $this->get_session_data();
-        if ($data['is_admin'] != 1){
-            redirect(base_url().'home');
+        if ($data['session_is_admin'] != 1){
+            $this->session->set_flashdata('login_error', 'You don\'t have access to that page');
+            redirect(base_url());
         }
 
     }
@@ -31,9 +33,18 @@ class Master extends CI_Controller
     public function get_session_data(){
         // TODO: use real session data
         // remember use xss_clean
-        $data['username'] = 'John-Doe';
-        $data['user_id'] = '123';
-        $data['is_admin'] = 1;
+        if($this->session->userdata('is_logged_in') == 1){
+            // if a session already exist
+            // pass the session data to $data, this will be passed when rendering views
+            $data['session_username'] = xss_clean($this->session->userdata('session_username'));
+            $data['session_user_id'] = xss_clean($this->session->userdata('session_user_id'));
+            $data['session_is_admin'] = xss_clean($this->session->userdata('session_is_admin'));
+            $data['is_logged_in'] = 1;
+        } else {
+            // else set is_logged_in = 0
+            $data['is_logged_in'] = 0;
+        }
+
         return $data;
     }
     public function index(){
@@ -329,12 +340,14 @@ class Master extends CI_Controller
 
     public function model_update(){
         // this updates a model in the database
-        // and then redirect to /master/item-type
+        // and then redirect to /master/model
 
         $this->load->model('Model_model');
         $data = [
             'name' => $this->input->post('name'),
-            'item_type_id' => $this->input->post('item_type_id')
+            'capacity_size' => $this->input->post('capacity_size'),
+            'units' => $this->input->post('units'),
+            'brand_id' => $this->input->post('brand_id')
         ];
         $id = $this->uri->segment('5');
 
@@ -1067,5 +1080,203 @@ class Master extends CI_Controller
         } else {
             //show errors
         }
+    }
+
+    public function user(){
+        // this shows the list of the users in the master database
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - User';
+        $this->parser->parse('templates/header.php', $data);
+
+        $this->load->model('User_model');
+        $data['records'] = $this->User_model->select_all();
+        $this->parser->parse('masters/users/index.php', $data);
+
+        $this->parser->parse('templates/footer.php', $data);
+    }
+
+    public function user_insert_form(){
+        // this shows the form for inserting a new user
+
+        $data = $this->get_session_data();
+
+        // check if there's any previous error messages to parse
+        $errors = $this->session->flashdata('errors');
+        $data['errors'] = $errors;
+
+        // pass the previously entered value
+        $username = $this->session->flashdata('username');
+        $data['username'] = $username;
+        $is_admin = $this->session->flashdata('is_admin');
+        $data['is_admin'] = $is_admin;
+
+
+        $data['title'] = 'ALS - User';
+        $this->parser->parse('templates/header.php', $data);
+        $this->parser->parse('masters/users/insert_form.php', $data);
+
+        $this->parser->parse('templates/footer.php', $data);
+    }
+
+    public function user_insert(){
+        // this insert a new user to the database
+        // and then redirect to /master/user
+        $method = $this->input->method();
+
+        if($method == 'get') {
+            //show the form
+            redirect(base_url().'master/user/new');
+
+        } else if ($method == 'post'){
+            //check for errors
+            $errors = [];
+            $username = $this->input->post('username');
+            $password = $this->input->post('password');
+            $is_admin = ($this->input->post('is_admin') != null) ? 1 : 0;
+
+            if (!ctype_alnum($username)){
+                array_push($errors, 'Username can only contains alphanumeric characters!');
+            }
+            if (!ctype_alnum($password)){
+                array_push($errors, 'Password can only contains alphanumeric characters!');
+            }
+            if (strlen($username) < 4 || strlen($username) > 20){
+                array_push($errors, 'Username must be between 4 to 20 characters!');
+            }
+            if (strlen($password) < 8 || strlen($password) > 32){
+                array_push($errors, 'Password must be between 8 to 32 characters!');
+            }
+            
+            if (sizeof($errors) == 0){
+                //if there are still no errors at this point, try inserting
+                $data = [
+                    'username' => $username,
+                    'password' => md5($password),
+                    'is_admin' => $is_admin
+                ];
+                $this->load->model('User_model');
+                if ($this->User_model->insert($data)) {
+                    //success inserting data
+                    redirect(base_url() . 'master/user');
+                } else {
+                    //errors!
+                    $db_error = $this->db->error();
+                    if ($db_error['code'] == 1062){
+                        //this means that there are duplicate entry
+                        array_push($errors, 'Username already exists! Please use a different username!');
+                    }
+                    // For Debugging purposes only
+//                    $error_msg = 'Error code: '.$db_error['code'].'<br/>';
+//                    $error_msg .= 'Message: '.$db_error['message'];
+//                    array_push($errors, $error_msg);
+                }
+            }
+
+            //if we reach this point, this means that there were still errors
+            //so we show the input form again, while passing the error messages as flashdata.
+            $data = $this->get_session_data();
+
+            $this->session->set_flashdata('errors', $errors);
+            $this->session->set_flashdata('username', $username);
+            $this->session->set_flashdata('is_admin', $is_admin);
+            redirect(base_url().'master/user/new');
+        }
+    }
+    public function user_update_form(){
+        // this shows the form for updating an item
+
+        $data = $this->get_session_data();
+
+        // check if there's any previous error messages to parse
+        $errors = $this->session->flashdata('errors');
+        $data['errors'] = $errors;
+
+        // pass the previously entered value
+        $username = $this->session->flashdata('username');
+        $data['username'] = $username;
+        $is_admin = $this->session->flashdata('is_admin');
+        $data['is_admin'] = $is_admin;
+
+        $data['title'] = 'ALS - User';
+        $this->parser->parse('templates/header.php', $data);
+
+        $id = $this->uri->segment('4');
+
+        $query = $this->db->get_where('users', array('id' => $id));
+        $data['record'] = $query->result()[0];
+        $data['id'] = $id;
+        $this->load->view('masters/users/update_form.php', $data);
+
+        $this->load->view('templates/footer.php');
+    }
+
+    public function user_update(){
+        // this updates a user in the database
+        // and then redirect to /master/user
+        $method = $this->input->method();
+
+        if($method == 'get') {
+            //show the form
+            redirect(base_url().'master/user/new');
+
+        } else if ($method == 'post'){
+            //check for errors
+            $errors = [];
+            $username = $this->input->post('username');
+            $password = $this->input->post('password');
+            $is_admin = ($this->input->post('is_admin') != null) ? 1 : 0;
+            $id = $this->uri->segment('5');
+
+            if (!ctype_alnum($username)){
+                array_push($errors, 'Username can only contains alphanumeric characters!');
+            }
+            if (!ctype_alnum($password)){
+                array_push($errors, 'Password can only contains alphanumeric characters!');
+            }
+            if (strlen($username) < 4 || strlen($username) > 20){
+                array_push($errors, 'Username must be between 4 to 20 characters!');
+            }
+            if (strlen($password) < 8 || strlen($password) > 32){
+                array_push($errors, 'Password must be between 8 to 32 characters!');
+            }
+
+            if (sizeof($errors) == 0){
+                //if there are still no errors at this point, try updating database
+                $data = [
+                    'username' => $username,
+                    'password' => md5($password),
+                    'is_admin' => $is_admin
+                ];
+                $this->load->model('User_model');
+                if ($this->User_model->update($data, $id)) {
+                    //success inserting data
+                    redirect(base_url() . 'master/user');
+                } else {
+                    //errors!
+                    $db_error = $this->db->error();
+                    if ($db_error['code'] == 1062){
+                        // this means that there are duplicate entry
+                        // add more error code in the future using nested if statements
+                        array_push($errors, 'Username already exists! Please use a different username!');
+                    }
+                    // For Debugging purposes only
+//                    $error_msg = 'Error code: '.$db_error['code'].'<br/>';
+//                    $error_msg .= 'Message: '.$db_error['message'];
+//                    array_push($errors, $error_msg);
+                }
+            }
+
+            //if we reach this point, this means that there were still errors
+            //so we show the input form again, while passing the error messages as flashdata.
+            $data = $this->get_session_data();
+
+            $this->session->set_flashdata('errors', $errors);
+            $this->session->set_flashdata('username', $username);
+            $this->session->set_flashdata('is_admin', $is_admin);
+            redirect(base_url().'master/user/edit/'.$id);
+        }
+
     }
 }
