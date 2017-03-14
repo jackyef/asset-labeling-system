@@ -8,25 +8,42 @@
 ?>
 <!DOCTYPE html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
     <title> {title} </title>
     <link rel="stylesheet" href="<?= base_url() ?>css/bootstrap.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>css/bootstrap-select.min.css">
+<!--    <link rel="stylesheet" href="--><?//= base_url() ?><!--css/dataTables.min.css">-->
     <link rel="stylesheet" href="<?= base_url() ?>css/dataTables.bootstrap.min.css">
+    <link rel="stylesheet" href="<?= base_url() ?>css/dataTables-ext.min.css">
+<!--    <link rel="stylesheet" href="--><?//= base_url() ?><!--css/jquery.dataTables.css">-->
     <link rel="stylesheet" href="<?= base_url() ?>css/font-awesome.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>css/sidenav.css">
     <script src="<?= base_url() ?>js/jquery.js"></script>
     <script src="<?= base_url() ?>js/bootstrap.min.js"></script>
     <script src="<?= base_url() ?>js/bootstrap-select.js"></script>
+<!--    <script src="--><?//= base_url() ?><!--js/dataTables.min.js"></script>-->
     <script src="<?= base_url() ?>js/jquery.dataTables.min.js"></script>
-    <script src="<?= base_url() ?>js/dataTables.bootstrap.min.js"></script>
+    <script src="<?= base_url() ?>js/dataTables.bootstrap.min.js"></script> <!-- creates white space at the right, bug!-->
+    <script src="<?= base_url() ?>js/dataTables-ext.min.js"></script>
 
     <script>
         $(document).ready(function() {
-            $('.data-table').DataTable();
+            $('.data-table').DataTable({
+                responsive: true,
+//                fixedHeader: true,
+//                scrollX: true,
+//                scrollY: "300px",
+                colReorder: true
+//                dom: 'Blfrtip',
+//                buttons: ['print', 'colvis']
+            });
+//            $('.data-table').DataTable().buttons.exportData( {
+//                columns: ':visible'
+//            } );
         } );
     </script>
 </head>
-<body>
+<body style="overflow-x: hidden">
 <?//= json_encode($is_logged_in) ?>
 <?//= json_encode($session_is_admin) ?>
 <?//= json_encode($session_user_id) ?>
