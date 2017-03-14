@@ -12,6 +12,7 @@
     <title> {title} </title>
     <link rel="stylesheet" href="<?= base_url() ?>css/bootstrap.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="<?= base_url() ?>css/bootstrap-datepicker3.standalone.min.css">
 <!--    <link rel="stylesheet" href="--><?//= base_url() ?><!--css/dataTables.min.css">-->
     <link rel="stylesheet" href="<?= base_url() ?>css/dataTables.bootstrap.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>css/dataTables-ext.min.css">
@@ -21,9 +22,10 @@
     <script src="<?= base_url() ?>js/jquery.js"></script>
     <script src="<?= base_url() ?>js/bootstrap.min.js"></script>
     <script src="<?= base_url() ?>js/bootstrap-select.js"></script>
+    <script src="<?= base_url() ?>js/bootstrap-datepicker.min.js"></script>
 <!--    <script src="--><?//= base_url() ?><!--js/dataTables.min.js"></script>-->
     <script src="<?= base_url() ?>js/jquery.dataTables.min.js"></script>
-    <script src="<?= base_url() ?>js/dataTables.bootstrap.min.js"></script> <!-- creates white space at the right, bug!-->
+    <script src="<?= base_url() ?>js/dataTables.bootstrap.min.js"></script>
     <script src="<?= base_url() ?>js/dataTables-ext.min.js"></script>
 
     <script>
@@ -40,6 +42,27 @@
 //            $('.data-table').DataTable().buttons.exportData( {
 //                columns: ':visible'
 //            } );
+
+//            // handles datepicker on pages that uses it
+//            $('.datepicker').datepicker({
+//                format: 'DD, dd MM yyyy',
+//                autoclose: true,
+//                todayHighlight: true
+//            });
+//            $('.datepicker').datepicker('update', new Date());
+//
+//            // handles warranty_expiry_date can't be earlier than purchase date
+//            $('#date_of_purchase').datepicker().on('changeDate', function(){
+//                var selected = $('#date_of_purchase').datepicker('getDate');
+//                $('#warranty_expiry_date').datepicker('setStartDate', selected);
+//                $('#warranty_expiry_date').datepicker('update', selected);
+//            });
+
+//            var arr = document.getElementsByTagName('script');
+//            for (var n = 0; n < arr.length; n++) {
+//                eval(arr[n].innerHTML)//run script inside div
+//            }
+
         } );
     </script>
 </head>
@@ -84,13 +107,15 @@
                         <li><a href="<?= base_url()?>master/model">Model <span class="label label-success">done</span></a></li>
                         <li><a href="<?= base_url()?>master/mutation-status">Mutation Status <span class="label label-success">done</span></a></li>
                         <li role="separator" class="divider"></li>
+                        <li><a href="<?= base_url()?>master/os">Operating System <span class="label label-success">done</span></a></li>
+                        <li role="separator" class="divider"></li>
                         <li><a href="<?= base_url()?>master/user">User <span class="label label-success">done</span></a></li>
                     </ul>
                 </li>
                 <?php endif; ?>
 
                 <!-- The ones below can be accessed by any users as long as they're logged in-->
-                <li><a href="#">Item</a></li>
+                <li><a href="<?= base_url()?>item">Item</a></li>
                 <li><a href="#">Assembled Item</a></li>
                 <li><a href="#">Mutation History</a></li>
                 <li><a href="#">Company</a></li>

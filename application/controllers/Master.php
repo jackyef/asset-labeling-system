@@ -1277,6 +1277,85 @@ class Master extends CI_Controller
             $this->session->set_flashdata('is_admin', $is_admin);
             redirect(base_url().'master/user/edit/'.$id);
         }
+    }
 
+    public function operating_system(){
+        // this shows the list of the operating_systems in the master database
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Operating_system';
+        $this->parser->parse('templates/header.php', $data);
+
+        $this->load->model('Operating_system_model');
+        $data['records'] = $this->Operating_system_model->select_all();
+        $this->parser->parse('masters/operating_systems/index.php', $data);
+
+        $this->parser->parse('templates/footer.php', $data);
+    }
+
+    public function operating_system_insert_form(){
+        // this shows the form for inserting a new operating_system
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Operating_system';
+        $this->parser->parse('templates/header.php', $data);
+
+        $this->parser->parse('masters/operating_systems/insert_form.php', $data);
+
+        $this->parser->parse('templates/footer.php', $data);
+    }
+
+    public function operating_system_insert(){
+        // this insert a new operating_system to the database
+        // and then redirect to /master/item-type
+
+        $this->load->model('Operating_system_model');
+        $data = [
+            'name' => $this->input->post('name', TRUE)
+        ];
+
+        if ($this->Operating_system_model->insert($data)) {
+            //success inserting data
+            redirect(base_url() . 'master/os');
+        } else {
+            //show errors
+        }
+    }
+    public function operating_system_update_form(){
+        // this shows the form for updating an operating_system
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Operating_system';
+        $this->parser->parse('templates/header.php', $data);
+
+        $id = $this->uri->segment('4');
+
+        $query = $this->db->get_where('operating_systems', array('id' => $id));
+        $data['record'] = $query->result()[0];
+        $data['id'] = $id;
+        $this->load->view('masters/operating_systems/update_form.php', $data);
+
+        $this->load->view('templates/footer.php');
+    }
+
+    public function operating_system_update(){
+        // this updates a operating_system in the database
+        // and then redirect to /master/item-type
+
+        $this->load->model('Operating_system_model');
+        $data = [
+            'name' => $this->input->post('name', TRUE)
+        ];
+        $id = $this->uri->segment('5');
+
+        if ($this->Operating_system_model->update($data, $id)) {
+            //success inserting data
+            redirect(base_url() . 'master/operating_system');
+        } else {
+            //show errors
+        }
     }
 }
