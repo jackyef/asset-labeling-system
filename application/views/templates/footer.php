@@ -7,6 +7,7 @@
  */
 ?>
 
+</div> <!-- /col-sm-12 -->
 </div> <!-- /container -->
 <br/>
 <div class="footer" style="border-top: 1px solid #9d9d9d; background-color: white; padding: .5em 10% .5em 10%; ">

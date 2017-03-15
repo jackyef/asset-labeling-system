@@ -137,6 +137,12 @@ $route['master/user/new/submit'] = 'master/user_insert';
 $route['master/user/edit/:num'] = 'master/user_update_form/:num';
 $route['master/user/edit/submit/:num'] = 'master/user_update/:num';
 
+$route['master/os'] = 'master/operating_system';
+$route['master/os/new'] = 'master/operating_system_insert_form';
+$route['master/os/new/submit'] = 'master/operating_system_insert';
+$route['master/os/edit/:num'] = 'master/operating_system_update_form/:num';
+$route['master/os/edit/submit/:num'] = 'master/operating_system_update/:num';
+
 $route['home/login'] = 'home/login';
 $route['logout'] = 'home/logout';
 $route['home/help'] = 'home/help';
@@ -144,4 +150,10 @@ $route['home/login/auth'] = 'home/login_auth';
 $route['help'] = 'home/help';
 $route['about'] = 'home/about';
 
-
+$route['item'] = 'item/index';
+$route['item/new'] = 'item/item_insert_form';
+$route['item/new/submit'] = 'item/item_insert';
+$route['item/edit/:num'] = 'item/item_update_form/:num';
+$route['item/edit/submit/:num'] = 'item/item_update/:num';
+$route['item/mutate/:num'] = 'item/item_mutate_form/:num';
+$route['item/mutate/submit/:num'] = 'item/item_mutate/:num';
