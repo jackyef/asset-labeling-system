@@ -26,7 +26,7 @@
         <th> Id </th>
         <th> Sub Location (Lv. 1)</th>
         <th> Parent Location </th>
-        <th> Action </th>
+        <th style="min-width: 1em"> Action </th>
         </thead>
         <?php
         foreach($records as $first_sub_loc){

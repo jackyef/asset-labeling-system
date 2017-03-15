@@ -82,7 +82,8 @@ class Item extends CI_Controller
                             b.name as brand_name, m.name as model_name, 
                             e.name as employee_name, e.location_id as location_id, 
                             e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id');
+                            e.second_sub_location_id as second_sub_location_id, 
+                            e.company_id as employee_company_id');
         $this->db->from('items i, item_types it, brands b, models m, employees e');
         $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
                           i.employee_id = e.id ');
@@ -383,18 +384,22 @@ class Item extends CI_Controller
         $data = $this->get_session_data();
 
         $data['title'] = 'ALS - Item';
+        $id = $this->uri->segment('3');
         $this->parser->parse('templates/header.php', $data);
 
-        $id = $this->uri->segment('3');
-
         $this->db->select('i.*, it.name as item_type_name, it.id as item_type_id, 
-                            b.name as brand_name, m.name as model_name, 
+                            b.name as brand_name, m.name as model_name,
+                            m.capacity_size as model_capacity_size,
+                            m.units as model_units, 
                             e.name as employee_name, e.location_id as location_id, 
                             e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id');
-        $this->db->from('items i, item_types it, brands b, models m, employees e');
+                            e.second_sub_location_id as second_sub_location_id,
+                            e.company_id as employee_company_id,
+                            c.name as company_name, 
+                            s.name as supplier_name');
+        $this->db->from('items i, item_types it, brands b, models m, employees e, companies c, suppliers s');
         $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
-                          i.employee_id = e.id ');
+                          i.employee_id = e.id AND i.company_id = c.id AND i.supplier_id = s.id');
 
         $query = $this->db->get_where('items', array('i.id' => $id));
         $data['record'] = $query->result()[0];
@@ -462,7 +467,7 @@ class Item extends CI_Controller
             $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
         }
 
-        $this->load->view('items/update_form.php', $data);
+        $this->load->view('items/detail.php', $data);
 
         $this->load->view('templates/footer.php', $data);
     }

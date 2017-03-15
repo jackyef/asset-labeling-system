@@ -22,6 +22,7 @@ class Home extends CI_Controller
         $this->load->database();
         $this->output->enable_profiler(FALSE);
 
+
     }
 
     public function get_session_data(){
@@ -39,6 +40,10 @@ class Home extends CI_Controller
             // else set is_logged_in = 0
             $data['is_logged_in'] = 0;
         }
+
+        //get site_wide_msg, if exists
+        $data['site_wide_msg'] = $this->session->flashdata('site_wide_msg');
+        $data['site_wide_msg_type'] = $this->session->flashdata('site_wide_msg_type');
 
         return $data;
     }
@@ -83,6 +88,8 @@ class Home extends CI_Controller
 
             // redirect to home
 //            echo json_encode($this->session->userdata());
+            $this->session->set_flashdata('site_wide_msg', 'Login success, welcome back '.$username.'!');
+            $this->session->set_flashdata('site_wide_msg_type', 'success');
             redirect(base_url());
         } else {
             // login failed
@@ -98,8 +105,93 @@ class Home extends CI_Controller
         redirect(base_url());
     }
 
-    public function inside(){
+    public function chpass(){
+        if ($this->input->method(TRUE) == 'GET'){
+            // check if id == the currently logged_in id
+            $data = $this->get_session_data();
+            $id = $this->uri->segment('3');
+            if($data['session_user_id'] != $id){
+                //if they're not the same, just redirect to correct id
+                redirect(base_url().'home/chpass/'.$data['session_user_id']);
+            }
+            // if we reached here, we can show the form
+            $data['id'] = $id;
+            // check if there's any previous error messages to parse
+            $errors = $this->session->flashdata('errors');
+            $data['errors'] = $errors;
+            // check if there's any previous messages to parse
+            $msg = $this->session->flashdata('msg');
+            $data['msg'] = $msg;
 
+            // show change password form
+
+            $data['title'] = 'ALS - Change Password';
+            $this->parser->parse('templates/header.php', $data);
+
+            $this->parser->parse('home/chpass.php', $data);
+
+            $this->parser->parse('templates/footer.php', $data);
+
+        } else if (($this->input->method(TRUE) == 'POST')){
+            // a new change password request is submitted,
+            // first, check if session_user_id is valid
+            $data = $this->get_session_data();
+            $id = $this->uri->segment('3');
+            if($data['session_user_id'] != $id){
+                //if they're not the same, just redirect to correct id
+                redirect(base_url().'home/chpass/'.$data['session_user_id']);
+            }
+
+            // now we do data validations here
+            //check for errors
+            $errors = [];
+
+            $password = $this->input->post('password', TRUE);
+            $new_password = $this->input->post('new_password', TRUE);
+
+            $this->db->select('u.password, u.id');
+            $this->db->from('users u');
+            $this->db->where('id', $id);
+            $this->db->where('password', md5($password));
+            $user = $this->db->get()->result();
+
+            if(sizeof($user) != 1){
+                array_push($errors, 'You typed your current password incorrectly.');
+            }
+            if (!ctype_alnum($new_password)){
+                array_push($errors, 'Your new password can only contains alphanumeric characters!');
+            }
+            if (strlen($new_password) < 8 || strlen($new_password) > 32){
+                array_push($errors, 'Your new password must be between 8 to 32 characters!');
+            }
+
+            if (sizeof($errors) == 0){
+                //if there are still no errors at this point, try updating database
+                $data = [
+                    'password' => md5($new_password)
+                ];
+                $this->load->model('User_model');
+                if ($this->User_model->update($data, $id)) {
+                    //success updating data
+                    $this->session->set_flashdata('msg', 'Your password is changed successfully!');
+                    redirect(base_url() . 'home/chpass/'.$id);
+                } else {
+                    //errors!
+                    $db_error = $this->db->error();
+                    array_push($errors, 'A database error occured. Code: '.$db_error['code']);
+                }
+            }
+
+            //if we reach this point, this means that there were still errors
+            //so we show the input form again, while passing the error messages as flashdata.
+            $data = $this->get_session_data();
+
+            $this->session->set_flashdata('errors', $errors);
+            redirect(base_url().'home/chpass/'.$id);
+
+        } else {
+            redirect(base_url());
+        }
     }
 
     public function help(){

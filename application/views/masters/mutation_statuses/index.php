@@ -25,7 +25,7 @@
         <thead>
         <th> Id </th>
         <th> Mutation Status </th>
-        <th> Action </th>
+        <th style="min-width: 1em"> Action </th>
         </thead>
         <?php
         foreach($records as $mutation_status){

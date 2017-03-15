@@ -88,14 +88,14 @@
             <div class="panel-body">
                 <h4>You are logged in as:</h4>
                 <div class="form-group">
-                    <div class="col-sm-4" for="name">Username</div>
+                    <div class="col-sm-4">Username</div>
                     <div class="col-sm-8">
                         <?= $session_username ?>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <div class="col-sm-4" for="name">Is admin?</div>
+                    <div class="col-sm-4">Is admin?</div>
                     <div class="col-sm-8">
                         <?= (($session_is_admin == 1) ? 'Yes' : 'No') ?>
                     </div>

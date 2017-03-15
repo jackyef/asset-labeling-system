@@ -14,7 +14,7 @@
     <br/>
     <form class="form-horizontal" action="<?php echo base_url(); ?>item/new/submit" method="POST">
         <div class="form-group">
-            <label class="control-label col-sm-2" for="date_of_purchase">Purchased at:</label>
+            <label class="control-label col-sm-2" for="date_of_purchase">Purchased on:</label>
             <div class="col-sm-3">
                 <div class="input-group date" data-provide="datepicker-inline ">
                     <input type="text" class="form-control datepicker" id="date_of_purchase" name="date_of_purchase">
@@ -34,7 +34,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-sm-2" for="warranty_expiry_date">Warranty expires at:</label>
+            <label class="control-label col-sm-2" for="warranty_expiry_date">Warranty expires on:</label>
             <div class="col-sm-3">
                 <div class="input-group date" data-provide="datepicker-inline ">
                     <input type="text" class="form-control datepicker" id="warranty_expiry_date" name="warranty_expiry_date">

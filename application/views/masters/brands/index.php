@@ -26,7 +26,7 @@
         <th> Id </th>
         <th> Brand </th>
         <th> Item type </th>
-        <th> Action </th>
+        <th style="min-width: 1em"> Action </th>
         </thead>
         <?php
         foreach($records as $brand){

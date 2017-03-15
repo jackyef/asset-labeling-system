@@ -28,7 +28,7 @@
         <th> Company </th>
         <th> Is working? </th>
         <th> Current Location </th>
-        <th> Action </th>
+        <th style="min-width: 1em"> Action </th>
         </thead>
         <?php
         foreach($records as $employee){

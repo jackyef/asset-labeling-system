@@ -63,10 +63,6 @@ $route['translate_uri_dashes'] = FALSE;
  * would instead call the “shoes” controller class and the “id_123” method.
  */
 
-## Route for User CRUD
-$route['user/new'] = 'user/insert_view';
-$route['user/edit/:num'] = 'user/update_view/:num';
-
 $route['master/item-type'] = 'master/item_type';
 $route['master/item-type/new'] = 'master/item_type_insert_form';
 $route['master/item-type/new/submit'] = 'master/item_type_insert';
@@ -147,6 +143,7 @@ $route['home/login'] = 'home/login';
 $route['logout'] = 'home/logout';
 $route['home/help'] = 'home/help';
 $route['home/login/auth'] = 'home/login_auth';
+$route['home/chpass/:num'] = 'home/chpass/:num';
 $route['help'] = 'home/help';
 $route['about'] = 'home/about';
 
@@ -157,3 +154,8 @@ $route['item/edit/:num'] = 'item/item_update_form/:num';
 $route['item/edit/submit/:num'] = 'item/item_update/:num';
 $route['item/mutate/:num'] = 'item/item_mutate_form/:num';
 $route['item/mutate/submit/:num'] = 'item/item_mutate/:num';
+
+
+$route['company'] = 'company/index';
+$route['company/edit/:num'] = 'company/company_update_form/:num';
+$route['company/edit/submit/:num'] = 'company/company_update/:num';

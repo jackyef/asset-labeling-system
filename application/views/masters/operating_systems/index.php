@@ -25,7 +25,7 @@
         <thead>
         <th> Id </th>
         <th> Operating System Name </th>
-        <th> Action </th>
+        <th style="min-width: 1em"> Action </th>
         </thead>
         <?php
         foreach($records as $operating_system){
