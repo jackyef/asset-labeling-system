@@ -8,6 +8,7 @@
 ?>
 
 <div class="row">
+    <div class="col-sm-12">
     <div class="pull-left">
         <ol class="breadcrumb">
             <li><a href="<?= base_url()?>">Home</a></li>
@@ -51,6 +52,7 @@
         ?>
     </table>
 
+</div>
 </div>
 
 

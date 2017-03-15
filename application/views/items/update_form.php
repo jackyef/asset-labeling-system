@@ -8,6 +8,7 @@
 ?>
 
 <div class="row">
+    <div class="col-sm-12">
     <a href="<?= base_url().'item'?>"><button class="btn btn-primary"><span class="fa fa-backward"></span> Back to item list</button></a>
     <h2>Edit item (code:
         <?= str_pad($record->item_type_id, 3, '0', STR_PAD_LEFT).'-'.str_pad($record->id, 5, '0', STR_PAD_LEFT) ?>)
@@ -155,6 +156,7 @@
             </div>
         </div>
     </form>
+</div>
 </div>
 <script type="text/javascript">
     // update the date pickers to take the record's value

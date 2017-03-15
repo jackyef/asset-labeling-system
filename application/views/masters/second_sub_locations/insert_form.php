@@ -8,6 +8,7 @@
 ?>
 
 <div class="row">
+    <div class="col-sm-12">
     <a href="<?= base_url().'master/ssub-location'?>"><button class="btn btn-primary"><span class="fa fa-backward"></span> Back to second sub location list</button></a>
     <h2>Add a new second sub location</h2>
     <br/>
@@ -34,6 +35,7 @@
             </div>
         </div>
     </form>
+</div>
 </div>
 
 

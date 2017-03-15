@@ -8,6 +8,7 @@
 ?>
 
 <div class="row">
+    <div class="col-sm-12">
     <a href="<?= base_url().'master/model'?>"><button class="btn btn-primary"><span class="fa fa-backward"></span> Back to model list</button></a>
     <h2>Edit model</h2>
     <br/>
@@ -49,6 +50,7 @@
             </div>
         </div>
     </form>
+</div>
 </div>
 
 

@@ -8,6 +8,7 @@
 ?>
 
 <div class="row">
+    <div class="col-sm-12">
     <a href="<?= base_url().'master/supplier'?>"><button class="btn btn-primary"><span class="fa fa-backward"></span> Back to supplier list</button></a>
     <h2>Edit supplier</h2>
     <br/>
@@ -25,6 +26,7 @@
             </div>
         </div>
     </form>
+</div>
 </div>
 
 
