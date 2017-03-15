@@ -95,6 +95,11 @@ class Master extends CI_Controller
     public function item_type_insert(){
         // this insert a new item_type to the database
         // and then redirect to /master/item-type
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/item-type');
+        }
 
         $this->load->model('Item_type_model');
         $is_assembled = ($this->input->post('is_assembled') != null) ? 1 : 0;
@@ -131,6 +136,11 @@ class Master extends CI_Controller
     public function item_type_update(){
         // this updates a item_type in the database
         // and then redirect to /master/item-type
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/item-type');
+        }
 
         $this->load->model('Item_type_model');
         $data = [
@@ -186,6 +196,11 @@ class Master extends CI_Controller
     public function brand_insert(){
         // this insert a new brand to the database
         // and then redirect to /master/item-type
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/brand');
+        }
 
         $this->load->model('Brand_model');
         $data = [
@@ -231,6 +246,11 @@ class Master extends CI_Controller
     public function brand_update(){
         // this updates a brand in the database
         // and then redirect to /master/item-type
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/brand');
+        }
 
         $this->load->model('Brand_model');
         $data = [
@@ -292,6 +312,12 @@ class Master extends CI_Controller
         // this insert a new model to the database
         // and then redirect to /master/item-type
 
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/model');
+        }
+
         $this->load->model('Model_model');
         $data = [
             'name' => $this->input->post('name', TRUE),
@@ -342,6 +368,12 @@ class Master extends CI_Controller
         // this updates a model in the database
         // and then redirect to /master/model
 
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/model');
+        }
+
         $this->load->model('Model_model');
         $data = [
             'name' => $this->input->post('name', TRUE),
@@ -391,6 +423,12 @@ class Master extends CI_Controller
         // this insert a new supplier to the database
         // and then redirect to /master/item-type
 
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/supplier');
+        }
+
         $this->load->model('Supplier_model');
         $data = [
             'name' => $this->input->post('name', TRUE)
@@ -424,6 +462,12 @@ class Master extends CI_Controller
     public function supplier_update(){
         // this updates a supplier in the database
         // and then redirect to /master/item-type
+
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/supplier');
+        }
 
         $this->load->model('Supplier_model');
         $data = [
@@ -471,6 +515,12 @@ class Master extends CI_Controller
         // this insert a new company to the database
         // and then redirect to /master/item-type
 
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/company');
+        }
+
         $this->load->model('Company_model');
         $data = [
             'name' => $this->input->post('name', TRUE)
@@ -504,6 +554,12 @@ class Master extends CI_Controller
     public function company_update(){
         // this updates a company in the database
         // and then redirect to /master/item-type
+
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/company');
+        }
 
         $this->load->model('Company_model');
         $data = [
@@ -551,6 +607,12 @@ class Master extends CI_Controller
         // this insert a new location to the database
         // and then redirect to /master/item-type
 
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/location');
+        }
+
         $this->load->model('Location_model');
         $data = [
             'name' => $this->input->post('name', TRUE)
@@ -584,6 +646,12 @@ class Master extends CI_Controller
     public function location_update(){
         // this updates a location in the database
         // and then redirect to /master/item-type
+
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/location');
+        }
 
         $this->load->model('Location_model');
         $data = [
@@ -641,6 +709,12 @@ class Master extends CI_Controller
         // this insert a new first_sub_location to the database
         // and then redirect to /master/item-type
 
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/fsub-location');
+        }
+
         $this->load->model('First_sub_location_model');
         $data = [
             'name' => $this->input->post('name', TRUE),
@@ -685,6 +759,12 @@ class Master extends CI_Controller
     public function first_sub_location_update(){
         // this updates a first_sub_location in the database
         // and then redirect to /master/item-type
+
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/fsub-location');
+        }
 
         $this->load->model('First_sub_location_model');
         $data = [
@@ -743,6 +823,12 @@ class Master extends CI_Controller
         // this insert a new second_sub_location to the database
         // and then redirect to /master/item-type
 
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/ssub-location');
+        }
+
         $this->load->model('Second_sub_location_model');
         $data = [
             'name' => $this->input->post('name', TRUE),
@@ -788,6 +874,12 @@ class Master extends CI_Controller
     public function second_sub_location_update(){
         // this updates a second_sub_location in the database
         // and then redirect to /master/item-type
+
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/ssub-location');
+        }
 
         $this->load->model('Second_sub_location_model');
         $data = [
@@ -836,6 +928,12 @@ class Master extends CI_Controller
         // this insert a new mutation_status to the database
         // and then redirect to /master/item-type
 
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/mutation-status');
+        }
+
         $this->load->model('Mutation_status_model');
         $data = [
             'name' => $this->input->post('name', TRUE)
@@ -869,6 +967,12 @@ class Master extends CI_Controller
     public function mutation_status_update(){
         // this updates a mutation_status in the database
         // and then redirect to /master/mutation-status
+
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/mutation-status');
+        }
 
         $this->load->model('Mutation_status_model');
         $data = [
@@ -973,6 +1077,12 @@ class Master extends CI_Controller
         // this insert a new employee to the database
         // and then redirect to /master/item-type
 
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/employee');
+        }
+
         $this->load->model('Employee_model');
         $locs = $this->input->post('location_id', TRUE);
         $locs_id = explode(',',$locs);
@@ -1051,6 +1161,12 @@ class Master extends CI_Controller
         // this updates a employee in the database
         // and then redirect to /master/item-type
 
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/employee');
+        }
+
         $this->load->model('Employee_model');
         $locs = $this->input->post('location_id', TRUE);
         $locs_id = explode(',',$locs);
@@ -1127,7 +1243,7 @@ class Master extends CI_Controller
 
         if($method == 'get') {
             //show the form
-            redirect(base_url().'master/user/new');
+            redirect(base_url().'master/user');
 
         } else if ($method == 'post'){
             //check for errors
@@ -1219,7 +1335,7 @@ class Master extends CI_Controller
 
         if($method == 'get') {
             //show the form
-            redirect(base_url().'master/user/new');
+            redirect(base_url().'master/user');
 
         } else if ($method == 'post'){
             //check for errors
@@ -1311,6 +1427,12 @@ class Master extends CI_Controller
         // this insert a new operating_system to the database
         // and then redirect to /master/item-type
 
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/os');
+        }
+
         $this->load->model('Operating_system_model');
         $data = [
             'name' => $this->input->post('name', TRUE)
@@ -1344,6 +1466,12 @@ class Master extends CI_Controller
     public function operating_system_update(){
         // this updates a operating_system in the database
         // and then redirect to /master/item-type
+
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'master/os');
+        }
 
         $this->load->model('Operating_system_model');
         $data = [
