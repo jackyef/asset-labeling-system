@@ -14,7 +14,7 @@
         </ol>
     </div>
     <div class="clearfix"></div>
-    <div class="col-md-8">
+    <div class="col-md-8" style="padding: 0">
         <div class="panel panel-collapse panel-default" style="border-color: #229955;">
             <div class="panel-heading" style="background-color: #229955">
                 <h3 class="panel-title" style="color: white">Information</h3>
@@ -36,7 +36,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4" style="padding: 0">
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">Login</h3>

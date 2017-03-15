@@ -147,7 +147,8 @@
         $('.datepicker').datepicker({
             format: 'DD, dd MM yyyy',
             autoclose: true,
-            todayHighlight: true
+            todayHighlight: true,
+            disableTouchKeyboard: true
         });
         $('.datepicker').datepicker('update', new Date());
 

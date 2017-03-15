@@ -163,7 +163,8 @@
 
         format: 'DD, dd MM yyyy',
         autoclose: true,
-        todayHighlight: true
+        todayHighlight: true,
+        disableTouchKeyboard: true
     });
 
         $('#date_of_purchase').datepicker('update', '<?= (date("d-m-Y", strtotime($record->date_of_purchase))) ?>');
