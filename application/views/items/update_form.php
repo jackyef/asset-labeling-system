@@ -19,7 +19,7 @@
             <label class="control-label col-sm-2" for="date_of_purchase">Purchased at:</label>
             <div class="col-sm-3">
                 <div class="input-group date" data-provide="datepicker-inline ">
-                    <input type="text" class="form-control datepicker" id="date_of_purchase" name="date_of_purchase">
+                    <input type="text" class="form-control datepicker" id="date_of_purchase" name="date_of_purchase" />
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
                     </div>
@@ -38,8 +38,8 @@
         <div class="form-group">
             <label class="control-label col-sm-2" for="warranty_expiry_date">Warranty expires at:</label>
             <div class="col-sm-3">
-                <div class="input-group date" data-provide="datepicker-inline">
-                    <input type="text" class="form-control datepicker" id="warranty_expiry_date" name="warranty_expiry_date">
+                <div class="input-group date" data-provide="datepicker-inline ">
+                    <input type="text" class="form-control datepicker" id="warranty_expiry_date" name="warranty_expiry_date"/>
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
                     </div>
@@ -118,6 +118,7 @@
         <div class="form-group">
             <label class="control-label col-sm-2" for="employee_id">Holding employee:</label>
             <div class="col-sm-10">
+                <input type="hidden" name="employee_id" id="employee_id" value="<?= $record->employee_id?>" />
                 <select class="form-control selectpicker" name="employee_id" id="employee_id" data-live-search="true" disabled>
                     <?php foreach($employees as $employee){ ?>
                         <option value="<?= $employee->id?>"
@@ -161,13 +162,20 @@
 <script type="text/javascript">
     // update the date pickers to take the record's value
     $(document).ready(function(){
-        $('.datepicker').datepicker({
-
-        format: 'DD, dd MM yyyy',
-        autoclose: true,
-        todayHighlight: true,
-        disableTouchKeyboard: true
-    });
+        $('#warranty_expiry_date').datepicker({
+            format: 'DD, dd MM yyyy',
+            autoclose: true,
+            todayHighlight: true,
+            todayBtn: true,
+            disableTouchKeyboard: true
+        });
+        $('#date_of_purchase').datepicker({
+            format: 'DD, dd MM yyyy',
+            autoclose: true,
+            todayHighlight: true,
+            todayBtn: true,
+            disableTouchKeyboard: true
+        });
 
         $('#date_of_purchase').datepicker('update', '<?= (date("d-m-Y", strtotime($record->date_of_purchase))) ?>');
         $('#warranty_expiry_date').datepicker('setStartDate', '<?= (date("d-m-Y", strtotime($record->warranty_expiry_date))) ?>');

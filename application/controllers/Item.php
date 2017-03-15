@@ -200,6 +200,11 @@ class Item extends CI_Controller
     public function item_insert(){
         // this insert a new item to the database
 
+        // check if it's a POST request or not first
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'item');
+        }
         $id_to_insert = $this->get_max_id()+1;
         $is_used = ($this->input->post('is_used') != null) ? '1' : '0';
         $this->load->model('Item_model');
@@ -300,6 +305,7 @@ class Item extends CI_Controller
         foreach($this->db->get()->result() as $company){
             $data['companies'][$company->id] = $company;
         }
+
         $this->db->reset_query();
         $this->db->select('l.* ');
         $this->db->from('locations l');
@@ -329,6 +335,11 @@ class Item extends CI_Controller
     public function item_update(){
         // this update an item in the database
 
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'item');
+        }
         $this->load->model('Item_model');
 
         $id = $this->uri->segment('4');
@@ -364,5 +375,95 @@ class Item extends CI_Controller
         } else {
             //show errors
         }
+    }
+
+    public function detail(){
+        // this shows the form for inserting a new mutation status
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Item';
+        $this->parser->parse('templates/header.php', $data);
+
+        $id = $this->uri->segment('3');
+
+        $this->db->select('i.*, it.name as item_type_name, it.id as item_type_id, 
+                            b.name as brand_name, m.name as model_name, 
+                            e.name as employee_name, e.location_id as location_id, 
+                            e.first_sub_location_id as first_sub_location_id, 
+                            e.second_sub_location_id as second_sub_location_id');
+        $this->db->from('items i, item_types it, brands b, models m, employees e');
+        $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
+                          i.employee_id = e.id ');
+
+        $query = $this->db->get_where('items', array('i.id' => $id));
+        $data['record'] = $query->result()[0];
+        $data['id'] = $id;
+
+        $this->db->reset_query();
+        $this->db->select('m.*, b.name as brand_name, it.name as item_type_name ');
+        $this->db->from('models m, brands b, item_types it');
+        $this->db->where('m.brand_id = b.id AND b.item_type_id = it.id');
+        $this->db->order_by('it.name, b.name, m.name asc');
+        foreach($this->db->get()->result() as $model){
+            $data['models'][$model->id] = $model;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('s.* ');
+        $this->db->from('suppliers s');
+        $this->db->order_by('s.name asc');
+        foreach($this->db->get()->result() as $supplier){
+            $data['suppliers'][$supplier->id] = $supplier;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('e.*, c.name as company_name');
+        $this->db->from('employees e, companies c');
+        $this->db->where('e.company_id = c.id');
+        $this->db->order_by('e.name asc');
+        foreach($this->db->get()->result() as $employee){
+            $data['employees'][$employee->id] = $employee;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('os.* ');
+        $this->db->from('operating_systems os');
+        $this->db->order_by('os.name asc');
+        foreach($this->db->get()->result() as $os){
+            $data['operating_systems'][$os->id] = $os;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('c.* ');
+        $this->db->from('companies c');
+        $this->db->order_by('c.name asc');
+        foreach($this->db->get()->result() as $company){
+            $data['companies'][$company->id] = $company;
+        }
+        $this->db->reset_query();
+        $this->db->select('l.* ');
+        $this->db->from('locations l');
+        foreach($this->db->get()->result() as $location){
+            $data['locations'][$location->id] = $location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('f.* ');
+        $this->db->from('first_sub_locations f');
+        foreach($this->db->get()->result() as $first_sub_location){
+            $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('s.* ');
+        $this->db->from('second_sub_locations s');
+        foreach($this->db->get()->result() as $second_sub_location){
+            $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
+        }
+
+        $this->load->view('items/update_form.php', $data);
+
+        $this->load->view('templates/footer.php', $data);
     }
 }
