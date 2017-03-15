@@ -8,6 +8,7 @@
 ?>
 
 <div class="row">
+    <div class="col-sm-12">
     <a href="<?= base_url().'master/employee'?>"><button class="btn btn-primary"><span class="fa fa-backward"></span> Back to employee list</button></a>
     <h2>Edit employee</h2>
     <br/>
@@ -85,6 +86,7 @@
             </div>
         </div>
     </form>
+</div>
 </div>
 
 

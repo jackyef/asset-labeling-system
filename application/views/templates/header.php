@@ -151,4 +151,3 @@
     </div><!-- /.container-fluid -->
 </nav>
 <div class="container">
-    <div class="col-sm-12">

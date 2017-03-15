@@ -8,6 +8,7 @@
 ?>
 
 <div class="row">
+    <div class="col-sm-12">
     <div class="pull-left">
         <ol class="breadcrumb">
             <li><a href="<?= base_url()?>">Home</a></li>
@@ -16,7 +17,7 @@
         </ol>
     </div>
     <div class="pull-right">
-        <a href="<?php echo base_url(); ?>master/os/new"><button class="btn btn-primary"><span class="fa fa-plus"></span> New Operating System</button> </a>
+        <a href="<?php echo base_url(); ?>master/os/new"><button class="btn btn-primary btn"><span class="fa fa-plus"></span> New Operating System</button> </a>
     </div>
     <div class="clearfix"></div>
     <table class="table table-striped table-responsive data-table">
@@ -41,6 +42,7 @@
         ?>
     </table>
 
+</div>
 </div>
 
 

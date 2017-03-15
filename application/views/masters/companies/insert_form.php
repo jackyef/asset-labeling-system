@@ -8,6 +8,7 @@
 ?>
 
 <div class="row">
+    <div class="col-sm-12">
     <a href="<?= base_url().'master/company'?>"><button class="btn btn-primary"><span class="fa fa-backward"></span> Back to company list</button></a>
     <h2>Add a new company</h2>
     <br/>
@@ -24,6 +25,7 @@
             </div>
         </div>
     </form>
+</div>
 </div>
 
 

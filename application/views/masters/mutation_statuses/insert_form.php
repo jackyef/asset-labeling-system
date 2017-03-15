@@ -8,6 +8,7 @@
 ?>
 
 <div class="row">
+    <div class="col-sm-12">
     <a href="<?= base_url().'master/mutation-status'?>"><button class="btn btn-primary"><span class="fa fa-backward"></span> Back to mutation status list</button></a>
     <h2>Add a new mutation status</h2>
     <br/>
@@ -24,6 +25,7 @@
             </div>
         </div>
     </form>
+</div>
 </div>
 
 
