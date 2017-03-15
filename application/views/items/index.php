@@ -41,7 +41,7 @@
             echo '<td>'.$item->model_name.'</td>';
             echo '<td>'.
                     '<i class="fa fa-calendar"></i> '.
-                    $item->date_of_purchase.
+                    date("d M Y", strtotime($item->date_of_purchase)).
                 '</td>';
             echo '<td>'.$companies[$item->company_id]->name.'</td>';
             echo '<td>'.(($item->is_used == 1) ? 'Yes' : 'No' ).'</td>';

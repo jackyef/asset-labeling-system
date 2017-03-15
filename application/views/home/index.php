@@ -51,20 +51,30 @@
             <div class="panel-body">
                 <form class="form-horizontal" action="<?= base_url().'home/login' ?>" method="POST">
                     <div class="form-group">
-                        <label class="control-label col-sm-3" for="name">Username</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Type your username here" required>
+<!--                        <label class="control-label col-sm-3" for="name">Username</label>-->
+                        <div class="col-sm-12">
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <span class="fa fa-user" style="min-width: 1.5em"></span>
+                                </div>
+                                <input type="text" class="form-control" id="username" name="username" placeholder="Type your username here" required>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-sm-3" for="name">Password</label>
-                        <div class="col-sm-9">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Type your password here" required>
+<!--                        <label class="control-label col-sm-3" for="name">Password</label>-->
+                        <div class="col-sm-12">
+                            <div class="input-group">
+                                <div class="input-group-addon">
+                                    <span class="fa fa-lock" style="min-width: 1.5em"></span>
+                                </div>
+                                <input type="password" class="form-control" id="password" name="password" placeholder="Type your password here" required>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-sm-offset-3 col-sm-9">
-                            <button type="submit" class="btn btn-success">Login</button>
+                        <div class="col-sm-12">
+                            <button type="submit" class="form-control btn btn-success">Login</button>
                         </div>
                     </div>
                 </form>

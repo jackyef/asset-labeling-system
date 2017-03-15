@@ -36,7 +36,7 @@
         <div class="form-group">
             <label class="control-label col-sm-2" for="warranty_expiry_date">Warranty expires at:</label>
             <div class="col-sm-3">
-                <div class="input-group date" data-provide="datepicker-inline">
+                <div class="input-group date" data-provide="datepicker-inline ">
                     <input type="text" class="form-control datepicker" id="warranty_expiry_date" name="warranty_expiry_date">
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
@@ -146,12 +146,21 @@
 <script type="text/javascript">
     $(document).ready(function(){
         // handles datepicker on pages that uses it
-        $('.datepicker').datepicker({
+        $('#warranty_expiry_date').datepicker({
             format: 'DD, dd MM yyyy',
             autoclose: true,
             todayHighlight: true,
+            todayBtn: true,
             disableTouchKeyboard: true
         });
+        $('#date_of_purchase').datepicker({
+            format: 'DD, dd MM yyyy',
+            autoclose: true,
+            todayHighlight: true,
+            todayBtn: true,
+            disableTouchKeyboard: true
+        });
+
         $('.datepicker').datepicker('update', new Date());
 
         // handles warranty_expiry_date can't be earlier than purchase date
