@@ -45,6 +45,10 @@ class Master extends CI_Controller
             $data['is_logged_in'] = 0;
         }
 
+        //get site_wide_msg, if exists
+        $data['site_wide_msg'] = $this->session->flashdata('site_wide_msg');
+        $data['site_wide_msg_type'] = $this->session->flashdata('site_wide_msg_type');
+
         return $data;
     }
     public function index(){

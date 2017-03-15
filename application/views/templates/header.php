@@ -118,7 +118,7 @@
                 <li><a href="<?= base_url()?>item">Item</a></li>
                 <li><a href="#">Assembled Item</a></li>
                 <li><a href="#">Mutation History</a></li>
-                <li><a href="#">Company</a></li>
+                <li><a href="<?= base_url().'company'?>">Company</a></li>
                 <li><a href="#">Employee</a></li>
                 <?php else: ?>
                 <!-- If not admin, and not logged in, then only show Home, Help, About, etc. -->
@@ -135,7 +135,7 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Hi, {session_username}! <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="<?= base_url().'user/chpass/'.$session_user_id ?>"><span class="fa fa-pencil"></span> Change password</a></li>
+                        <li><a href="<?= base_url().'home/chpass/'.$session_user_id ?>"><span class="fa fa-pencil"></span> Change password</a></li>
                         <li><a href="<?= base_url().'logout' ?>"><span class="fa fa-sign-out"></span> Logout</a></li>
                     </ul>
                 </li>
@@ -151,3 +151,25 @@
     </div><!-- /.container-fluid -->
 </nav>
 <div class="container">
+    <!-- This is a placeholder to show site_wite_msg from any controller, just pass the value as a flashdata -->
+    <?php if(isset($site_wide_msg)): ?>
+        <div class="col-sm-12">
+            <div class="alert alert-<?= $site_wide_msg_type?>">
+                <p><?= $site_wide_msg ?><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></p>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- javascript warning -->
+    <noscript>
+        <div class="col-sm-12">
+            <div class="noscriptmsg alert alert-danger">
+                <span class="fa fa-warning"></span> Uh oh!
+                We noticed that either you disabled Javascript on your browser,
+                or your browser simply doesn't support Javascript. This web
+                will <strong>NOT</strong> work well without Javascript. Please
+                enable Javascript on your browser, or switch to a browser that
+                supports it.
+            </div>
+        </div>
+    </noscript>

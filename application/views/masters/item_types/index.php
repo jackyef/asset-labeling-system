@@ -26,7 +26,7 @@
         <th> Id </th>
         <th> Item Type </th>
         <th> Is an assembled item? </th>
-        <th> Action </th>
+        <th style="min-width: 1em"> Action </th>
         </thead>
         <?php
         foreach($records as $item_type){

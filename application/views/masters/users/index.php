@@ -26,7 +26,7 @@
         <th> Id </th>
         <th> User </th>
         <th> Is admin? </th>
-        <th> Action </th>
+        <th style="min-width: 1em"> Action </th>
         </thead>
         <?php
         foreach($records as $user){

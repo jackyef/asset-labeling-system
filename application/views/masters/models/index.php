@@ -28,7 +28,7 @@
         <th> Brand </th>
         <th> Model </th>
         <th> Capacity/Size </th>
-        <th> Action </th>
+        <th style="min-width: 1em"> Action </th>
         </thead>
         <?php
         foreach($records as $model){

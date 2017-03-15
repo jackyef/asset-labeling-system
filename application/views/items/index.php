@@ -26,17 +26,21 @@
         <th> Item Code </th>
         <th> Item Type / Brand </th>
         <th> Model </th>
-        <th> Purchased on </th>
+        <th style="min-width: 6em"> Purchased on </th>
         <th> Owned by </th>
         <th> Is used? </th>
         <th> Held by </th>
-        <th> Action </th>
+        <th style="min-width: 1em"> Action </th>
         </thead>
         <?php
         foreach($records as $item){
             echo '<tr>';
             echo '<td>'.$item->id.'</td>';
-            echo '<td>'.str_pad($item->item_type_id, 3, '0', STR_PAD_LEFT).'-'.str_pad($item->id, 5, '0', STR_PAD_LEFT).'</td>';
+            echo '<td>'.
+                '<a href="'.base_url().'item/detail/'.$item->id.'">'.
+                str_pad($item->item_type_id, 3, '0', STR_PAD_LEFT).'-'.str_pad($item->id, 5, '0', STR_PAD_LEFT).
+                '</a>'.
+                '</td>';
             echo '<td>'.$item->item_type_name.', '.$item->brand_name.'</td>';
             echo '<td>'.$item->model_name.'</td>';
             echo '<td>'.
@@ -45,14 +49,23 @@
                 '</td>';
             echo '<td>'.$companies[$item->company_id]->name.'</td>';
             echo '<td>'.(($item->is_used == 1) ? 'Yes' : 'No' ).'</td>';
-            echo '<td>'.$item->employee_name. ' <br/> <i class="fa fa-map-marker"></i> '.
+            echo '<td>'.$item->employee_name.
+                '<br/> <i class="fa fa-building"></i> '.
+                $companies[$item->employee_company_id]->name.
+                '<br/> <i class="fa fa-map-marker"></i> '.
                 (($item->location_id != 0) ? $locations[$item->location_id]->name : '').
                 (($item->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.$first_sub_locations[$item->first_sub_location_id]->name : '').
                 (($item->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.$second_sub_locations[$item->second_sub_location_id]->name : '').
                 '</td>';
             echo '<td> 
                         <a href="'. base_url(). 'item/edit/'.$item->id.'">
-                        <button class="btn btn-xs btn-info"><span class="fa fa-edit"></span> Edit</button>
+                        <button class="btn btn-xs btn-info" ><span class="fa fa-edit"></span> Edit</button>
+                        </a>
+                        <a href="'. base_url(). 'item/detail/'.$item->id.'">
+                        <button class="btn btn-xs btn-warning" ><span class="fa fa-external-link"></span> View</button>
+                        </a>
+                        <a href="'. base_url(). 'item/mutate/'.$item->id.'">
+                        <button class="btn btn-xs btn-primary" ><span class="fa fa-refresh"></span> Mutate</button>
                         </a>
                   </td>';
             echo '</tr>';
