@@ -115,11 +115,11 @@
                 <?php endif; ?>
 
                 <!-- The ones below can be accessed by any users as long as they're logged in-->
-                <li><a href="<?= base_url()?>item">Item</a></li>
-                <li><a href="#">Assembled Item</a></li>
-                <li><a href="#">Mutation History</a></li>
-                <li><a href="<?= base_url().'company'?>">Company</a></li>
-                <li><a href="<?= base_url().'employee'?>">Employee</a></li>
+                <li><a href="<?= base_url().'item'?>">Item<span class="label label-success">done</span></a></li>
+                <li><a href="#">Assembled Item<span class="label label-danger">0%</span></a></li>
+                <li><a href="<?= base_url().'mutation-history'?>">Mutation History<span class="label label-warning">50%</span></a></li>
+                <li><a href="<?= base_url().'company'?>">Company<span class="label label-success">done</span></a></li>
+                <li><a href="<?= base_url().'employee'?>">Employee<span class="label label-success">done</span></a></li>
                 <?php else: ?>
                 <!-- If not admin, and not logged in, then only show Home, Help, About, etc. -->
                 <li><a href="<?= base_url() ?>">Home</a></li>

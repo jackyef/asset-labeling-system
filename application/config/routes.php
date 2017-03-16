@@ -164,3 +164,8 @@ $route['company/detail/:num'] = 'company/detail/:num';
 $route['employee'] = 'employee/index';
 $route['employee/edit/:num'] = 'employee/employee_update_form/:num';
 $route['employee/edit/submit/:num'] = 'employee/employee_update/:num';
+$route['employee/detail/:num'] = 'employee/detail/:num';
+
+$route['mutation-history'] = 'mutation_history/index';
+$route['mutation-history/edit/:num'] = 'mutation_history/mutation_history_update_form/:num';
+$route['mutation-history/edit/submit/:num'] = 'mutation_history/mutation_history_update/:num';
