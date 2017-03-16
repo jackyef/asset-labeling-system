@@ -119,7 +119,7 @@
                 <li><a href="#">Assembled Item</a></li>
                 <li><a href="#">Mutation History</a></li>
                 <li><a href="<?= base_url().'company'?>">Company</a></li>
-                <li><a href="#">Employee</a></li>
+                <li><a href="<?= base_url().'employee'?>">Employee</a></li>
                 <?php else: ?>
                 <!-- If not admin, and not logged in, then only show Home, Help, About, etc. -->
                 <li><a href="<?= base_url() ?>">Home</a></li>

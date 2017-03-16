@@ -1,9 +1,9 @@
 TODO:
 - company index (the same as master company, but can't insert new) (DONE!)
 
-- employee index (the same as master employee, but can't insert new)
-- company detail (company id, name, list of employees)
-- employee detail page (employee id, company, active, location, list of items held)
+- employee index (the same as master employee, but can't insert new) (DONE!)
+- company detail (company id, name, list of employees) (DONE!)
+- employee detail page (employee id, company, active, location, list of items held) (DONE!)
 
 - start working on assembled_items
 - make sure get_max_id work as intended!

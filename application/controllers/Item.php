@@ -76,7 +76,7 @@ class Item extends CI_Controller
         $data['title'] = 'ALS - Item';
         $this->parser->parse('templates/header.php', $data);
 
-        // TODO: parse the content of this route here!
+        // parse the content of this route here!
 
         $this->db->select('i.*, it.name as item_type_name, it.id as item_type_id, 
                             b.name as brand_name, m.name as model_name, 

@@ -21,7 +21,7 @@
             <div class="col-sm-12">
                 <h3>Item
                     Code:
-                    <?= (str_pad($record->item_type_id, 3, '0', STR_PAD_LEFT).'-'.str_pad($record->id, 5, '0', STR_PAD_LEFT)) ?>
+                    <?= (str_pad($record->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($record->id, 5, '0', STR_PAD_LEFT)) ?>
                 </h3>
                 <div class="col-md-7">
                     <div class="panel panel-primary">
@@ -96,7 +96,9 @@
                                 <div class="col-sm-4"><strong>Owned by</strong></div>
                                 <div class="col-sm-8">
                                     <span class="fa fa-building"></span>
-                                    <?= $record->company_name ?>
+                                    <a href="<?= base_url().'company/detail/'.$record->company_id ?>">
+                                        <?= $record->company_name ?>
+                                    </a>
                                 </div>
                             </div>
 
@@ -122,14 +124,18 @@
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Name</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->employee_name ?>
+                                    <a href="<?= base_url().'employee/detail/'.$record->employee_id ?>">
+                                        <?= $record->employee_name ?>
+                                    </a>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Works at</strong></div>
                                 <div class="col-sm-8">
                                     <span class="fa fa-building"></span>
-                                    <?= $companies[$record->employee_company_id]->name ?>
+                                    <a href="<?= base_url().'company/detail/'.$record->employee_company_id ?>">
+                                        <?= $companies[$record->employee_company_id]->name ?>
+                                    </a>
                                 </div>
                             </div>
 
