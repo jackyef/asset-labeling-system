@@ -31,7 +31,7 @@
         foreach($records as $company){
             echo '<tr>';
             echo '<td>'.$company->id.'</td>';
-            echo '<td>'.$company->name.'</td>';
+            echo '<td><a href="'.base_url().'company/detail/'.$company->id.'">'.$company->name.'</a></td>';
             echo '<td> 
                         <a href="'. base_url(). 'master/company/edit/'.$company->id.'">
                         <button class="btn btn-xs btn-info"><span class="fa fa-edit"></span> Edit</button>

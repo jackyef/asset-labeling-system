@@ -11,7 +11,7 @@
     <div class="col-sm-12">
     <a href="<?= base_url().'item'?>"><button class="btn btn-primary"><span class="fa fa-backward"></span> Back to item list</button></a>
     <h2>Edit item (code:
-        <?= str_pad($record->item_type_id, 3, '0', STR_PAD_LEFT).'-'.str_pad($record->id, 5, '0', STR_PAD_LEFT) ?>)
+        <?= str_pad($record->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($record->id, 5, '0', STR_PAD_LEFT) ?>)
     </h2>
     <br/>
     <form class="form-horizontal" action="<?php echo base_url(); ?>item/edit/submit/<?= $record->id ?>" method="POST">

@@ -102,4 +102,55 @@ class Company extends CI_Controller
             //show errors
         }
     }
+
+    public function detail(){
+        // this page shows all employees information of this employee
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Company';
+        $this->parser->parse('templates/header.php', $data);
+
+        $id = $this->uri->segment('3');
+
+        $query = $this->db->get_where('companies', array('id' => $id));
+        $data['record'] = $query->result()[0];
+        $data['id'] = $id;
+
+        $this->db->select('e.*, c.name as company_name');
+        $this->db->from('companies c');
+        $this->db->where('e.company_id = c.id');
+//        $this->db->order_by('l.name, f.name asc');
+        $query = $this->db->get_where('employees e', array('e.company_id' => $id));
+        $data['employees'] = $query->result();
+
+
+        $this->db->reset_query();
+        $this->db->select('l.* ');
+        $this->db->from('locations l');
+        $this->db->order_by('l.name asc');
+        foreach($this->db->get()->result() as $location){
+            $data['locations'][$location->id] = $location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('f.* ');
+        $this->db->from('first_sub_locations f');
+        $this->db->order_by('f.name asc');
+        foreach($this->db->get()->result() as $first_sub_location){
+            $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('s.* ');
+        $this->db->from('second_sub_locations s');
+        $this->db->order_by('s.name asc');
+        foreach($this->db->get()->result() as $second_sub_location) {
+            $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
+        }
+
+        $this->load->view('companies/detail.php', $data);
+
+        $this->load->view('templates/footer.php', $data);
+
+    }
 }

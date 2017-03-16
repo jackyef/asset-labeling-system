@@ -38,7 +38,7 @@
             echo '<td>'.$item->id.'</td>';
             echo '<td>'.
                 '<a href="'.base_url().'item/detail/'.$item->id.'">'.
-                str_pad($item->item_type_id, 3, '0', STR_PAD_LEFT).'-'.str_pad($item->id, 5, '0', STR_PAD_LEFT).
+                str_pad($item->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($item->id, 5, '0', STR_PAD_LEFT).
                 '</a>'.
                 '</td>';
             echo '<td>'.$item->item_type_name.', '.$item->brand_name.'</td>';
@@ -47,9 +47,13 @@
                     '<i class="fa fa-calendar"></i> '.
                     date("d M Y", strtotime($item->date_of_purchase)).
                 '</td>';
-            echo '<td>'.$companies[$item->company_id]->name.'</td>';
+            echo '<td><a href="'.base_url().'company/detail/'.$item->company_id.'">'.
+                $companies[$item->company_id]->name.
+                '</a></td>';
             echo '<td>'.(($item->is_used == 1) ? 'Yes' : 'No' ).'</td>';
-            echo '<td>'.$item->employee_name.
+            echo '<td>'.
+                '<a href="'.base_url().'employee/detail/'.$item->employee_id.'">'.
+                $item->employee_name. '</a>'.
                 '<br/> <i class="fa fa-building"></i> '.
                 $companies[$item->employee_company_id]->name.
                 '<br/> <i class="fa fa-map-marker"></i> '.

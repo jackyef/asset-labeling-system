@@ -1,17 +1,20 @@
 TODO:
 - company index (the same as master company, but can't insert new) (DONE!)
-
-- employee index (the same as master employee, but can't insert new)
-- company detail (company id, name, list of employees)
-- employee detail page (employee id, company, active, location, list of items held)
+- employee index (the same as master employee, but can't insert new) (DONE!)
+- company detail (company id, name, list of employees) (DONE!)
+- employee detail page (employee id, company, active, location, list of items held) (DONE!)
+- add mutate function for items (DONE!)
+- modify insert item to add mutation history (first item assignment) (DONE!)
+- add mutation history index page (DONE!)
+- add mutation history edit form (to update mutation status) (DONE!)
+- add mutation history detail page (no need cause of the edit page)
 
 - start working on assembled_items
 - make sure get_max_id work as intended!
-- then add mutate function for items and assembled_items
+- then add mutate function for assembled_items
 - add delete item / assembled item function (also delete all mutation history records)
-- modify insert item to add mutation history (first item assignment)
 
-- anchor every item to item detail, employee to employee detail, company to company detail
+- ANCHORING: anchor every item_code to item detail, employee to employee detail, company to company detail
 ==========
 
 0. Pikirkan mengenai operating system, bagaimana seharusnya?
