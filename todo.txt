@@ -8,19 +8,26 @@ TODO:
 - add mutation history index page (DONE!)
 - add mutation history edit form (to update mutation status) (DONE!)
 - add mutation history detail page (no need cause of the edit page)
+- insert assembled items (DONE!)
+- make sure get_max_id work as intended! (DONE!)
+- modify insert assembled item to add mutation history (DONE!)
+
+- update assembled item
+- remove component assembled item
+- add component to an assembled item
+- assemble a new item from existing items
+
+- start working on assembled_items
+- then add mutate function for assembled_items
+- modify mutation history page to show only item with part_of = 0
+- modify mutation history page to show assembled items as well
+- modify item page to show only item with part_of = 0
+- modify assembled item to show all assembled items
+- add delete item / assembled item function (also delete all mutation history records)
 
 - create help page that tells about
   - item_type-brand-model design
   - mutation between employee concept, NOT location concept
-
-- start working on assembled_items
-- make sure get_max_id work as intended!
-- then add mutate function for assembled_items
-- modify insert assembled item to add mutation history
-- modify mutation history page to show only item with part_of = 0
-- modify item page to show only item with part_of = 0
-- modify assembled item to show all assembled items
-- add delete item / assembled item function (also delete all mutation history records)
 
 - ANCHORING: anchor every item_code to item detail, employee to employee detail, company to company detail
 

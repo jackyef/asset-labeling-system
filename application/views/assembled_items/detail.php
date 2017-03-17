@@ -12,7 +12,7 @@
         <div class="pull-left">
             <ol class="breadcrumb">
                 <li><a href="<?= base_url()?>">Home</a></li>
-                <li><a href="<?= base_url().'item' ?>">Item</a></li>
+                <li><a href="<?= base_url().'assembled-item' ?>">Assembled Item</a></li>
                 <li>Detail</li>
             </ol>
         </div>
@@ -43,21 +43,12 @@
                             </div>
 
                             <div class="form-group">
-                                <div class="col-sm-4"><strong>Model</strong></div>
+                                <div class="col-sm-4"><strong>Product Name</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->model_name ?>
+                                    <?= $record->product_name ?>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <div class="col-sm-4"><strong>Capacity/Size</strong></div>
-                                <div class="col-sm-8">
-                                    <?php if ($record->model_capacity_size == ''): ?>
-                                        N/A
-                                    <?php else: ?>
-                                        <?= $record->model_capacity_size.' '.$record->model_units ?>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
+
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Operating System</strong></div>
                                 <div class="col-sm-8">
@@ -120,6 +111,25 @@
                                     <span class="fa fa-sticky-note"></span> <strong>Note</strong></div>
                                 <div class="col-sm-8">
                                     <?= $record->note ?>
+                                </div>
+                            </div>
+
+                            <div class="divider">&nbsp;</div>
+
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <strong>Contains</strong></div>
+                                <div class="col-sm-8">
+                                    <?php foreach($items as $item): ?>
+                                        - <?= $item->item_type_name.', '.$item->brand_name.', '.$item->model_name?>
+                                        <?php if($item->model_units != ''): ?>
+                                            (<?= $item->model_capacity_size.' '.$item->model_units ?>)
+                                        <?php endif; ?>
+                                        <a href="<?= base_url().'item/detail/'.$item->id?>">
+                                        (<?= (str_pad($item->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($item->id, 5, '0', STR_PAD_LEFT)) ?></a>)
+                                        <br/>
+                                    <?php endforeach; ?>
+                                    </ul>
                                 </div>
                             </div>
 
@@ -191,26 +201,12 @@
 
                             <div class="form-group">
                                 <div class="col-sm-12">
-                                    <?php if($record->assembled_item_id == 0): ?>
-                                        <a href="<?= base_url().'item/mutate/'.$record->id ?>">
-                                            <button class="btn btn-primary form-control">
-                                                <span class="fa fa-refresh"></span>
-                                                Mutate to another employee
-                                            </button>
-                                        </a>
-                                    <?php else: ?>
-                                            <div class="alert alert-danger">
-                                                <span class="fa fa-times"></span>
-                                                You can't mutate this item because it is a part of an assembled item.
-                                                Mutate the parent item instead.
-                                            </div>
-                                        <a href="<?= base_url().'assembled-item/detail/'.$record->assembled_item_id ?>">
-                                            <button class="btn btn-primary form-control">
-                                                <span class="fa fa-arrow-right"></span>
-                                                Go to the parent item
-                                            </button>
-                                        </a>
-                                    <?php endif; ?>
+                                    <a href="<?= base_url().'item/mutate/'.$record->id ?>">
+                                        <button class="btn btn-primary form-control">
+                                            <span class="fa fa-refresh"></span>
+                                            Mutate to another employee
+                                        </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -228,7 +224,7 @@
                 <th> Id </th>
                 <th> Item Code </th>
                 <th> Item Type / Brand </th>
-                <th> Model </th>
+                <th> Product name </th>
                 <th style="min-width: 6em"> Mutated on </th>
                 <th> From </th>
                 <th> To </th>
@@ -241,12 +237,12 @@
                     echo '<tr>';
                     echo '<td>'.$mutation->id.'</td>';
                     echo '<td>'.
-                        '<a href="'.base_url().'item/detail/'.$mutation->item_id.'">'.
+                        '<a href="'.base_url().'assembled-item/detail/'.$mutation->item_id.'">'.
                         str_pad($mutation->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($mutation->item_id, 5, '0', STR_PAD_LEFT).
                         '</a>'.
                         '</td>';
                     echo '<td>'.$mutation->item_type_name.', '.$mutation->brand_name.'</td>';
-                    echo '<td>'.$mutation->model_name.'</td>';
+                    echo '<td>'.$mutation->product_name.'</td>';
                     echo '<td>'.
                         '<i class="fa fa-calendar"></i> '.
                         date("d M Y", strtotime($mutation->mutation_date)).
@@ -301,6 +297,7 @@
                         echo $mutation_statuses[$mutation->mutation_status_id]->name;
                     }
                     echo '</td>';
+
                     echo '<td> 
                         <a href="'. base_url(). 'mutation-history/edit/'.$mutation->id.'">
                         <button class="btn btn-xs btn-info" ><span class="fa fa-edit"></span> Edit</button>
