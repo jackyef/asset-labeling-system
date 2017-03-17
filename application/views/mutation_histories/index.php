@@ -114,7 +114,9 @@
 <script type="text/javascript">
     $(document).ready(function(){
         $('.data-table-mutation').DataTable({
-            "order": [[ 0, "desc" ]]
+            "order": [[ 0, "desc" ]],
+            responsive: true,
+            colReorder: true
         });
     });
 
