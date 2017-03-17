@@ -110,6 +110,12 @@ class Home extends CI_Controller
             // check if id == the currently logged_in id
             $data = $this->get_session_data();
             $id = $this->uri->segment('3');
+            if($data['is_logged_in'] != 1){
+                //not logged in
+                $this->session->set_flashdata('site_wide_msg', 'You don\'t have access to that page');
+                $this->session->set_flashdata('site_wide_msg_type', 'danger');
+                redirect(base_url());
+            }
             if($data['session_user_id'] != $id){
                 //if they're not the same, just redirect to correct id
                 redirect(base_url().'home/chpass/'.$data['session_user_id']);

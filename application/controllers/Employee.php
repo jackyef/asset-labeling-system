@@ -24,7 +24,9 @@ class Employee extends CI_Controller
 
         $data = $this->get_session_data();
         if ($data['is_logged_in'] != 1){
-            $this->session->set_flashdata('login_error', 'You don\'t have access to that page');
+//            $this->session->set_flashdata('login_error', 'You don\'t have access to that page');
+            $this->session->set_flashdata('site_wide_msg', 'You don\'t have access to that page');
+            $this->session->set_flashdata('site_wide_msg_type', 'danger');
             redirect(base_url());
         }
 
@@ -146,14 +148,29 @@ class Employee extends CI_Controller
         }
 
         $this->load->model('Employee_model');
+
+        $locs = $this->input->post('location_id', TRUE);
+        $locs_id = explode(',',$locs);
+        $location_id = $locs_id[0];
+        $first_sub_location_id = $locs_id[1];
+        $second_sub_location_id = $locs_id[2];
+
+        $is_working = ($this->input->post('is_working') != null) ? 1 : 0;
         $data = [
-            'name' => $this->input->post('name', TRUE)
+            'name' => $this->input->post('name', TRUE),
+            'company_id' => $this->input->post('company_id', TRUE),
+            'is_working' => $is_working,
+            'location_id' => $location_id,
+            'first_sub_location_id' => $first_sub_location_id,
+            'second_sub_location_id' => $second_sub_location_id
         ];
         $id = $this->uri->segment('4');
 
         if ($this->Employee_model->update($data, $id)) {
-            //success inserting data
-            redirect(base_url() . 'employee');
+            //success updating data
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> Changes saved!');
+            $this->session->set_flashdata('site_wide_msg_type', 'success');
+            redirect(base_url() . 'employee/detail/'.$id);
         } else {
             //show errors
         }

@@ -69,6 +69,17 @@
 
                                 </div>
                             </div>
+                            <div class="divider">&nbsp;</div>
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <a href="<?= base_url().'employee/edit/'.$record->id ?>">
+                                        <button class="btn btn-primary form-control">
+                                            <span class="fa fa-edit"></span>
+                                            Edit employee information
+                                        </button>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

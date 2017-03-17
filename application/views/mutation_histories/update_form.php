@@ -114,6 +114,11 @@
                                         </option>
                                     <?php } ?>
                                 </select>
+                                <div class="col-sm-12">
+                                    <?= (($employees[$record->prev_employee_id]->location_id != 0) ? '<span class="fa fa-map-marker"></span> '.$locations[$employees[$record->prev_employee_id]->location_id]->name : '') ?>
+                                    <?= (($employees[$record->prev_employee_id]->first_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.$first_sub_locations[$employees[$record->prev_employee_id]->first_sub_location_id]->name : '') ?>
+                                    <?= (($employees[$record->prev_employee_id]->second_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.$second_sub_locations[$employees[$record->prev_employee_id]->second_sub_location_id]->name : '') ?>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -130,6 +135,11 @@
                                         </option>
                                     <?php } ?>
                                 </select>
+                                <div class="col-sm-12">
+                                    <?= (($employees[$record->employee_id]->location_id != 0) ? '<span class="fa fa-map-marker"></span> '.$locations[$employees[$record->employee_id]->location_id]->name : '') ?>
+                                    <?= (($employees[$record->employee_id]->first_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.$first_sub_locations[$employees[$record->employee_id]->first_sub_location_id]->name : '') ?>
+                                    <?= (($employees[$record->employee_id]->second_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.$second_sub_locations[$employees[$record->employee_id]->second_sub_location_id]->name : '') ?>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">

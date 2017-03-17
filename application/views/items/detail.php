@@ -122,6 +122,19 @@
                                     <?= $record->note ?>
                                 </div>
                             </div>
+
+                            <div class="divider">&nbsp;</div>
+
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <a href="<?= base_url().'item/edit/'.$record->id ?>">
+                                        <button class="btn btn-primary form-control">
+                                            <span class="fa fa-edit"></span>
+                                            Edit item information
+                                        </button>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -195,7 +208,7 @@
         <div class="col-sm-12">
             <h3>Mutation History</h3>
             <hr />
-            <table class="table table-striped table-responsive data-table">
+            <table class="table table-striped table-responsive data-table-mutation">
                 <!-- add the data-table class to tell the page to paginate this table -->
                 <thead>
                 <th> Id </th>
@@ -289,4 +302,11 @@
     </div>
 </div>
 
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.data-table-mutation').DataTable({
+                "order": [[ 0, "desc" ]]
+            });
+        });
 
+    </script>

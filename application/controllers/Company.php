@@ -24,7 +24,9 @@ class Company extends CI_Controller
 
         $data = $this->get_session_data();
         if ($data['is_logged_in'] != 1){
-            $this->session->set_flashdata('login_error', 'You don\'t have access to that page');
+//            $this->session->set_flashdata('login_error', 'You don\'t have access to that page');
+            $this->session->set_flashdata('site_wide_msg', 'You don\'t have access to that page');
+            $this->session->set_flashdata('site_wide_msg_type', 'danger');
             redirect(base_url());
         }
 

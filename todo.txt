@@ -9,12 +9,26 @@ TODO:
 - add mutation history edit form (to update mutation status) (DONE!)
 - add mutation history detail page (no need cause of the edit page)
 
+- create help page that tells about
+  - item_type-brand-model design
+  - mutation between employee concept, NOT location concept
+
 - start working on assembled_items
 - make sure get_max_id work as intended!
 - then add mutate function for assembled_items
+- modify insert assembled item to add mutation history
+- modify mutation history page to show only item with part_of = 0
+- modify item page to show only item with part_of = 0
+- modify assembled item to show all assembled items
 - add delete item / assembled item function (also delete all mutation history records)
 
 - ANCHORING: anchor every item_code to item detail, employee to employee detail, company to company detail
+
+- REPORTING: utilize column selector and datatable print feature
+- dashboard with statistics as admin homepage
+- Generate barcode images
+- Print barcode (look at QZ Tray)
+- Read barcode and redirect to item detail page
 ==========
 
 0. Pikirkan mengenai operating system, bagaimana seharusnya?
