@@ -9,10 +9,10 @@
 
 <div class="row">
     <div class="col-sm-12">
-    <a href="<?= base_url().'item'?>"><button class="btn btn-primary"><span class="fa fa-backward"></span> Back to item list</button></a>
-    <h2>Add a new item</h2>
+    <a href="<?= base_url().'assembled-item'?>"><button class="btn btn-primary"><span class="fa fa-backward"></span> Back to assembled item list</button></a>
+    <h2>Add a new assembled item</h2>
     <br/>
-    <form class="form-horizontal" action="<?php echo base_url(); ?>item/new/submit" method="POST">
+    <form class="form-horizontal" action="<?php echo base_url(); ?>assembled-item/new/submit" method="POST">
         <div class="form-group">
             <label class="control-label col-sm-2" for="date_of_purchase">Purchased on:</label>
             <div class="col-sm-3">
@@ -52,16 +52,21 @@
             </div>
         </div>
         <div class="form-group">
-            <label class="control-label col-sm-2" for="model_id">Item type / Brand / Model:</label>
+            <label class="control-label col-sm-2" for="brand_id">Item type / Brand:</label>
             <div class="col-sm-10">
-                <select class="form-control selectpicker" name="model_id" id="model_id" data-live-search="true">
-                    <?php foreach($models as $model){ ?>
-                        <option value="<?= $model->id?>">
-                            <?= $model->item_type_name.' / '.$model->brand_name. ' / '. $model->name ?>
-                            <?= (($model->capacity_size) ? '('.$model->capacity_size.' '.$model->units.')' : '') ?>
+                <select class="form-control selectpicker" name="brand_id" id="brand_id" data-live-search="true">
+                    <?php foreach($brands as $brand){ ?>
+                        <option value="<?= $brand->id?>">
+                            <?= $brand->item_type_name.' / '.$brand->name ?>
                         </option>
                     <?php } ?>
                 </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="model_id">Product name:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Ex: PX-8529, Dell Workstation 19, etc" required>
             </div>
         </div>
         <div class="form-group">
@@ -132,16 +137,40 @@
                 <textarea class="form-control" rows="4" id="note" name="note" placeholder="Ex: Sesuai dengan Surat no. XX, red-colored Desktop, etc"></textarea>
             </div>
         </div>
+
+        <!-- TODO: add dynamic field to add items here -->
+        <div class="form-group">
+            <h3>This assembled item contains: </h3>
+            <hr />
+            <div id="item-forms">
+                <!-- item forms will be dynamically generated here -->
+                <div class="col-sm-offset-2 col-sm-10" id="no-item-msg">
+                    <input type="hidden" id="item_count" name="item_count" value="0"/>
+                    <div class="alert alert-warning">
+                        You haven't added any item to this assembled item yet.
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="button" class="btn btn-success" id="btn-add-item-field"><span class="fa fa-plus"></span> Add another item </button>
+                        <button type="button" class="btn btn-danger" id="btn-remove-item-field" disabled><span class="fa fa-minus"></span> Remove last item </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Add this assembled item!</button>
             </div>
         </div>
     </form>
 </div>
 </div>
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function() {
         // handles datepicker on pages that uses it
         $('#warranty_expiry_date').datepicker({
             format: 'DD, dd MM yyyy',
@@ -157,14 +186,98 @@
             todayBtn: true,
             disableTouchKeyboard: true
         });
-
         $('.datepicker').datepicker('update', new Date());
 
         // handles warranty_expiry_date can't be earlier than purchase date
-        $('#date_of_purchase').datepicker().on('changeDate', function(){
+        $('#date_of_purchase').datepicker().on('changeDate', function () {
             var selected = $('#date_of_purchase').datepicker('getDate');
             $('#warranty_expiry_date').datepicker('setStartDate', selected);
             $('#warranty_expiry_date').datepicker('update', selected);
+        });
+
+
+        var current_item_form_count = 0;
+
+        $('#btn-add-item-field').click(function (e) {
+            e.preventDefault();
+            current_item_form_count++;
+            $('#item_count').val(current_item_form_count);
+            $('#item-forms').append(
+                '<div class="col-sm-12" id="item-form'+current_item_form_count+'">' +
+                '<h4> Item #'+current_item_form_count+': </h4>' +
+                '<div class="form-group">' +
+                '<label class="control-label col-sm-2" for="model_id'+current_item_form_count+'">Item type / Brand / Model:</label>' +
+                '<div class="col-sm-4">' +
+                '<select class="form-control selectpicker" name="model_id'+current_item_form_count+'" id="model_id'+current_item_form_count+'" data-live-search="true">' +
+                '<?php foreach($models as $model){ ?>' +
+                '<option value="<?= $model->id?>">' +
+                '<?= $model->item_type_name . ' / ' . $model->brand_name . ' / ' . $model->name ?>' +
+                '<?= (($model->capacity_size) ? '(' . $model->capacity_size . ' ' . $model->units . ')' : '') ?>' +
+                '</option>' +
+                '<?php } ?>' +
+                '</select>' +
+                '</div>' +
+                '<label class="control-label col-sm-2" for="warranty_expiry_date'+current_item_form_count+'">Warranty expires on:</label>' +
+                '<div class="col-sm-4">' +
+                '<div class="input-group date" data-provide="datepicker-inline ">' +
+                '<input type="text" class="form-control datepicker warranty-date-picker" id="warranty_expiry_date'+current_item_form_count+'" name="warranty_expiry_date'+current_item_form_count+'">' +
+                '<div class="input-group-addon">' +
+                '<span class="fa fa-calendar"></span> ' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-sm-offset-6 col-sm-4">' +
+                '<div class="well-sm bg-info">' +
+                '<span class="fa fa-info-circle">' +
+                '</span>' +
+                'Change this if this part has its own different warranty period.' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>');
+
+            // initialize the date picker for the newly added form
+            $('#warranty_expiry_date'+current_item_form_count).datepicker({
+                format: 'DD, dd MM yyyy',
+                autoclose: true,
+                todayHighlight: true,
+                todayBtn: true,
+                disableTouchKeyboard: true
+            });
+            // set default value
+            var selected = $('#warranty_expiry_date').datepicker('getDate');
+            $('#warranty_expiry_date'+current_item_form_count).datepicker('setStartDate', selected);
+            $('#warranty_expiry_date'+current_item_form_count).datepicker('update', selected);
+            // handles warranty_expiry_date can't be earlier than purchase date
+            $('#date_of_purchase').datepicker().on('changeDate', function () {
+                var selected = $('#date_of_purchase').datepicker('getDate');
+                $('.warranty-date-picker').datepicker('setStartDate', selected);
+                $('.warranty-date-picker').datepicker('update', selected);
+            });
+            $('#warranty_expiry_date').datepicker().on('changeDate', function () {
+                var selected = $('#warranty_expiry_date').datepicker('getDate');
+                $('.warranty-date-picker').datepicker('setStartDate', selected);
+                $('.warranty-date-picker').datepicker('update', selected);
+            });
+
+            $('.selectpicker').selectpicker('refresh');
+
+
+            if(current_item_form_count >= 1){
+                $('#btn-remove-item-field').prop('disabled', false);
+                $('#no-item-msg').hide();
+            }
+        });
+
+        $('#btn-remove-item-field').click(function(e){
+            e.preventDefault();
+            $('#item-form'+current_item_form_count).remove();
+            current_item_form_count--;
+            $('#item_count').val(current_item_form_count);
+            if(current_item_form_count <= 0){
+                $('#btn-remove-item-field').prop('disabled', true);
+                $('#no-item-msg').show();
+            }
         });
     });
 </script>

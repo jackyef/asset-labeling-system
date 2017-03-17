@@ -97,7 +97,7 @@
 
                 <!-- The ones below can be accessed by any users as long as they're logged in-->
                 <li><a href="<?= base_url().'item'?>">Item <span class="label label-success">done</span></a></li>
-                <li><a href="#">Assembled Item <span class="label label-danger">0%</span></a></li>
+                <li><a href="<?= base_url().'assembled-item'?>">Assembled Item <span class="label label-danger">20%</span></a></li>
                 <li><a href="<?= base_url().'mutation-history'?>">Mutation History <span class="label label-warning">50%</span></a></li>
                 <li><a href="<?= base_url().'company'?>">Company <span class="label label-success">done</span></a></li>
                 <li><a href="<?= base_url().'employee'?>">Employee <span class="label label-success">done</span></a></li>
