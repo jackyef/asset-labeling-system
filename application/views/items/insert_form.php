@@ -121,7 +121,7 @@
                     <ul>
                         <li>If you're not assigning this item to be used by an employee yet, assign it to a warehouse employee. (Ex: Gudang IT, Gudang B, etc.)</li>
                         <li>You may have to create this kind of employees beforehand. If no such employees exists, contact your administrator.</li>
-                        <li>If you are assigning to a warehouse employee, the item is probably not being currently used.</li>
+                        <li>If you are assigning to a warehouse employee, the item is probably not currently being used.</li>
                     </ul>
                 </div>
             </div>

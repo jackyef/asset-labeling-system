@@ -43,7 +43,7 @@
             <div class="panel-heading">
                 <h3 class="panel-title">Login</h3>
             </div>
-            <?php if($login_error): ?>
+            <?php if(isset($login_error)): ?>
                 <p class="alert alert-danger alert-dismissable" ><?= $login_error ?><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></p>
             <?php endif; ?>
             <?php if($is_logged_in == 0): ?>

@@ -10,9 +10,9 @@
 <div class="row">
     <div class="col-sm-12">
     <a href="<?= base_url().'item'?>"><button class="btn btn-primary"><span class="fa fa-backward"></span> Back to item list</button></a>
-    <h2>Edit item (code:
-        <?= str_pad($record->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($record->id, 5, '0', STR_PAD_LEFT) ?>)
-    </h2>
+    <h3>Edit item (code:
+        <a href="<?= base_url().'item/detail/'.$record->id ?>"><?= str_pad($record->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($record->id, 5, '0', STR_PAD_LEFT) ?></a>)
+    </h3>
     <br/>
     <form class="form-horizontal" action="<?php echo base_url(); ?>item/edit/submit/<?= $record->id ?>" method="POST">
         <div class="form-group">
@@ -139,7 +139,7 @@
                     <ul>
                         <li>If you're not assigning this item to be used by an employee yet, assign it to a warehouse employee. (Ex: Gudang IT, Gudang B, etc.)</li>
                         <li>You may have to create this kind of employees beforehand. If no such employees exists, contact your administrator.</li>
-                        <li>If you are assigning to a warehouse employee, the item is probably not being currently used.</li>
+                        <li>If you are assigning to a warehouse employee, the item is probably not currently being used.</li>
                     </ul>
                 </div>
             </div>

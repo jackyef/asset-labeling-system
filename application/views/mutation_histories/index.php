@@ -16,7 +16,7 @@
         </ol>
     </div>
     <div class="clearfix"></div>
-    <table class="table table-striped table-responsive data-table">
+    <table class="table table-striped table-responsive data-table-mutation">
         <!-- add the data-table class to tell the page to paginate this table -->
         <thead>
         <th> Id </th>
@@ -83,7 +83,9 @@
                 echo $mutation->note;
             } else {
                 // truncate the note if it is greater than 50 characters long
-                echo substr($mutation->note, 0, 50). '...';
+                echo '<span class="first50">'.
+                    substr($mutation->note, 0, 49). '...'.
+                     '</span>';
                 echo '<h6><a href="'.base_url().'mutation-history/edit/'.$mutation->id.'#note">see more</a></h6>';
             }
             echo '</td>';
@@ -109,4 +111,11 @@
 </div>
 </div>
 
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('.data-table-mutation').DataTable({
+            "order": [[ 0, "desc" ]]
+        });
+    });
 
+</script>

@@ -24,7 +24,9 @@ class Item extends CI_Controller
 
         $data = $this->get_session_data();
         if ($data['is_logged_in'] != 1){
-            $this->session->set_flashdata('login_error', 'You don\'t have access to that page');
+//            $this->session->set_flashdata('login_error', 'You don\'t have access to that page');
+            $this->session->set_flashdata('site_wide_msg', 'You don\'t have access to that page');
+            $this->session->set_flashdata('site_wide_msg_type', 'danger');
             redirect(base_url());
         }
 
@@ -392,7 +394,9 @@ class Item extends CI_Controller
 
         if ($this->Item_model->update($data, $id)) {
             //success updating data
-            redirect(base_url() . 'item');
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> Changes saved!');
+            $this->session->set_flashdata('site_wide_msg_type', 'success');
+            redirect(base_url() . 'item/detail/'.$id);
         } else {
             //show errors
         }

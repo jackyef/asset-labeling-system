@@ -24,7 +24,9 @@ class Mutation_history extends CI_Controller
 
         $data = $this->get_session_data();
         if ($data['is_logged_in'] != 1){
-            $this->session->set_flashdata('login_error', 'You don\'t have access to that page');
+//            $this->session->set_flashdata('login_error', 'You don\'t have access to that page');
+            $this->session->set_flashdata('site_wide_msg', 'You don\'t have access to that page');
+            $this->session->set_flashdata('site_wide_msg_type', 'danger');
             redirect(base_url());
         }
 
@@ -197,7 +199,7 @@ class Mutation_history extends CI_Controller
         // check if this is a POST request
         if ($this->input->method(TRUE) != 'POST'){
             // if not, just redirect
-            redirect(base_url() . 'item');
+            redirect(base_url() . 'mutation-history');
         }
 
         $this->load->model('Mutation_model');
@@ -313,168 +315,4 @@ class Mutation_history extends CI_Controller
         $this->load->view('templates/footer.php', $data);
     }
 
-    public function item_mutate_form(){
-        // show the item mutation form
-        $data = $this->get_session_data();
-
-        $data['title'] = 'ALS - Item';
-        $id = $this->uri->segment('3');
-        $this->parser->parse('templates/header.php', $data);
-
-        $this->db->select('i.*, it.name as item_type_name, it.id as item_type_id, 
-                            b.name as brand_name, m.name as model_name,
-                            m.capacity_size as model_capacity_size,
-                            m.units as model_units, 
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id,
-                            e.company_id as employee_company_id,
-                            c.name as company_name, 
-                            s.name as supplier_name');
-        $this->db->from('items i, item_types it, brands b, models m, employees e, companies c, suppliers s');
-        $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
-                          i.employee_id = e.id AND i.company_id = c.id AND i.supplier_id = s.id');
-
-        $query = $this->db->get_where('items', array('i.id' => $id));
-        $data['record'] = $query->result()[0];
-        $data['id'] = $id;
-
-
-        $this->db->reset_query();
-        $this->db->select('m.*, b.name as brand_name, it.name as item_type_name ');
-        $this->db->from('models m, brands b, item_types it');
-        $this->db->where('m.brand_id = b.id AND b.item_type_id = it.id');
-        $this->db->order_by('it.name, b.name, m.name asc');
-        foreach($this->db->get()->result() as $model){
-            $data['models'][$model->id] = $model;
-        }
-
-        $this->db->reset_query();
-        $this->db->select('s.* ');
-        $this->db->from('suppliers s');
-        $this->db->order_by('s.name asc');
-        foreach($this->db->get()->result() as $supplier){
-            $data['suppliers'][$supplier->id] = $supplier;
-        }
-
-        $this->db->reset_query();
-        $this->db->select('e.*, c.name as company_name');
-        $this->db->from('employees e, companies c');
-        $this->db->where('e.company_id = c.id');
-        $this->db->order_by('e.name asc');
-        foreach($this->db->get()->result() as $employee){
-            $data['employees'][$employee->id] = $employee;
-        }
-
-        $this->db->reset_query();
-        $this->db->select('os.* ');
-        $this->db->from('operating_systems os');
-        $this->db->order_by('os.name asc');
-        foreach($this->db->get()->result() as $os){
-            $data['operating_systems'][$os->id] = $os;
-        }
-
-        $this->db->reset_query();
-        $this->db->select('ms.* ');
-        $this->db->from('mutation_statuses ms');
-        $this->db->order_by('ms.name asc');
-        foreach($this->db->get()->result() as $ms){
-            $data['mutation_statuses'][$ms->id] = $ms;
-        }
-
-        $this->db->reset_query();
-        $this->db->select('c.* ');
-        $this->db->from('companies c');
-        $this->db->order_by('c.name asc');
-        foreach($this->db->get()->result() as $company){
-            $data['companies'][$company->id] = $company;
-        }
-
-
-        $this->db->reset_query();
-        $this->db->select('l.* ');
-        $this->db->from('locations l');
-        foreach($this->db->get()->result() as $location){
-            $data['locations'][$location->id] = $location;
-        }
-
-        $this->db->reset_query();
-        $this->db->select('f.* ');
-        $this->db->from('first_sub_locations f');
-        foreach($this->db->get()->result() as $first_sub_location){
-            $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
-        }
-
-        $this->db->reset_query();
-        $this->db->select('s.* ');
-        $this->db->from('second_sub_locations s');
-        foreach($this->db->get()->result() as $second_sub_location){
-            $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
-        }
-
-
-        $this->load->view('items/mutate_form.php', $data);
-
-        $this->load->view('templates/footer.php', $data);
-    }
-
-    public function item_mutate(){
-        $data = $this->get_session_data();
-        // check if it's a POST request or not first
-        if ($this->input->method(TRUE) != 'POST'){
-            // if not, just redirect
-            redirect(base_url() . 'item');
-        }
-
-
-        $id = $this->uri->segment('4');
-        $employee_id = $this->input->post('employee_id', TRUE);
-        $prev_employee_id =$this->input->post('prev_employee_id', TRUE);
-
-        if ($employee_id == $prev_employee_id){
-            //prevents mutation from and to the same employee
-            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span>You can\'t mutate to the same employee!');
-            $this->session->set_flashdata('site_wide_msg_type', 'danger');
-            redirect(base_url().'item/mutate/'.$id);
-        }
-
-        // we're going to do insert mutation and update item information as a transaction
-        // if one fail, we're going to rollback
-        $this->db->trans_start(); # Starting Transaction
-        // insert a new mutation
-        $mutation_date = date("Y-m-d", strtotime($this->input->post('mutation_date', TRUE)));
-        $data = [
-            'item_id' => $id,
-            'prev_employee_id' => $this->input->post('prev_employee_id', TRUE),
-            'employee_id' => $this->input->post('employee_id', TRUE),
-            'mutation_status_id' => $this->input->post('mutation_status_id', TRUE),
-            'note' => $this->input->post('note', TRUE),
-            'mutation_date' => $mutation_date
-        ];
-
-        // insert mutation data to db
-        $this->load->model('Mutation_model');
-        $this->Mutation_model->insert($data);
-
-        // now update item with the new employee id
-        $data2 = [
-            'employee_id' => $this->input->post('employee_id', TRUE)
-        ];
-
-        $this->load->model('Item_model');
-        $this->Item_model->update($data2, $id);
-
-        if ($this->db->trans_complete()) {
-            //Transaction succeeded! Both query is successfully executed
-            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> Mutation success!');
-            $this->session->set_flashdata('site_wide_msg_type', 'success');
-            redirect(base_url() . 'item/detail/'.$id);
-        } else {
-            //show errors
-            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span>An error occured!');
-            $this->session->set_flashdata('site_wide_msg_type', 'danger');
-            redirect(base_url() . 'item/mutate/'.$id);
-        }
-
-    }
 }
