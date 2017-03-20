@@ -28,9 +28,9 @@
                         </div>
                         <div class="panel-body">
                             <div class="form-group">
-                                <div class="col-sm-4"><strong>Item code</strong></div>
+                                <div class="col-sm-4"><strong>Item Code</strong></div>
                                 <div class="col-sm-8">
-                                    <a href="<?= base_url().'item/detail/'.$record->item_id ?>">
+                                    <a href="<?= (($assembled == 0) ? base_url().'item/detail/'.$record->item_id : base_url().'assembled-item/detail/'.$record->item_id) ?>">
                                         <?= str_pad($record->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($record->item_id, 5, '0', STR_PAD_LEFT) ?></a>
                                 </div>
                             </div>
@@ -48,7 +48,7 @@
                             </div>
 
                             <div class="form-group">
-                                <div class="col-sm-4"><strong>Model</strong></div>
+                                <div class="col-sm-4"><strong><?= ($assembled == 1) ? 'Product Name' : 'Model' ?></strong></div>
                                 <div class="col-sm-8">
                                     <?= $record->model_name ?>
                                 </div>
@@ -56,11 +56,16 @@
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Capacity/Size</strong></div>
                                 <div class="col-sm-8">
-                                    <?php if ($record->model_capacity_size == ''): ?>
+                                    <?php if(!isset($record->model_capacity_size)): ?>
                                         N/A
                                     <?php else: ?>
-                                        <?= $record->model_capacity_size.' '.$record->model_units ?>
+                                        <?php if ($record->model_capacity_size == ''): ?>
+                                            N/A
+                                        <?php else: ?>
+                                            <?= $record->model_capacity_size.' '.$record->model_units ?>
+                                        <?php endif; ?>
                                     <?php endif; ?>
+
                                 </div>
                             </div>
                             <div class="form-group">
@@ -106,18 +111,24 @@
                             <div class="col-sm-12">
                                 <input type="hidden" name="prev_employee_id" id="prev_employee_id" value="<?= $record->prev_employee_id ?>"/>
                                 <select class="form-control selectpicker"  data-live-search="true" disabled>
-                                    <?php foreach($employees as $employee){ ?>
-                                        <option value="<?= $employee->id?>"
-                                            <?= $record->prev_employee_id == $employee->id ? 'selected' : ''?>>
-                                            <?= $employee->name ?>
-                                            (<?= $companies[$employee->company_id]->name?>)
-                                        </option>
-                                    <?php } ?>
+                                    <?php if($record->mutation_status_id == 0): ?>
+                                        <option>N/A</option>
+                                    <?php else: ?>
+                                        <?php foreach($employees as $employee){ ?>
+                                            <option value="<?= $employee->id?>"
+                                                <?= $record->prev_employee_id == $employee->id ? 'selected' : ''?>>
+                                                <?= $employee->name ?>
+                                                (<?= $companies[$employee->company_id]->name?>)
+                                            </option>
+                                        <?php } ?>
+                                    <?php endif; ?>
                                 </select>
                                 <div class="col-sm-12">
-                                    <?= (($employees[$record->prev_employee_id]->location_id != 0) ? '<span class="fa fa-map-marker"></span> '.$locations[$employees[$record->prev_employee_id]->location_id]->name : '') ?>
-                                    <?= (($employees[$record->prev_employee_id]->first_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.$first_sub_locations[$employees[$record->prev_employee_id]->first_sub_location_id]->name : '') ?>
-                                    <?= (($employees[$record->prev_employee_id]->second_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.$second_sub_locations[$employees[$record->prev_employee_id]->second_sub_location_id]->name : '') ?>
+                                    <?php if($record->mutation_status_id != 0): ?>
+                                        <?= (($employees[$record->prev_employee_id]->location_id != 0) ? '<span class="fa fa-map-marker"></span> '.$locations[$employees[$record->prev_employee_id]->location_id]->name : '') ?>
+                                        <?= (($employees[$record->prev_employee_id]->first_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.$first_sub_locations[$employees[$record->prev_employee_id]->first_sub_location_id]->name : '') ?>
+                                        <?= (($employees[$record->prev_employee_id]->second_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.$second_sub_locations[$employees[$record->prev_employee_id]->second_sub_location_id]->name : '') ?>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -142,6 +153,7 @@
                                 </div>
                             </div>
                         </div>
+                        <input type="hidden" name="assembled" id="assembled" value="<?= $assembled ?>"/>
                         <div class="form-group">
                             <label class="col-sm-12" for="employee_id">Mutation status:</label>
                             <div class="col-sm-12">

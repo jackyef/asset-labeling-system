@@ -22,7 +22,7 @@
         <th> Id </th>
         <th> Item Code </th>
         <th> Item Type / Brand </th>
-        <th> Model </th>
+        <th> Model Name </th>
         <th style="min-width: 6em"> Mutated on </th>
         <th> From </th>
         <th> To </th>
@@ -34,8 +34,12 @@
         foreach($records as $mutation){
             echo '<tr>';
             echo '<td>'.$mutation->id.'</td>';
+            $link = 'item';
+            if(isset($mutation->assembled) AND $mutation->assembled == 1){
+                $link = 'assembled-item';
+            };
             echo '<td>'.
-                '<a href="'.base_url().'item/detail/'.$mutation->item_id.'">'.
+                '<a href="'.base_url().$link.'/detail/'.$mutation->item_id.'">'.
                 str_pad($mutation->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($mutation->item_id, 5, '0', STR_PAD_LEFT).
                 '</a>'.
                 '</td>';
@@ -92,7 +96,7 @@
 
             echo '<td>';
             if ($mutation->mutation_status_id == 0){
-                echo 'First assignment';
+                echo 'N/A';
             } else {
                 echo $mutation_statuses[$mutation->mutation_status_id]->name;
             }

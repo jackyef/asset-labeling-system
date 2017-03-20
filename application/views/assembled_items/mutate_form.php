@@ -12,13 +12,13 @@
         <div class="pull-left">
             <ol class="breadcrumb">
                 <li><a href="<?= base_url()?>">Home</a></li>
-                <li><a href="<?= base_url().'item' ?>">Item</a></li>
+                <li><a href="<?= base_url().'item' ?>">Assembled Item</a></li>
                 <li>Mutate</li>
             </ol>
         </div>
         <div class="clearfix"></div>
-    <h3>Mutate item (code:
-        <a href="<?= base_url().'item/detail/'.$record->id ?>">
+    <h3>Mutate assembled item (code:
+        <a href="<?= base_url().'assembled-item/detail/'.$record->id ?>">
         <?= str_pad($record->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($record->id, 5, '0', STR_PAD_LEFT) ?></a>)
     </h3>
         <div class="col-md-6">
@@ -43,19 +43,9 @@
                             </div>
 
                             <div class="form-group">
-                                <div class="col-sm-4"><strong>Model</strong></div>
+                                <div class="col-sm-4"><strong>Product Name</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->model_name ?>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-4"><strong>Capacity/Size</strong></div>
-                                <div class="col-sm-8">
-                                    <?php if ($record->model_capacity_size == ''): ?>
-                                        N/A
-                                    <?php else: ?>
-                                        <?= $record->model_capacity_size.' '.$record->model_units ?>
-                                    <?php endif; ?>
+                                    <?= $record->product_name ?>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -69,6 +59,32 @@
                                 </div>
                             </div>
 
+                            <div class="divider">&nbsp;</div>
+
+                            <div class="form-group">
+                                <div class="col-sm-4">
+                                    <strong>Contains</strong></div>
+                                <div class="col-sm-8">
+                                    <table>
+                                        <?php if(sizeof($items) == 0){ ?>
+                                            <tr>
+                                                <td> This assembled item contains no items.</td>
+                                            </tr>
+                                        <?php }?>
+                                        <?php foreach($items as $item): ?>
+                                            <tr>
+                                                <td><?= $item->item_type_name.', '.$item->brand_name.', '.$item->model_name?>
+                                                    <?php if($item->model_units != ''): ?>
+                                                        (<?= $item->model_capacity_size.' '.$item->model_units ?>)
+                                                    <?php endif; ?>
+                                                    (<a href="<?= base_url().'item/detail/'.$item->id?>"><?= (str_pad($item->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($item->id, 5, '0', STR_PAD_LEFT)) ?></a>)
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </table>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -138,7 +154,7 @@
                     <h3 class="panel-title" style="color: white;">Mutation</h3>
                 </div>
                 <div class="panel-body">
-                    <form class="form-horizontal" action="<?php echo base_url(); ?>item/mutate/submit/<?= $record->id ?>" method="POST">
+                    <form class="form-horizontal" action="<?php echo base_url(); ?>assembled-item/mutate/submit/<?= $record->id ?>" method="POST">
                         <div class="form-group">
                             <label class="col-sm-12" for="date_of_purchase">Mutation date:</label>
                             <div class="col-sm-12">

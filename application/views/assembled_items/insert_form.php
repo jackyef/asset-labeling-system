@@ -147,7 +147,8 @@
                 <div class="col-sm-offset-2 col-sm-10" id="no-item-msg">
                     <input type="hidden" id="item_count" name="item_count" value="0"/>
                     <div class="alert alert-warning">
-                        You haven't added any item to this assembled item yet.
+                        You haven't added any item to this assembled item yet. <br/>
+                        NOTE: You can leave this assembled item empty if you are planning to add existing items to it later.
                     </div>
                 </div>
             </div>

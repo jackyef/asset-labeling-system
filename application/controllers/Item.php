@@ -91,7 +91,7 @@ class Item extends CI_Controller
                             e.company_id as employee_company_id');
         $this->db->from('items i, item_types it, brands b, models m, employees e');
         $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
-                          i.employee_id = e.id ');
+                          i.employee_id = e.id AND assembled_item_id = 0');
 //        $this->db->order_by('l.name, f.name asc');
         $data['records'] = $this->db->get()->result();
 

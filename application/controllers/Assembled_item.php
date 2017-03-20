@@ -322,36 +322,36 @@ class Assembled_item extends CI_Controller
         }
     }
 
-    public function item_update_form(){
+    public function assembled_item_update_form(){
         // this shows the form for inserting a new mutation status
 
         $data = $this->get_session_data();
 
-        $data['title'] = 'ALS - Item';
+        $data['title'] = 'ALS - Assembled Item';
         $this->parser->parse('templates/header.php', $data);
 
         $id = $this->uri->segment('3');
 
-        $this->db->select('i.*, it.name as item_type_name, it.id as item_type_id, 
-                            b.name as brand_name, m.name as model_name, 
+        $this->db->select('ai.*, it.name as item_type_name, it.id as item_type_id, 
+                            b.name as brand_name, 
                             e.name as employee_name, e.location_id as location_id, 
                             e.first_sub_location_id as first_sub_location_id, 
                             e.second_sub_location_id as second_sub_location_id');
-        $this->db->from('items i, item_types it, brands b, models m, employees e');
-        $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
-                          i.employee_id = e.id ');
+        $this->db->from('item_types it, brands b, models m, employees e');
+        $this->db->where('ai.brand_id = b.id AND b.item_type_id = it.id AND
+                          ai.employee_id = e.id ');
 
-        $query = $this->db->get_where('items', array('i.id' => $id));
+        $query = $this->db->get_where('assembled_items ai', array('ai.id' => $id));
         $data['record'] = $query->result()[0];
         $data['id'] = $id;
 
         $this->db->reset_query();
-        $this->db->select('m.*, b.name as brand_name, it.name as item_type_name ');
-        $this->db->from('models m, brands b, item_types it');
-        $this->db->where('m.brand_id = b.id AND b.item_type_id = it.id');
-        $this->db->order_by('it.name, b.name, m.name asc');
-        foreach($this->db->get()->result() as $model){
-            $data['models'][$model->id] = $model;
+        $this->db->select('b.*, it.name as item_type_name ');
+        $this->db->from('brands b, item_types it');
+        $this->db->where('b.item_type_id = it.id AND it.is_assembled = 1');
+        $this->db->order_by('it.name, b.name asc');
+        foreach($this->db->get()->result() as $brand){
+            $data['brands'][$brand->id] = $brand;
         }
 
         $this->db->reset_query();
@@ -408,20 +408,20 @@ class Assembled_item extends CI_Controller
             $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
         }
 
-        $this->load->view('items/update_form.php', $data);
+        $this->load->view('assembled_items/update_form.php', $data);
 
         $this->load->view('templates/footer.php', $data);
     }
 
-    public function item_update(){
-        // this update an item in the database
+    public function assembled_item_update(){
+        // this update an assembled item in the database
 
         // check if this is a POST request
         if ($this->input->method(TRUE) != 'POST'){
             // if not, just redirect
             redirect(base_url() . 'item');
         }
-        $this->load->model('Item_model');
+        $this->load->model('Assembled_item_model');
 
         $id = $this->uri->segment('4');
 
@@ -436,12 +436,14 @@ class Assembled_item extends CI_Controller
             $warranty_expiry_date = $date_of_purchase;
         }
 
+        $this->db->trans_start(); # Starting Transaction
+        // update the assembled item information
         $data = [
-            'model_id' => $this->input->post('model_id', TRUE),
+            'product_name' => $this->input->post('product_name', TRUE),
+            'brand_id' => $this->input->post('brand_id', TRUE),
             'supplier_id' => $this->input->post('supplier_id', TRUE),
             'company_id' => $this->input->post('company_id', TRUE),
             'operating_system_id' => $this->input->post('operating_system_id', TRUE),
-            'employee_id' => $this->input->post('employee_id', TRUE),
             'is_used' => $is_used,
             'note' => $this->input->post('note', TRUE),
             'date_of_purchase' => $date_of_purchase,
@@ -449,14 +451,26 @@ class Assembled_item extends CI_Controller
         ];
         // for debugging purposes
 //        echo json_encode($data);
+        $this->Assembled_item_model->update($data, $id);
 
-        if ($this->Item_model->update($data, $id)) {
-            //success updating data
-            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> Changes saved!');
+        // then, we're going to update the is_used status of all the child items
+        $data2 = [
+            'is_used' => $is_used
+        ];
+        $this->load->model('Item_model');
+        $this->Item_model->update_where_assembled_item_id($data2, $id);
+
+        if ($this->db->trans_complete()) {
+            //Transaction succeeded! All queries are successfully executed
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> The assembled item and its parts information are successfully updated!');
             $this->session->set_flashdata('site_wide_msg_type', 'success');
-            redirect(base_url() . 'item/detail/'.$id);
+            redirect(base_url() . 'assembled-item/detail/'.$id);
         } else {
             //show errors
+            $db_error = $this->db->error();
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span>An error occured! <br/>'.json_encode($db_error));
+            $this->session->set_flashdata('site_wide_msg_type', 'danger');
+            redirect(base_url() . 'assembled-item/edit/'.$id);
         }
     }
 
@@ -590,14 +604,61 @@ class Assembled_item extends CI_Controller
         $this->load->view('templates/footer.php', $data);
     }
 
-    public function item_mutate_form(){
-        // show the item mutation form
+    public function remove_item(){
+        //simply set the item's assembled_item_id to 0
         $data = $this->get_session_data();
 
-        $data['title'] = 'ALS - Item';
+        $data['title'] = 'ALS - Assembled Item';
+        $id = $this->uri->segment('3');
+        $item_id = $this->uri->segment('4');
+
+
+        $data2 = [
+            'assembled_item_id' => 0
+        ];
+        $this->load->model('Item_model');
+        if($this->Item_model->update($data2, $item_id)){
+            //success
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> Successfully removed an item from the assembled item!');
+            $this->session->set_flashdata('site_wide_msg_type', 'success');
+            redirect(base_url() . 'assembled-item/detail/'.$id);
+        } else {
+            //error
+            $db_error = $this->db->error();
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span>An error occured! <br/>'.json_encode($db_error));
+            $this->session->set_flashdata('site_wide_msg_type', 'danger');
+            redirect(base_url() . 'assembled-item/detail/'.$id);
+        };
+
+
+    }
+
+    public function add_item_form(){
+        // this shows the form for inserting a new mutation status
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Assembled Item';
         $id = $this->uri->segment('3');
         $this->parser->parse('templates/header.php', $data);
 
+        $this->db->select('ai.*, it.name as item_type_name, it.id as item_type_id, 
+                            b.name as brand_name,
+                            e.name as employee_name, e.location_id as location_id, 
+                            e.first_sub_location_id as first_sub_location_id, 
+                            e.second_sub_location_id as second_sub_location_id,
+                            e.company_id as employee_company_id,
+                            c.name as company_name, 
+                            s.name as supplier_name');
+        $this->db->from('assembled_items ai, item_types it, brands b, employees e, companies c, suppliers s');
+        $this->db->where('ai.brand_id = b.id AND b.item_type_id = it.id AND
+                          ai.employee_id = e.id AND ai.company_id = c.id AND ai.supplier_id = s.id');
+
+        $query = $this->db->get_where('assembled_items', array('ai.id' => $id));
+        $data['record'] = $query->result()[0];
+        $data['id'] = $id;
+
+        $this->db->reset_query();
         $this->db->select('i.*, it.name as item_type_name, it.id as item_type_id, 
                             b.name as brand_name, m.name as model_name,
                             m.capacity_size as model_capacity_size,
@@ -608,14 +669,47 @@ class Assembled_item extends CI_Controller
                             e.company_id as employee_company_id,
                             c.name as company_name, 
                             s.name as supplier_name');
-        $this->db->from('items i, item_types it, brands b, models m, employees e, companies c, suppliers s');
+        $this->db->from('item_types it, brands b, models m, employees e, companies c, suppliers s');
         $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
                           i.employee_id = e.id AND i.company_id = c.id AND i.supplier_id = s.id');
 
-        $query = $this->db->get_where('items', array('i.id' => $id));
-        $data['record'] = $query->result()[0];
-        $data['id'] = $id;
+        $query = $this->db->get_where('items i', array('i.assembled_item_id' => $id));
+        $data['items'] = $query->result();
 
+
+        $this->db->reset_query();
+        $this->db->select('i.*, it.name as item_type_name, it.id as item_type_id, it.is_assembled as item_type_is_assembled, 
+                            b.name as brand_name, m.name as model_name,
+                            m.capacity_size as model_capacity_size,
+                            m.units as model_units, 
+                            e.name as employee_name, e.location_id as location_id, 
+                            e.first_sub_location_id as first_sub_location_id, 
+                            e.second_sub_location_id as second_sub_location_id,
+                            e.company_id as employee_company_id,
+                            c.name as company_name, 
+                            s.name as supplier_name');
+        $this->db->from('item_types it, brands b, models m, employees e, companies c, suppliers s');
+        $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
+                          i.employee_id = e.id AND i.company_id = c.id AND i.supplier_id = s.id');
+
+        $this->db->order_by('it.name, b.name, m.name, it.id, i.id asc');
+        // get list of items that is not an assembled item
+        // and isn't already part of another assembled item
+        $query = $this->db->get_where('items i', array('i.assembled_item_id' => 0,
+                                                        'it.is_assembled' => 0));
+        $data['items_to_add'] = $query->result();
+
+
+        $this->db->reset_query();
+        $this->db->select('mu.*, it.name as item_type_name, it.id as item_type_id, 
+                            ai.product_name as product_name,
+                            b.name as brand_name, ai.operating_system_id as operating_system_id');
+
+        $this->db->from('assembled_items ai, item_types it, brands b');
+        $this->db->where('mu.item_id = ai.id AND ai.brand_id = b.id AND b.item_type_id = it.id');
+        $this->db->order_by('mu.id desc');
+        $query = $this->db->get_where('mutations mu', array('mu.item_id' => $id));
+        $data['mutations'] = $query->result();
 
         $this->db->reset_query();
         $this->db->select('m.*, b.name as brand_name, it.name as item_type_name ');
@@ -624,6 +718,192 @@ class Assembled_item extends CI_Controller
         $this->db->order_by('it.name, b.name, m.name asc');
         foreach($this->db->get()->result() as $model){
             $data['models'][$model->id] = $model;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('ms.* ');
+        $this->db->from('mutation_statuses ms');
+        $this->db->order_by('ms.name asc');
+        foreach($this->db->get()->result() as $ms){
+            $data['mutation_statuses'][$ms->id] = $ms;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('s.* ');
+        $this->db->from('suppliers s');
+        $this->db->order_by('s.name asc');
+        foreach($this->db->get()->result() as $supplier){
+            $data['suppliers'][$supplier->id] = $supplier;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('e.*, c.name as company_name');
+        $this->db->from('employees e, companies c');
+        $this->db->where('e.company_id = c.id');
+        $this->db->order_by('e.name asc');
+        foreach($this->db->get()->result() as $employee){
+            $data['employees'][$employee->id] = $employee;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('os.* ');
+        $this->db->from('operating_systems os');
+        $this->db->order_by('os.name asc');
+        foreach($this->db->get()->result() as $os){
+            $data['operating_systems'][$os->id] = $os;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('c.* ');
+        $this->db->from('companies c');
+        $this->db->order_by('c.name asc');
+        foreach($this->db->get()->result() as $company){
+            $data['companies'][$company->id] = $company;
+        }
+        $this->db->reset_query();
+        $this->db->select('l.* ');
+        $this->db->from('locations l');
+        foreach($this->db->get()->result() as $location){
+            $data['locations'][$location->id] = $location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('f.* ');
+        $this->db->from('first_sub_locations f');
+        foreach($this->db->get()->result() as $first_sub_location){
+            $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('s.* ');
+        $this->db->from('second_sub_locations s');
+        foreach($this->db->get()->result() as $second_sub_location){
+            $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
+        }
+
+        $this->load->view('assembled_items/add_item_form.php', $data);
+
+        $this->load->view('templates/footer.php', $data);
+    }
+
+    public function add_item(){
+        // simply update the item assembled_item_id with the current assembled_item_id
+        // then create a mutation record
+        // check if it's a POST request or not first
+
+
+        $data = $this->get_session_data();
+        $id = $this->uri->segment('4'); //assembled_item_id
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'assembled-item/add/'.$id);
+        };
+
+        $item_id_prev_employee_id = $this->input->post('item_id_prev_employee_id', TRUE);
+        $item_id_prev_employee_id = explode(',', $item_id_prev_employee_id);
+        $item_id = $item_id_prev_employee_id[0];
+        $prev_employee_id = $item_id_prev_employee_id[1];
+
+
+        $this->db->trans_start(); # Starting Transaction
+        $data2 = [
+            'assembled_item_id' => $id,
+            'employee_id' => $this->input->post('employee_id', TRUE)
+        ];
+        // updates the item assembled_item_id and change the holder
+        $this->load->model('Item_model');
+        $this->Item_model->update($data2, $item_id);
+
+        // create a mutation record
+        $data3 = [
+            'item_id' => $item_id,
+            'prev_employee_id' => $prev_employee_id,
+            'employee_id' => $this->input->post('employee_id', TRUE),
+            'note' => 'Mutated to assemble the assembled item with id: '.$id.'.',
+            'mutation_date' => date('Y-m-d')
+        ];
+
+        $this->load->model('Mutation_model');
+        $this->Mutation_model->insert($data3);
+
+
+        if ($this->db->trans_complete()) {
+            //Transaction succeeded! All queries are successfully executed
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> The item added to assembled item!');
+            $this->session->set_flashdata('site_wide_msg_type', 'success');
+            redirect(base_url() . 'assembled-item/add/'.$id);
+        } else {
+            //show errors
+            $db_error = $this->db->error();
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span>An error occured! <br/>'.json_encode($db_error));
+            $this->session->set_flashdata('site_wide_msg_type', 'danger');
+            redirect(base_url() . 'assembled-item/add/'.$id);
+        }
+
+    }
+
+    public function assembled_item_mutate_form(){
+        // show the item mutation form
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Item';
+        $id = $this->uri->segment('3');
+        $this->parser->parse('templates/header.php', $data);
+
+        $this->db->select('ai.*, it.name as item_type_name, it.id as item_type_id, 
+                            b.name as brand_name,
+                            e.name as employee_name, e.location_id as location_id, 
+                            e.first_sub_location_id as first_sub_location_id, 
+                            e.second_sub_location_id as second_sub_location_id,
+                            e.company_id as employee_company_id,
+                            c.name as company_name, 
+                            s.name as supplier_name');
+        $this->db->from('assembled_items ai, item_types it, brands b, employees e, companies c, suppliers s');
+        $this->db->where('ai.brand_id = b.id AND b.item_type_id = it.id AND
+                          ai.employee_id = e.id AND ai.company_id = c.id AND ai.supplier_id = s.id');
+
+        $query = $this->db->get_where('assembled_items', array('ai.id' => $id));
+        $data['record'] = $query->result()[0];
+        $data['id'] = $id;
+
+        // get items current inside this assembled item
+        $this->db->reset_query();
+        $this->db->select('i.*, it.name as item_type_name, it.id as item_type_id, 
+                            b.name as brand_name, m.name as model_name,
+                            m.capacity_size as model_capacity_size,
+                            m.units as model_units, 
+                            e.name as employee_name, e.location_id as location_id, 
+                            e.first_sub_location_id as first_sub_location_id, 
+                            e.second_sub_location_id as second_sub_location_id,
+                            e.company_id as employee_company_id,
+                            c.name as company_name, 
+                            s.name as supplier_name');
+        $this->db->from('item_types it, brands b, models m, employees e, companies c, suppliers s');
+        $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
+                          i.employee_id = e.id AND i.company_id = c.id AND i.supplier_id = s.id');
+
+        $query = $this->db->get_where('items i', array('i.assembled_item_id' => $id));
+        $data['items'] = $query->result();
+
+        //model for adding items
+        $this->db->reset_query();
+        $this->db->select('m.*, b.name as brand_name, it.name as item_type_name ');
+        $this->db->from('models m, brands b, item_types it');
+        $this->db->where('m.brand_id = b.id AND b.item_type_id = it.id');
+        $this->db->order_by('it.name, b.name, m.name asc');
+        foreach($this->db->get()->result() as $model){
+            $data['models'][$model->id] = $model;
+        }
+
+
+
+        $this->db->reset_query();
+        $this->db->select('b.*, it.name as item_type_name ');
+        $this->db->from('brands b, item_types it');
+        $this->db->where('b.item_type_id = it.id AND it.is_assembled = 1');
+        $this->db->order_by('it.name, b.name asc');
+        foreach($this->db->get()->result() as $brand){
+            $data['brands'][$brand->id] = $brand;
         }
 
         $this->db->reset_query();
@@ -690,21 +970,21 @@ class Assembled_item extends CI_Controller
         }
 
 
-        $this->load->view('items/mutate_form.php', $data);
+        $this->load->view('assembled_items/mutate_form.php', $data);
 
         $this->load->view('templates/footer.php', $data);
     }
 
-    public function item_mutate(){
+    public function assembled_item_mutate(){
         $data = $this->get_session_data();
         // check if it's a POST request or not first
+        $id = $this->uri->segment('4');
         if ($this->input->method(TRUE) != 'POST'){
             // if not, just redirect
-            redirect(base_url() . 'item');
+            redirect(base_url() . 'assembled-item/mutate/'.$id);
         }
 
 
-        $id = $this->uri->segment('4');
         $employee_id = $this->input->post('employee_id', TRUE);
         $prev_employee_id =$this->input->post('prev_employee_id', TRUE);
 
@@ -712,13 +992,13 @@ class Assembled_item extends CI_Controller
             //prevents mutation from and to the same employee
             $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span>You can\'t mutate to the same employee!');
             $this->session->set_flashdata('site_wide_msg_type', 'danger');
-            redirect(base_url().'item/mutate/'.$id);
+            redirect(base_url().'assembled-item/mutate/'.$id);
         }
 
         // we're going to do insert mutation and update item information as a transaction
         // if one fail, we're going to rollback
         $this->db->trans_start(); # Starting Transaction
-        // insert a new mutation
+        // insert a new mutation for the assembled item
         $mutation_date = date("Y-m-d", strtotime($this->input->post('mutation_date', TRUE)));
         $data = [
             'item_id' => $id,
@@ -733,24 +1013,53 @@ class Assembled_item extends CI_Controller
         $this->load->model('Mutation_model');
         $this->Mutation_model->insert($data);
 
-        // now update item with the new employee id
+        // now update the assembled_item with the new employee id
         $data2 = [
             'employee_id' => $this->input->post('employee_id', TRUE)
         ];
+        $this->load->model('Assembled_item_model');
+        $this->Assembled_item_model->update($data2, $id);
+
+        // now insert a mutation record for every item that is part of this assembled item as well
+        $this->db->reset_query();
+        $this->db->select('i.*');
+        $query = $this->db->get_where('items i', array('i.assembled_item_id' => $id));
+        $data['items'] = $query->result();
 
         $this->load->model('Item_model');
-        $this->Item_model->update($data2, $id);
+
+        foreach($data['items'] as $item){
+            // loop for each item in the assembled item
+            // insert a mutation record
+            $data = [
+                'item_id' => $item->id,
+                'prev_employee_id' => $this->input->post('prev_employee_id', TRUE),
+                'employee_id' => $this->input->post('employee_id', TRUE),
+                'mutation_status_id' => $this->input->post('mutation_status_id', TRUE),
+                'note' => $this->input->post('note', TRUE),
+                'mutation_date' => $mutation_date
+            ];
+            // insert the mutation record
+            $this->Mutation_model->insert($data);
+
+            // update the item holder information
+            $data2 = [
+                'employee_id' => $this->input->post('employee_id', TRUE)
+            ];
+            $this->Item_model->update($data2, $item->id);
+
+        }
 
         if ($this->db->trans_complete()) {
             //Transaction succeeded! Both query is successfully executed
             $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> Mutation success!');
             $this->session->set_flashdata('site_wide_msg_type', 'success');
-            redirect(base_url() . 'item/detail/'.$id);
+            redirect(base_url() . 'assembled-item/detail/'.$id);
         } else {
             //show errors
             $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span>An error occured!');
             $this->session->set_flashdata('site_wide_msg_type', 'danger');
-            redirect(base_url() . 'item/mutate/'.$id);
+            redirect(base_url() . 'assembled-item/mutate/'.$id);
         }
 
     }

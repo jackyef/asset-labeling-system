@@ -17,19 +17,27 @@
             &copy; <?= date('Y') ?> jackyef. All rights reserved. <br/>
         </div>
         <div class="pull-right">
-            <a href="https://github.com/jackyef/asset-labeling-system">
+            <a href="https://github.com/jackyef/asset-labeling-system" target="_blank">
                 <button class="btn btn-sm" style="background-color: #1a1a1a; ">
                     <span class="fa fa-github fa-1x" style="min-width: 1em; color: #cacaca;"></span>
                 </button></a>
-            <a href="https://facebook.com/zhouyongchao">
+            <a href="http://codepen.io/jackyef/pens/public/" target="_blank">
+                <button class="btn btn-sm" style="background-color: #1a1a1a; ">
+                    <span class="fa fa-codepen fa-1x" style="min-width: 1em; color: #cacaca;"></span>
+                </button></a>
+            <a href="https://www.freecodecamp.com/jackyef" target="_blank">
+                <button class="btn btn-sm" style="background-color: #1a1a1a; ">
+                    <span class="fa fa-free-code-camp fa-1x" style="min-width: 1em; color: #cacaca;"></span>
+                </button></a>
+            <a href="https://facebook.com/zhouyongchao" target="_blank">
                 <button class="btn btn-sm" style="background-color: #1a1a1a; ">
                     <span class="fa fa-facebook fa-1x" style="min-width: 1em; color: #cacaca;"></span>
                 </button></a>
-            <a href="https://instagram.com/jackyef_">
+            <a href="https://instagram.com/jackyef_" target="_blank">
                 <button class="btn btn-sm" style="background-color: #1a1a1a; ">
                     <span class="fa fa-instagram fa-1x" style="min-width: 1em; color: #cacaca;"></span>
                 </button></a>
-            <a href="https://www.linkedin.com/in/jacky-efendi-094643a1/">
+            <a href="https://www.linkedin.com/in/jacky-efendi-094643a1/" target="_blank">
                 <button class="btn btn-sm" style="background-color: #1a1a1a; ">
                     <span class="fa fa-linkedin fa-1x" style="min-width: 1em; color: #cacaca;"></span>
                 </button></a>

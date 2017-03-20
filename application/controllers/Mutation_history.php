@@ -66,9 +66,34 @@ class Mutation_history extends CI_Controller
         $this->db->select('mu.*, it.name as item_type_name, it.id as item_type_id, 
                             b.name as brand_name, m.name as model_name');
         $this->db->from('mutations mu, items i, item_types it, brands b, models m');
-        $this->db->where('mu.item_id = i.id AND i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id');
+        $this->db->where('mu.item_id = i.id AND i.model_id = m.id AND 
+                        m.brand_id = b.id AND b.item_type_id = it.id AND 
+                        assembled_item_id = 0'); // only show items that are not part of other assembled item
         $this->db->order_by('mu.id desc');
-        $data['records'] = $this->db->get()->result();
+        $query = $this->db->get();
+        $result1 = $query->result();
+
+        $this->db->select('mu.*, it.name as item_type_name, it.id as item_type_id, 
+                            b.name as brand_name, ai.product_name as model_name,
+                            ai.operating_system_id as operating_system_id');
+
+        $this->db->from('mutations mu, assembled_items ai, item_types it, brands b');
+        $this->db->where('mu.item_id = ai.id AND ai.brand_id = b.id AND b.item_type_id = it.id');
+        $this->db->order_by('mu.id desc');
+        $query = $this->db->get();
+        $result2 = $query->result();
+        foreach($result2 as $entry){
+            $entry->assembled = 1; //mark this record as an assembled item, so we can redirect correctly
+        }
+
+        $data['records'] = array_merge($result1, $result2);
+
+        // for debugging purposes
+//        echo sizeof($result1);
+//        echo '<br/>';
+//        echo sizeof($result2);
+//        echo '<br/>';
+//        echo json_encode($data['records']);
 
         $this->db->reset_query();
         $this->db->select('e.* ');
@@ -137,7 +162,25 @@ class Mutation_history extends CI_Controller
         $this->db->where('mu.item_id = i.id AND i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id');
         $this->db->order_by('mu.id desc');
         $query = $this->db->get_where('mutations mu', array('mu.id' => $id));
-        $data['record'] = $query->result()[0];
+        $result1 = $query->result();
+
+        $this->db->select('mu.*, it.name as item_type_name, it.id as item_type_id, 
+                            b.name as brand_name, ai.product_name as model_name,
+                            ai.operating_system_id as operating_system_id');
+
+        $this->db->from('assembled_items ai, item_types it, brands b');
+        $this->db->where('mu.item_id = ai.id AND ai.brand_id = b.id AND b.item_type_id = it.id');
+        $this->db->order_by('mu.id desc');
+        $query = $this->db->get_where('mutations mu', array('mu.id' => $id));
+        $result2 = $query->result();
+
+        $data['record'] = array_merge($result1, $result2)[0];
+
+        if (sizeof($result1) == 0){
+            $data['assembled'] = 1; //used to decide how to link to item detail page assembled-item/detail or item/detail
+        } else {
+            $data['assembled'] = 0;
+        }
 
         $this->db->reset_query();
         $this->db->select('e.* ');
@@ -208,7 +251,7 @@ class Mutation_history extends CI_Controller
 
         $data = [
             'mutation_status_id' => $this->input->post('mutation_status_id', TRUE),
-            'note' => $this->input->post('note', TRUE),
+            'note' => $this->input->post('note', TRUE)
         ];
 
         if ($this->Mutation_model->update($data, $id)) {
@@ -219,100 +262,6 @@ class Mutation_history extends CI_Controller
         } else {
             //show errors
         }
-    }
-
-    public function detail(){
-        // this shows the form for inserting a new mutation status
-
-        $data = $this->get_session_data();
-
-        $data['title'] = 'ALS - Item';
-        $id = $this->uri->segment('3');
-        $this->parser->parse('templates/header.php', $data);
-
-        $this->db->select('i.*, it.name as item_type_name, it.id as item_type_id, 
-                            b.name as brand_name, m.name as model_name,
-                            m.capacity_size as model_capacity_size,
-                            m.units as model_units, 
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id,
-                            e.company_id as employee_company_id,
-                            c.name as company_name, 
-                            s.name as supplier_name');
-        $this->db->from('items i, item_types it, brands b, models m, employees e, companies c, suppliers s');
-        $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
-                          i.employee_id = e.id AND i.company_id = c.id AND i.supplier_id = s.id');
-
-        $query = $this->db->get_where('items', array('i.id' => $id));
-        $data['record'] = $query->result()[0];
-        $data['id'] = $id;
-
-        $this->db->reset_query();
-        $this->db->select('m.*, b.name as brand_name, it.name as item_type_name ');
-        $this->db->from('models m, brands b, item_types it');
-        $this->db->where('m.brand_id = b.id AND b.item_type_id = it.id');
-        $this->db->order_by('it.name, b.name, m.name asc');
-        foreach($this->db->get()->result() as $model){
-            $data['models'][$model->id] = $model;
-        }
-
-        $this->db->reset_query();
-        $this->db->select('s.* ');
-        $this->db->from('suppliers s');
-        $this->db->order_by('s.name asc');
-        foreach($this->db->get()->result() as $supplier){
-            $data['suppliers'][$supplier->id] = $supplier;
-        }
-
-        $this->db->reset_query();
-        $this->db->select('e.*, c.name as company_name');
-        $this->db->from('employees e, companies c');
-        $this->db->where('e.company_id = c.id');
-        $this->db->order_by('e.name asc');
-        foreach($this->db->get()->result() as $employee){
-            $data['employees'][$employee->id] = $employee;
-        }
-
-        $this->db->reset_query();
-        $this->db->select('os.* ');
-        $this->db->from('operating_systems os');
-        $this->db->order_by('os.name asc');
-        foreach($this->db->get()->result() as $os){
-            $data['operating_systems'][$os->id] = $os;
-        }
-
-        $this->db->reset_query();
-        $this->db->select('c.* ');
-        $this->db->from('companies c');
-        $this->db->order_by('c.name asc');
-        foreach($this->db->get()->result() as $company){
-            $data['companies'][$company->id] = $company;
-        }
-        $this->db->reset_query();
-        $this->db->select('l.* ');
-        $this->db->from('locations l');
-        foreach($this->db->get()->result() as $location){
-            $data['locations'][$location->id] = $location;
-        }
-
-        $this->db->reset_query();
-        $this->db->select('f.* ');
-        $this->db->from('first_sub_locations f');
-        foreach($this->db->get()->result() as $first_sub_location){
-            $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
-        }
-
-        $this->db->reset_query();
-        $this->db->select('s.* ');
-        $this->db->from('second_sub_locations s');
-        foreach($this->db->get()->result() as $second_sub_location){
-            $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
-        }
-
-        $this->load->view('items/detail.php', $data);
-
-        $this->load->view('templates/footer.php', $data);
     }
 
 }
