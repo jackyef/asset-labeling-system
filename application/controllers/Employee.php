@@ -231,10 +231,33 @@ class Employee extends CI_Controller
                             e.company_id as employee_company_id');
         $this->db->from('item_types it, brands b, models m, employees e');
         $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
-                          i.employee_id = e.id ');
-//        $this->db->order_by('l.name, f.name asc');
+                          i.employee_id = e.id AND assembled_item_id = 0');
         $query = $this->db->get_where('items i', array('i.employee_id' => $id));
-        $data['items'] = $query->result();
+        $result1 = $query->result();
+
+        $this->db->select('ai.*, it.name as item_type_name, it.id as item_type_id, 
+                            b.name as brand_name, ai.product_name as model_name, 
+                            e.name as employee_name, e.location_id as location_id, 
+                            e.first_sub_location_id as first_sub_location_id, 
+                            e.second_sub_location_id as second_sub_location_id, 
+                            e.company_id as employee_company_id');
+        $this->db->from('item_types it, brands b, employees e');
+        $this->db->where('ai.brand_id = b.id AND b.item_type_id = it.id AND
+                          ai.employee_id = e.id');
+        $query = $this->db->get_where('assembled_items ai', array('ai.employee_id' => $id));
+        $result2 = $query->result();
+
+        foreach($result2 as $entry){
+            $entry->assembled = 1; //mark this record as an assembled item, so we can redirect correctly
+        }
+
+        $data['items'] = array_merge($result1, $result2);
+        // for debugging purposes
+//        echo sizeof($result1);
+//        echo '<br/>';
+//        echo sizeof($result2);
+//        echo '<br/>';
+//        echo json_encode($data['items']);
 
 
         $this->load->view('employees/detail.php', $data);

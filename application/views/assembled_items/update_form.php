@@ -9,151 +9,168 @@
 
 <div class="row">
     <div class="col-sm-12">
-    <a href="<?= base_url().'item'?>"><button class="btn btn-primary"><span class="fa fa-backward"></span> Back to item list</button></a>
-    <h3>Edit item (code:
-        <a href="<?= base_url().'item/detail/'.$record->id ?>"><?= str_pad($record->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($record->id, 5, '0', STR_PAD_LEFT) ?></a>)
-    </h3>
-    <br/>
-    <form class="form-horizontal" action="<?php echo base_url(); ?>item/edit/submit/<?= $record->id ?>" method="POST">
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="date_of_purchase">Purchased on:</label>
-            <div class="col-sm-3">
-                <div class="input-group date" data-provide="datepicker-inline ">
-                    <input type="text" class="form-control datepicker" id="date_of_purchase" name="date_of_purchase" />
-                    <div class="input-group-addon">
-                        <span class="fa fa-calendar"></span>
+        <a href="<?= base_url().'assembled-item'?>"><button class="btn btn-primary"><span class="fa fa-backward"></span> Back to assembled item list</button></a>
+        <h2>Edit assembled item (code:
+            <a href="<?= base_url().'assembled-item/detail/'.$record->id ?>"><?= str_pad($record->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($record->id, 5, '0', STR_PAD_LEFT) ?></a>)
+        </h2>
+        <br/>
+        <form class="form-horizontal" action="<?php echo base_url(); ?>assembled-item/edit/submit/<?= $record->id ?>" method="POST">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="date_of_purchase">Purchased on:</label>
+                <div class="col-sm-3">
+                    <div class="input-group date" data-provide="datepicker-inline ">
+                        <input type="text" class="form-control datepicker" id="date_of_purchase" name="date_of_purchase">
+                        <div class="input-group-addon">
+                            <span class="fa fa-calendar"></span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-7">
-                <div class="well-sm bg-warning">
+                <div class="col-sm-7">
+                    <div class="well-sm bg-warning">
                         <span class="fa fa-lightbulb-o">
                         </span>
-                    Tips: Use ctrl + <i class="fa fa-arrow-left"></i> / <i class="fa fa-arrow-right"></i>
-                    to quickly navigate between years, shift + <i class="fa fa-arrow-left"></i> / <i class="fa fa-arrow-right"></i>
-                    between months! Hit enter!
-                </div>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="warranty_expiry_date">Warranty expires on:</label>
-            <div class="col-sm-3">
-                <div class="input-group date" data-provide="datepicker-inline ">
-                    <input type="text" class="form-control datepicker" id="warranty_expiry_date" name="warranty_expiry_date"/>
-                    <div class="input-group-addon">
-                        <span class="fa fa-calendar"></span>
+                        Tips: Use ctrl + <i class="fa fa-arrow-left"></i> / <i class="fa fa-arrow-right"></i>
+                        to quickly navigate between years, shift + <i class="fa fa-arrow-left"></i> / <i class="fa fa-arrow-right"></i>
+                        between months! Hit enter!
                     </div>
                 </div>
             </div>
-            <div class="col-sm-7">
-                <div class="well-sm bg-info">
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="warranty_expiry_date">Warranty expires on:</label>
+                <div class="col-sm-3">
+                    <div class="input-group date" data-provide="datepicker-inline ">
+                        <input type="text" class="form-control datepicker" id="warranty_expiry_date" name="warranty_expiry_date">
+                        <div class="input-group-addon">
+                            <span class="fa fa-calendar"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-7">
+                    <div class="well-sm bg-info">
                         <span class="fa fa-info-circle">
                         </span>
-                    For items without warranty, just leave this field the same as the purchase date.
+                        For items without warranty, just leave this field the same as the purchase date.
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="model_id">Item type / Brand / Model:</label>
-            <div class="col-sm-10">
-                <select class="form-control selectpicker" name="model_id" id="model_id" data-live-search="true">
-                    <?php foreach($models as $model){ ?>
-                        <option value="<?= $model->id?>"
-                            <?= (($model->id == $record->model_id) ? 'selected' : '') ?> >
-                            <?= $model->item_type_name.' / '.$model->brand_name. ' / '. $model->name ?>
-                            <?= (($model->capacity_size) ? '('.$model->capacity_size.' '.$model->units.')' : '') ?>
-                        </option>
-                    <?php } ?>
-                </select>
-                <p class="alert alert-danger">
-                    <i class="fa fa-warning"></i>
-                    Changing item type (Ex: HDD to Memory) <strong>WILL</strong> change the item code, which will
-                    probably cause a lot of problem, for example, if you have printed a barcode of this item.
-                    <br/>
-                    It's only absolutely safe to do this if there isn't any mutation of this item yet. Proceed at your own risk.
-                </p>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="supplier_id">Supplier:</label>
-            <div class="col-sm-10">
-                <select class="form-control selectpicker" name="supplier_id" id="supplier_id" data-live-search="true">
-                    <?php foreach($suppliers as $supplier){ ?>
-                        <option value="<?= $supplier->id?>"
-                            <?= (($supplier->id == $record->supplier_id) ? 'selected' : '') ?> >
-                            <?= $supplier->name ?>
-                        </option>
-                    <?php } ?>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="company_id">Owned by (Company):</label>
-            <div class="col-sm-10">
-                <select class="form-control selectpicker" name="company_id" id="company_id" data-live-search="true">
-                    <?php foreach($companies as $company){ ?>
-                        <option value="<?= $company->id?>"
-                            <?= (($company->id == $record->company_id) ? 'selected' : '') ?> >
-                            <?= $company->name ?>
-                        </option>
-                    <?php } ?>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="operating_system_id">Operating system:</label>
-            <div class="col-sm-10">
-                <select class="form-control selectpicker" name="operating_system_id" id="operating_system_id" data-live-search="true">
-                    <option value="0">N/A</option>
-                    <?php foreach($operating_systems as $operating_system){ ?>
-                        <option value="<?= $operating_system->id?>"
-                            <?= (($operating_system->id == $record->operating_system_id) ? 'selected' : '') ?> >
-                            <?= $operating_system->name ?>
-                        </option>
-                    <?php } ?>
-                </select>
-            </div>
-        </div>
 
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="employee_id">Holding employee:</label>
-            <div class="col-sm-10">
-                <input type="hidden" name="employee_id" id="employee_id" value="<?= $record->employee_id?>" />
-                <select class="form-control selectpicker" name="employee_id" id="employee_id" data-live-search="true" disabled>
-                    <?php foreach($employees as $employee){ ?>
-                        <option value="<?= $employee->id?>"
-                            <?= (($employee->id == $record->employee_id) ? 'selected' : '') ?> >
-                            <?= $employee->name ?>
-                            (<?= $employee->company_name ?>)
-                        </option>
-                    <?php } ?>
-                </select>
-                <div class="checkbox">
-                    <label><input type="checkbox" id="is_used" name="is_used"
-                        <?= (($record->is_used == '1') ? 'checked' : '') ?> >
-                        Is currently being used?</label>
-                </div>
-                <div class="alert alert-warning">
-                    <i class="fa fa-warning"></i>
-                    Note:
-                    <ul>
-                        <li>If you're not assigning this item to be used by an employee yet, assign it to a warehouse employee. (Ex: Gudang IT, Gudang B, etc.)</li>
-                        <li>You may have to create this kind of employees beforehand. If no such employees exists, contact your administrator.</li>
-                        <li>If you are assigning to a warehouse employee, the item is probably not currently being used.</li>
-                    </ul>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <div class="well-sm bg-warning">
+                        <span class="fa fa-info-circle">
+                        </span>
+                        Changing the dates will <strong>NOT</strong> affect the items inside this assembled item. You have to change
+                        each items' purchase date and warranty individually. This is to accomodate items that are purchased separately
+                        and then assembled together into an assembled item.
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="control-label col-sm-2" for="note">Note:</label>
-            <div class="col-sm-10">
-                <textarea class="form-control" rows="4" id="note" name="note" placeholder="Ex: Sesuai dengan Surat no. XX, red-colored Desktop, etc" required><?= $record->note ?></textarea>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="brand_id">Item type / Brand:</label>
+                <div class="col-sm-10">
+                    <select class="form-control selectpicker" name="brand_id" id="brand_id" data-live-search="true">
+                        <?php foreach($brands as $brand){ ?>
+                            <option value="<?= $brand->id?>"
+                            <?= (($brand->id == $record->brand_id) ? 'selected' : '') ?>>
+                                <?= $brand->item_type_name.' / '.$brand->name ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                    <p class="alert alert-danger">
+                        <i class="fa fa-warning"></i>
+                        Changing item type (Ex: HDD to Memory) <strong>WILL</strong> change the item code, which will
+                        probably cause a lot of problem, for example, if you have printed a barcode of this item.
+                        <br/>
+                        It's only absolutely safe to do this if there isn't any mutation of this item yet. Proceed at your own risk.
+                    </p>
+                </div>
             </div>
-        </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="model_id">Product name:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Ex: PX-8529, Dell Workstation 19, etc"
+                           value="<?= $record->product_name?>" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="supplier_id">Supplier:</label>
+                <div class="col-sm-10">
+                    <select class="form-control selectpicker" name="supplier_id" id="supplier_id" data-live-search="true">
+                        <?php foreach($suppliers as $supplier){ ?>
+                            <option value="<?= $supplier->id?>"
+                                <?= (($supplier->id == $record->supplier_id) ? 'selected' : '') ?>>
+                                <?= $supplier->name ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="company_id">Owned by (Company):</label>
+                <div class="col-sm-10">
+                    <select class="form-control selectpicker" name="company_id" id="company_id" data-live-search="true">
+                        <?php foreach($companies as $company){ ?>
+                            <option value="<?= $company->id?>"
+                                <?= (($company->id == $record->company_id) ? 'selected' : '') ?>>
+                                <?= $company->name ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="operating_system_id">Operating system:</label>
+                <div class="col-sm-10">
+                    <select class="form-control selectpicker" name="operating_system_id" id="operating_system_id" data-live-search="true">
+                        <option value="0">N/A</option>
+                        <?php foreach($operating_systems as $operating_system){ ?>
+                            <option value="<?= $operating_system->id?>"
+                                <?= (($operating_system->id == $record->operating_system_id) ? 'selected' : '') ?>>
+                                <?= $operating_system->name ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="employee_id">Holding employee:</label>
+                <div class="col-sm-10">
+                    <select class="form-control selectpicker" name="employee_id" id="employee_id" data-live-search="true" disabled>
+                        <?php foreach($employees as $employee){ ?>
+                            <option value="<?= $employee->id?>"
+                                <?= (($employee->id == $record->employee_id) ? 'selected' : '') ?>>
+                                <?= $employee->name ?>
+                                (<?= $employee->company_name ?>)
+                            </option>
+                        <?php } ?>
+                    </select>
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="is_used" name="is_used"
+                                <?= ($record->is_used == 1) ? 'checked' : '' ?>>
+                            Is currently being used?</label>
+                    </div>
+                    <div class="alert alert-warning">
+                        <span class="fa fa-warning"></span> Note:
+                        <ul>
+                            <li>Changing the "is used?" status of this assembled item <strong>WILL</strong> also affect all the items inside this assembled item.</li>
+                            <li>If you're not assigning this item to be used by an employee yet, assign it to a warehouse employee. (Ex: Gudang IT, Gudang B, etc.)</li>
+                            <li>You may have to create this kind of employees beforehand. If no such employees exists, contact your administrator.</li>
+                            <li>If you are assigning to a warehouse employee, the item is probably not currently being used.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="note">Note:</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" rows="4" id="note" name="note" placeholder="Ex: Sesuai dengan Surat no. XX, red-colored Desktop, etc"><?= $record->note ?></textarea>
+                </div>
+            </div>
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary"><span class="fa fa-save"></span> Save item information</button>
             </div>
         </div>
     </form>

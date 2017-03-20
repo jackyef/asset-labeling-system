@@ -110,7 +110,7 @@
                                 <div class="col-sm-4">
                                     <span class="fa fa-sticky-note"></span> <strong>Note</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->note ?>
+                                    <?= nl2br(html_escape($record->note)) ?>
                                 </div>
                             </div>
 
@@ -120,15 +120,35 @@
                                 <div class="col-sm-4">
                                     <strong>Contains</strong></div>
                                 <div class="col-sm-8">
+                                    <table>
+                                    <?php if(sizeof($items) == 0){ ?>
+                                        <tr>
+                                            <td> This assembled item contains no items.</td>
+                                        </tr>
+                                    <?php }?>
                                     <?php foreach($items as $item): ?>
-                                        - <?= $item->item_type_name.', '.$item->brand_name.', '.$item->model_name?>
+                                        <tr>
+                                        <td><?= $item->item_type_name.', '.$item->brand_name.', '.$item->model_name?>
                                         <?php if($item->model_units != ''): ?>
                                             (<?= $item->model_capacity_size.' '.$item->model_units ?>)
                                         <?php endif; ?>
-                                        <a href="<?= base_url().'item/detail/'.$item->id?>">
-                                        (<?= (str_pad($item->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($item->id, 5, '0', STR_PAD_LEFT)) ?></a>)
-                                        <br/>
+                                        (<a href="<?= base_url().'item/detail/'.$item->id?>"><?= (str_pad($item->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($item->id, 5, '0', STR_PAD_LEFT)) ?></a>)
+                                        </td>
+                                        <td valign="middle">
+                                            <a href="<?= base_url().'assembled-item/remove/'.$id.'/'.$item->id ?>">
+                                                <button class="btn btn-xs btn-danger">
+                                                    <span class="fa fa-times"></span> Remove</button></a>
+                                        </td>
+                                        </tr>
                                     <?php endforeach; ?>
+                                        <tr>
+                                            <td>
+                                                <a href="<?= base_url().'assembled-item/add/'.$id ?>">
+                                                    <button class="btn btn-sm btn-success">
+                                                        <span class="fa fa-plus"></span> Add item</button></a>
+                                            </td>
+                                        </tr>
+                                    </table>
                                     </ul>
                                 </div>
                             </div>
@@ -137,7 +157,7 @@
 
                             <div class="form-group">
                                 <div class="col-sm-12">
-                                    <a href="<?= base_url().'item/edit/'.$record->id ?>">
+                                    <a href="<?= base_url().'assembled-item/edit/'.$record->id ?>">
                                         <button class="btn btn-primary form-control">
                                             <span class="fa fa-edit"></span>
                                             Edit item information
@@ -201,7 +221,7 @@
 
                             <div class="form-group">
                                 <div class="col-sm-12">
-                                    <a href="<?= base_url().'item/mutate/'.$record->id ?>">
+                                    <a href="<?= base_url().'assembled-item/mutate/'.$record->id ?>">
                                         <button class="btn btn-primary form-control">
                                             <span class="fa fa-refresh"></span>
                                             Mutate to another employee
@@ -292,7 +312,7 @@
 
                     echo '<td>';
                     if ($mutation->mutation_status_id == 0){
-                        echo 'First assignment';
+                        echo 'N/A';
                     } else {
                         echo $mutation_statuses[$mutation->mutation_status_id]->name;
                     }

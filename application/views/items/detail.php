@@ -119,7 +119,7 @@
                                 <div class="col-sm-4">
                                     <span class="fa fa-sticky-note"></span> <strong>Note</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->note ?>
+                                    <?= nl2br(html_escape($record->note)) ?>
                                 </div>
                             </div>
 
@@ -296,7 +296,7 @@
 
                     echo '<td>';
                     if ($mutation->mutation_status_id == 0){
-                        echo 'First assignment';
+                        echo 'N/A';
                     } else {
                         echo $mutation_statuses[$mutation->mutation_status_id]->name;
                     }

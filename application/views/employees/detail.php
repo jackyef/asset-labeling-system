@@ -95,7 +95,7 @@
                 <th> Id </th>
                 <th> Item Code </th>
                 <th> Item Type / Brand </th>
-                <th> Model </th>
+                <th> Model Name</th>
                 <th style="min-width: 6em"> Purchased on </th>
                 <th> Owned by </th>
                 <th> Is used? </th>
@@ -106,8 +106,12 @@
                 foreach($items as $item){
                     echo '<tr>';
                     echo '<td>'.$item->id.'</td>';
+                    $link = 'item';
+                    if(isset($item->assembled) AND $item->assembled == 1){
+                        $link = 'assembled-item';
+                    };
                     echo '<td>'.
-                        '<a href="'.base_url().'item/detail/'.$item->id.'">'.
+                        '<a href="'.base_url().$link.'/detail/'.$item->id.'">'.
                         str_pad($item->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($item->id, 5, '0', STR_PAD_LEFT).
                         '</a>'.
                         '</td>';
