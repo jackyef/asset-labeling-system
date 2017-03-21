@@ -154,6 +154,7 @@ $route['item/edit/:num'] = 'item/item_update_form/:num';
 $route['item/edit/submit/:num'] = 'item/item_update/:num';
 $route['item/mutate/:num'] = 'item/item_mutate_form/:num';
 $route['item/mutate/submit/:num'] = 'item/item_mutate/:num';
+$route['item/delete/:num'] = 'item/item_delete/:num';
 
 $route['assembled-item'] = 'assembled_item/index';
 $route['assembled-item/new'] = 'assembled_item/assembled_item_insert_form';
@@ -166,6 +167,7 @@ $route['assembled-item/add/submit/:num'] = 'assembled_item/add_item/:num';
 $route['assembled-item/mutate/:num'] = 'assembled_item/assembled_item_mutate_form/:num';
 $route['assembled-item/mutate/submit/:num'] = 'assembled_item/assembled_item_mutate/:num';
 $route['assembled-item/detail/:num'] = 'assembled_item/detail/:num';
+$route['assembled-item/delete/:num'] = 'assembled_item/assembled_item_delete/:num';
 
 
 $route['company'] = 'company/index';

@@ -31,6 +31,12 @@ class Mutation_model extends CI_Model {
         }
     }
 
+    public function delete_where_item_id($id){
+        if($this->db->delete('mutations', 'item_id = '. $id)){
+            return true;
+        }
+    }
+
     public function update($data, $old_id){
         $this->db->set($data);
         $this->db->where('id', $old_id);

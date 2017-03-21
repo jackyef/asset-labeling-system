@@ -33,20 +33,20 @@
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Item Type</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->item_type_name ?>
+                                    <?= html_escape($record->item_type_name) ?>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Brand</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->brand_name ?>
+                                    <?= html_escape($record->brand_name) ?>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Product Name</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->product_name ?>
+                                    <?= html_escape($record->product_name) ?>
                                 </div>
                             </div>
 
@@ -56,7 +56,7 @@
                                     <?php if ($record->operating_system_id == 0): ?>
                                         N/A
                                     <?php else: ?>
-                                        <?= $operating_systems[$record->operating_system_id]->name ?>
+                                        <?= html_escape($operating_systems[$record->operating_system_id]->name) ?>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -90,7 +90,7 @@
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Supplier</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->supplier_name ?>
+                                    <?= html_escape($record->supplier_name) ?>
                                 </div>
                             </div>
 
@@ -99,7 +99,7 @@
                                 <div class="col-sm-8">
                                     <span class="fa fa-building"></span>
                                     <a href="<?= base_url().'company/detail/'.$record->company_id ?>">
-                                        <?= $record->company_name ?>
+                                        <?= html_escape($record->company_name) ?>
                                     </a>
                                 </div>
                             </div>
@@ -110,12 +110,12 @@
                                 <div class="col-sm-8">
                                     <span class="fa fa-user"></span>
                                     <a href="<?= base_url().'employee/detail/'.$record->employee_id ?>">
-                                        <?= $record->employee_name ?>
+                                        <?= html_escape($record->employee_name) ?>
                                     </a>
                                     <br/>
                                     <span class="fa fa-building"></span>
                                     <a href="<?= base_url().'company/detail/'.$employees[$record->employee_id]->company_id ?>">
-                                        <?= $employees[$record->employee_id]->company_name ?>
+                                        <?= html_escape($employees[$record->employee_id]->company_name) ?>
                                     </a>
                                 </div>
                             </div>
@@ -145,9 +145,9 @@
                                     <?php }?>
                                     <?php foreach($items as $item): ?>
                                         <tr>
-                                        <td><?= $item->item_type_name.', '.$item->brand_name.', '.$item->model_name?>
+                                        <td><?= html_escape($item->item_type_name.', '.$item->brand_name.', '.$item->model_name)?>
                                         <?php if($item->model_units != ''): ?>
-                                            (<?= $item->model_capacity_size.' '.$item->model_units ?>)
+                                            (<?= html_escape($item->model_capacity_size.' '.$item->model_units) ?>)
                                         <?php endif; ?>
                                         (<a href="<?= base_url().'item/detail/'.$item->id?>"><?= (str_pad($item->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($item->id, 5, '0', STR_PAD_LEFT)) ?></a>)
                                         </td>
@@ -178,11 +178,11 @@
                                         <select class="form-control selectpicker" name="item_id_prev_employee_id" id="item_id_prev_employee_id" data-live-search="true">
                                             <?php foreach($items_to_add as $item_to_add){ ?>
                                                 <option value="<?= $item_to_add->id.','.$item_to_add->employee_id?>">
-                                                    <?= $item_to_add->item_type_name ?> / <?= $item_to_add->brand_name ?> / <?= $item_to_add->model_name ?>
+                                                    <?= html_escape($item_to_add->item_type_name) ?> / <?= html_escape($item_to_add->brand_name) ?> / <?= html_escape($item_to_add->model_name) ?>
                                                     (<?= (str_pad($item_to_add->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($item_to_add->id, 5, '0', STR_PAD_LEFT)) ?>)
-                                                    <?= $item_to_add->employee_name ?>
+                                                    <?= html_escape($item_to_add->employee_name) ?>
                                                     <br/>
-                                                    <?= $companies[$item_to_add->employee_company_id]->name ?>
+                                                    <?= html_escape($companies[$item_to_add->employee_company_id]->name) ?>
                                                 </option>
                                             <?php } ?>
                                         </select>
