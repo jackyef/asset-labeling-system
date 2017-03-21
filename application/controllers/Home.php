@@ -26,7 +26,6 @@ class Home extends CI_Controller
     }
 
     public function get_session_data(){
-        // TODO: use real session data
         // remember use xss_clean
 //        echo json_encode($this->session->userdata());
         if($this->session->userdata('is_logged_in') == 1){
@@ -54,7 +53,6 @@ class Home extends CI_Controller
         $data['title'] = 'ALS - Home';
         $this->parser->parse('templates/header.php', $data);
 
-        // TODO: parse the content of this route here!
         // get login error message (if any)
         $data['login_error'] = $this->session->flashdata('login_error');
 
@@ -203,11 +201,10 @@ class Home extends CI_Controller
     public function help(){
         $data = $this->get_session_data();
 
-        $data['title'] = 'ALS - Home';
+        $data['title'] = 'ALS - Help';
         $this->parser->parse('templates/header.php', $data);
 
-        // TODO: parse the content of this route here!
-        $this->parser->parse('home/index.php', $data);
+        $this->parser->parse('home/help.php', $data);
         $this->parser->parse('templates/footer.php', $data);
 
     }
@@ -215,11 +212,10 @@ class Home extends CI_Controller
     public function about(){
         $data = $this->get_session_data();
 
-        $data['title'] = 'ALS - Home';
+        $data['title'] = 'ALS - About';
         $this->parser->parse('templates/header.php', $data);
 
-        // TODO: parse the content of this route here!
-        $this->parser->parse('home/index.php', $data);
+        $this->parser->parse('home/about.php', $data);
         $this->parser->parse('templates/footer.php', $data);
 
     }
