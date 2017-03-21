@@ -27,15 +27,14 @@ TODO:
   - test if mutation history are correctly deleted
   (DONE!)
 - add delete assembled item (delete all mutation history record, as well as all the item inside of it) (just for admin) (DONE!)
-- do a full web-app test, try to find any errors that might exist (DONE!, check one note for results)
-
-- html_escape every views that uses database stored data
-
+- do a full web-app test, try to find any errors that might exist (DONE!, check onenote.com for results)
+- html_escape every views that uses database stored data that is filled from user inputs(DONE!)
 - create help page that tells about
   - item_type-brand-model design
   - mutation between employee concept, NOT location concept
-
+  (DONE!)
 - ANCHORING: anchor every item_code to item detail, employee to employee detail, company to company detail (Probably done)
+
 
 - REPORTING: utilize column selector and datatable print feature
 - dashboard with statistics as admin homepage

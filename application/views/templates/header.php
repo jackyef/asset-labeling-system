@@ -75,32 +75,32 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Masters <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="<?= base_url()?>master/supplier">Supplier <span class="label label-success">done</span></a></li>
-                        <li><a href="<?= base_url()?>master/company">Company <span class="label label-success">done</span></a></li>
-                        <li><a href="<?= base_url()?>master/employee">Employee <span class="label label-success">done</span></a></li>
+                        <li><a href="<?= base_url()?>master/supplier">Supplier</a></li>
+                        <li><a href="<?= base_url()?>master/company">Company</a></li>
+                        <li><a href="<?= base_url()?>master/employee">Employee</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="<?= base_url()?>master/location">Location <span class="label label-success">done</span></a></li>
-                        <li><a href="<?= base_url()?>master/fsub-location">1st Sub-location <span class="label label-success">done</span></a></li>
-                        <li><a href="<?= base_url()?>master/ssub-location">2nd Sub-location <span class="label label-success">done</span></a></li>
+                        <li><a href="<?= base_url()?>master/location">Location</a></li>
+                        <li><a href="<?= base_url()?>master/fsub-location">1st Sub-location</a></li>
+                        <li><a href="<?= base_url()?>master/ssub-location">2nd Sub-location</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="<?= base_url()?>master/item-type">Item type <span class="label label-success">done</span></a></li>
-                        <li><a href="<?= base_url()?>master/brand">Brand <span class="label label-success">done</span></a></li>
-                        <li><a href="<?= base_url()?>master/model">Model <span class="label label-success">done</span></a></li>
-                        <li><a href="<?= base_url()?>master/mutation-status">Mutation Status <span class="label label-success">done</span></a></li>
+                        <li><a href="<?= base_url()?>master/item-type">Item type</a></li>
+                        <li><a href="<?= base_url()?>master/brand">Brand</a></li>
+                        <li><a href="<?= base_url()?>master/model">Model</a></li>
+                        <li><a href="<?= base_url()?>master/mutation-status">Mutation Status</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="<?= base_url()?>master/os">Operating System <span class="label label-success">done</span></a></li>
+                        <li><a href="<?= base_url()?>master/os">Operating System</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="<?= base_url()?>master/user">User <span class="label label-success">done</span></a></li>
+                        <li><a href="<?= base_url()?>master/user">User</a></li>
                     </ul>
                 </li>
                 <?php endif; ?>
 
                 <!-- The ones below can be accessed by any users as long as they're logged in-->
-                <li><a href="<?= base_url().'item'?>">Item <span class="label label-success">done</span></a></li>
-                <li><a href="<?= base_url().'assembled-item'?>">Assembled Item <span class="label label-warning">70%</span></a></li>
-                <li><a href="<?= base_url().'mutation-history'?>">Mutation History <span class="label label-success">done</span></a></li>
-                <li><a href="<?= base_url().'company'?>">Company <span class="label label-success">done</span></a></li>
-                <li><a href="<?= base_url().'employee'?>">Employee <span class="label label-success">done</span></a></li>
+                <li><a href="<?= base_url().'item'?>">Item</a></li>
+                <li><a href="<?= base_url().'assembled-item'?>">Assembled Item</a></li>
+                <li><a href="<?= base_url().'mutation-history'?>">Mutation History</a></li>
+                <li><a href="<?= base_url().'company'?>">Company</a></li>
+                <li><a href="<?= base_url().'employee'?>">Employee</a></li>
                 <?php else: ?>
                 <!-- If not admin, and not logged in, then only show Home, Help, About, etc. -->
                 <li><a href="<?= base_url() ?>">Home</a></li>

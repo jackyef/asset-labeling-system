@@ -15,6 +15,11 @@
     <div class="container">
         <div class="pull-left">
             &copy; <?= date('Y') ?> jackyef. All rights reserved. <br/>
+            <a href="<?= base_url()?>">Home</a>
+            -
+            <a href="<?= base_url().'help'?>">Help</a>
+            -
+            <a href="<?= base_url().'about'?>">About</a>
         </div>
         <div class="pull-right">
             <a href="https://github.com/jackyef/asset-labeling-system" target="_blank">
