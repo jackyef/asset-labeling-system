@@ -34,13 +34,13 @@
         foreach($records as $employee){
             echo '<tr>';
             echo '<td>'.$employee->id.'</td>';
-            echo '<td><a href="'.base_url().'employee/detail/'.$employee->id.'">'.$employee->name.'</a></td>';
-            echo '<td><a href="'.base_url().'company/detail/'.$employee->company_id.'">'.$employee->company_name.'</a></td>';
+            echo '<td><a href="'.base_url().'employee/detail/'.$employee->id.'">'.html_escape($employee->name).'</a></td>';
+            echo '<td><a href="'.base_url().'company/detail/'.$employee->company_id.'">'.html_escape($employee->company_name).'</a></td>';
             echo '<td>'.(($employee->is_working == 1) ? 'Yes' : 'No') .'</td>';
             echo '<td>'.
-                (($employee->location_id != 0) ? '<span class="fa fa-map-marker"></span> '.$locations[$employee->location_id]->name : '').
-                (($employee->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.$first_sub_locations[$employee->first_sub_location_id]->name : '').
-                (($employee->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.$second_sub_locations[$employee->second_sub_location_id]->name : '').
+                (($employee->location_id != 0) ? '<span class="fa fa-map-marker"></span> '.html_escape($locations[$employee->location_id]->name) : '').
+                (($employee->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$employee->first_sub_location_id]->name) : '').
+                (($employee->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$employee->second_sub_location_id]->name) : '').
                 '</td>';
             echo '<td> 
                         <a href="'. base_url(). 'master/employee/edit/'.$employee->id.'">

@@ -32,7 +32,7 @@
         foreach($records as $user){
             echo '<tr>';
             echo '<td>'.$user->id.'</td>';
-            echo '<td>'.$user->username.'</td>';
+            echo '<td>'.html_escape($user->username).'</td>';
             echo '<td>'. (($user->is_admin == 1) ? 'Yes' : 'No') . '</td>';
             echo '<td> 
                         <a href="'. base_url(). 'master/user/edit/'.$user->id.'">

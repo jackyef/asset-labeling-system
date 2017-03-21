@@ -57,8 +57,8 @@
                 <select class="form-control selectpicker" name="model_id" id="model_id" data-live-search="true">
                     <?php foreach($models as $model){ ?>
                         <option value="<?= $model->id?>">
-                            <?= $model->item_type_name.' / '.$model->brand_name. ' / '. $model->name ?>
-                            <?= (($model->capacity_size) ? '('.$model->capacity_size.' '.$model->units.')' : '') ?>
+                            <?= html_escape($model->item_type_name.' / '.$model->brand_name. ' / '. $model->name) ?>
+                            <?= (($model->capacity_size) ? html_escape('('.$model->capacity_size.' '.$model->units.')') : '') ?>
                         </option>
                     <?php } ?>
                 </select>
@@ -70,7 +70,7 @@
                 <select class="form-control selectpicker" name="supplier_id" id="supplier_id" data-live-search="true">
                     <?php foreach($suppliers as $supplier){ ?>
                         <option value="<?= $supplier->id?>">
-                            <?= $supplier->name ?>
+                            <?= html_escape($supplier->name) ?>
                         </option>
                     <?php } ?>
                 </select>
@@ -82,7 +82,7 @@
                 <select class="form-control selectpicker" name="company_id" id="company_id" data-live-search="true">
                     <?php foreach($companies as $company){ ?>
                         <option value="<?= $company->id?>">
-                            <?= $company->name ?>
+                            <?= html_escape($company->name) ?>
                         </option>
                     <?php } ?>
                 </select>
@@ -95,7 +95,7 @@
                     <option value="0">N/A</option>
                     <?php foreach($operating_systems as $operating_system){ ?>
                         <option value="<?= $operating_system->id?>">
-                            <?= $operating_system->name ?>
+                            <?= html_escape($operating_system->name) ?>
                         </option>
                     <?php } ?>
                 </select>
@@ -108,8 +108,8 @@
                 <select class="form-control selectpicker" name="employee_id" id="employee_id" data-live-search="true">
                     <?php foreach($employees as $employee){ ?>
                         <option value="<?= $employee->id?>">
-                            <?= $employee->name ?>
-                            (<?= $employee->company_name ?>)
+                            <?= html_escape($employee->name) ?>
+                            (<?= html_escape($employee->company_name) ?>)
                         </option>
                     <?php } ?>
                 </select>

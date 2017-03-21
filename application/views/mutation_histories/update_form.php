@@ -37,20 +37,20 @@
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Item Type</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->item_type_name ?>
+                                    <?= html_escape($record->item_type_name) ?>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Brand</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->brand_name ?>
+                                    <?= html_escape($record->brand_name) ?>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <div class="col-sm-4"><strong><?= ($assembled == 1) ? 'Product Name' : 'Model' ?></strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->model_name ?>
+                                    <?= html_escape($record->model_name) ?>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -62,7 +62,7 @@
                                         <?php if ($record->model_capacity_size == ''): ?>
                                             N/A
                                         <?php else: ?>
-                                            <?= $record->model_capacity_size.' '.$record->model_units ?>
+                                            <?= html_escape($record->model_capacity_size.' '.$record->model_units) ?>
                                         <?php endif; ?>
                                     <?php endif; ?>
 
@@ -74,7 +74,7 @@
                                     <?php if ($record->operating_system_id == 0): ?>
                                         N/A
                                     <?php else: ?>
-                                        <?= $operating_systems[$record->operating_system_id]->name ?>
+                                        <?= html_escape($operating_systems[$record->operating_system_id]->name) ?>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -117,17 +117,17 @@
                                         <?php foreach($employees as $employee){ ?>
                                             <option value="<?= $employee->id?>"
                                                 <?= $record->prev_employee_id == $employee->id ? 'selected' : ''?>>
-                                                <?= $employee->name ?>
-                                                (<?= $companies[$employee->company_id]->name?>)
+                                                <?= html_escape($employee->name) ?>
+                                                (<?= html_escape($companies[$employee->company_id]->name) ?>)
                                             </option>
                                         <?php } ?>
                                     <?php endif; ?>
                                 </select>
                                 <div class="col-sm-12">
                                     <?php if($record->mutation_status_id != 0): ?>
-                                        <?= (($employees[$record->prev_employee_id]->location_id != 0) ? '<span class="fa fa-map-marker"></span> '.$locations[$employees[$record->prev_employee_id]->location_id]->name : '') ?>
-                                        <?= (($employees[$record->prev_employee_id]->first_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.$first_sub_locations[$employees[$record->prev_employee_id]->first_sub_location_id]->name : '') ?>
-                                        <?= (($employees[$record->prev_employee_id]->second_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.$second_sub_locations[$employees[$record->prev_employee_id]->second_sub_location_id]->name : '') ?>
+                                        <?= (($employees[$record->prev_employee_id]->location_id != 0) ? '<span class="fa fa-map-marker"></span> '.html_escape($locations[$employees[$record->prev_employee_id]->location_id]->name) : '') ?>
+                                        <?= (($employees[$record->prev_employee_id]->first_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$employees[$record->prev_employee_id]->first_sub_location_id]->name) : '') ?>
+                                        <?= (($employees[$record->prev_employee_id]->second_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$employees[$record->prev_employee_id]->second_sub_location_id]->name) : '') ?>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -141,15 +141,15 @@
                                     <?php foreach($employees as $employee){ ?>
                                         <option value="<?= $employee->id?>"
                                             <?= $record->employee_id == $employee->id ? 'selected' : ''?>>
-                                            <?= $employee->name ?>
-                                            (<?= $companies[$employee->company_id]->name?>)
+                                            <?= html_escape($employee->name) ?>
+                                            (<?= html_escape($companies[$employee->company_id]->name) ?>)
                                         </option>
                                     <?php } ?>
                                 </select>
                                 <div class="col-sm-12">
-                                    <?= (($employees[$record->employee_id]->location_id != 0) ? '<span class="fa fa-map-marker"></span> '.$locations[$employees[$record->employee_id]->location_id]->name : '') ?>
-                                    <?= (($employees[$record->employee_id]->first_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.$first_sub_locations[$employees[$record->employee_id]->first_sub_location_id]->name : '') ?>
-                                    <?= (($employees[$record->employee_id]->second_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.$second_sub_locations[$employees[$record->employee_id]->second_sub_location_id]->name : '') ?>
+                                    <?= (($employees[$record->employee_id]->location_id != 0) ? '<span class="fa fa-map-marker"></span> '.html_escape($locations[$employees[$record->employee_id]->location_id]->name) : '') ?>
+                                    <?= (($employees[$record->employee_id]->first_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$employees[$record->employee_id]->first_sub_location_id]->name) : '') ?>
+                                    <?= (($employees[$record->employee_id]->second_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$employees[$record->employee_id]->second_sub_location_id]->name) : '') ?>
                                 </div>
                             </div>
                         </div>
@@ -161,7 +161,7 @@
                                     <?php foreach($mutation_statuses as $ms){ ?>
                                         <option value="<?= $ms->id?>"
                                         <?= $record->mutation_status_id == $ms->id ? 'selected' : ''?>>
-                                            <?= $ms->name ?>
+                                            <?= html_escape($ms->name) ?>
                                         </option>
                                     <?php } ?>
                                 </select>
@@ -170,7 +170,7 @@
                         <div class="form-group">
                             <label class="col-sm-12" for="note">Note:</label>
                             <div class="col-sm-12">
-                                <textarea class="form-control" rows="4" id="note" name="note" placeholder="Ex: Sesuai dengan Surat no. XX, etc"><?= $record->note ?></textarea>
+                                <textarea class="form-control" rows="4" id="note" name="note" placeholder="Ex: Sesuai dengan Surat no. XX, etc"><?= (html_escape($record->note)) ?></textarea>
                             </div>
                         </div>
 

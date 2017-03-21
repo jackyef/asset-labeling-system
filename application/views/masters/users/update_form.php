@@ -19,9 +19,9 @@
                 <input type="text" class="form-control" id="username" name="username" placeholder="Type username here"
                     value=
                     <?php if(isset($username)): ?>
-                        <?= '"'.$username.'"' ?>"
+                        <?= '"'.html_escape($username).'"' ?>"
                     <?php else: ?>
-                        <?= '"'.$record->username.'"' ?>
+                        <?= '"'.html_escape($record->username).'"' ?>
                     <?php endif; ?>
                        required>
             </div>

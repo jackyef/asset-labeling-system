@@ -32,20 +32,20 @@
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Item Type</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->item_type_name ?>
+                                    <?= html_escape($record->item_type_name) ?>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Brand</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->brand_name ?>
+                                    <?= html_escape($record->brand_name) ?>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Model</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->model_name ?>
+                                    <?= html_escape($record->model_name) ?>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -54,7 +54,7 @@
                                     <?php if ($record->model_capacity_size == ''): ?>
                                         N/A
                                     <?php else: ?>
-                                        <?= $record->model_capacity_size.' '.$record->model_units ?>
+                                        <?= html_escape($record->model_capacity_size.' '.$record->model_units) ?>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -64,7 +64,7 @@
                                     <?php if ($record->operating_system_id == 0): ?>
                                         N/A
                                     <?php else: ?>
-                                        <?= $operating_systems[$record->operating_system_id]->name ?>
+                                        <?= html_escape($operating_systems[$record->operating_system_id]->name) ?>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -84,7 +84,7 @@
                                 <div class="col-sm-4"><strong>Name</strong></div>
                                 <div class="col-sm-8">
                                     <a href="<?= base_url().'employee/detail/'.$record->employee_id ?>">
-                                        <?= $record->employee_name ?>
+                                        <?= html_escape($record->employee_name) ?>
                                     </a>
                                 </div>
                             </div>
@@ -93,7 +93,7 @@
                                 <div class="col-sm-8">
                                     <span class="fa fa-building"></span>
                                     <a href="<?= base_url().'company/detail/'.$record->employee_company_id ?>">
-                                        <?= $companies[$record->employee_company_id]->name ?>
+                                        <?= html_escape($companies[$record->employee_company_id]->name) ?>
                                     </a>
                                 </div>
                             </div>
@@ -119,9 +119,9 @@
                                 <div class="col-sm-8">
                                     <span class="fa fa-map-marker"></span>
                                     <?php echo
-                                        (($employees[$record->employee_id]->location_id != 0) ? $locations[$employees[$record->employee_id]->location_id]->name : '').
-                                        (($employees[$record->employee_id]->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.$first_sub_locations[$employees[$record->employee_id]->first_sub_location_id]->name : '').
-                                        (($employees[$record->employee_id]->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.$second_sub_locations[$employees[$record->employee_id]->second_sub_location_id]->name : '')
+                                        (($employees[$record->employee_id]->location_id != 0) ? html_escape($locations[$employees[$record->employee_id]->location_id]->name) : '').
+                                        (($employees[$record->employee_id]->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$employees[$record->employee_id]->first_sub_location_id]->name) : '').
+                                        (($employees[$record->employee_id]->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$employees[$record->employee_id]->second_sub_location_id]->name) : '')
                                     ?>
 
                                 </div>
@@ -157,8 +157,8 @@
                                 <select class="form-control selectpicker" name="employee_id" id="employee_id" data-live-search="true">
                                     <?php foreach($employees as $employee){ ?>
                                         <option value="<?= $employee->id?>">
-                                            <?= $employee->name ?>
-                                            (<?= $employee->company_name ?>)
+                                            <?= html_escape($employee->name) ?>
+                                            (<?= html_escape($employee->company_name) ?>)
                                         </option>
                                     <?php } ?>
                                 </select>
@@ -170,7 +170,7 @@
                                 <select class="form-control selectpicker" name="mutation_status_id" id="mutation_status_id" data-live-search="true">
                                     <?php foreach($mutation_statuses as $ms){ ?>
                                         <option value="<?= $ms->id?>">
-                                            <?= $ms->name ?>
+                                            <?= html_escape($ms->name) ?>
                                         </option>
                                     <?php } ?>
                                 </select>

@@ -17,7 +17,7 @@
             <label class="control-label col-sm-2" for="name">Name:</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" id="name" name="name" placeholder="Ex: CV. Disney Komp, Flazz Comp, etc"
-                       value="<?= $record->name ?>" required>
+                       value="<?= html_escape($record->name) ?>" required>
             </div>
         </div>
         <div class="form-group">

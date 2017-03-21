@@ -31,7 +31,7 @@
         foreach($records as $operating_system){
             echo '<tr>';
             echo '<td>'.$operating_system->id.'</td>';
-            echo '<td>'.$operating_system->name.'</td>';
+            echo '<td>'.html_escape($operating_system->name).'</td>';
             echo '<td> 
                         <a href="'. base_url(). 'master/os/edit/'.$operating_system->id.'">
                         <button class="btn btn-xs btn-info"><span class="fa fa-edit"></span> Edit</button>

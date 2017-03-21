@@ -60,8 +60,8 @@
                     <?php foreach($models as $model){ ?>
                         <option value="<?= $model->id?>"
                             <?= (($model->id == $record->model_id) ? 'selected' : '') ?> >
-                            <?= $model->item_type_name.' / '.$model->brand_name. ' / '. $model->name ?>
-                            <?= (($model->capacity_size) ? '('.$model->capacity_size.' '.$model->units.')' : '') ?>
+                            <?= html_escape($model->item_type_name.' / '.$model->brand_name. ' / '. $model->name) ?>
+                            <?= (($model->capacity_size) ? html_escape('('.$model->capacity_size.' '.$model->units.')') : '') ?>
                         </option>
                     <?php } ?>
                 </select>
@@ -81,7 +81,7 @@
                     <?php foreach($suppliers as $supplier){ ?>
                         <option value="<?= $supplier->id?>"
                             <?= (($supplier->id == $record->supplier_id) ? 'selected' : '') ?> >
-                            <?= $supplier->name ?>
+                            <?= html_escape($supplier->name) ?>
                         </option>
                     <?php } ?>
                 </select>
@@ -94,7 +94,7 @@
                     <?php foreach($companies as $company){ ?>
                         <option value="<?= $company->id?>"
                             <?= (($company->id == $record->company_id) ? 'selected' : '') ?> >
-                            <?= $company->name ?>
+                            <?= html_escape($company->name) ?>
                         </option>
                     <?php } ?>
                 </select>
@@ -108,7 +108,7 @@
                     <?php foreach($operating_systems as $operating_system){ ?>
                         <option value="<?= $operating_system->id?>"
                             <?= (($operating_system->id == $record->operating_system_id) ? 'selected' : '') ?> >
-                            <?= $operating_system->name ?>
+                            <?= html_escape($operating_system->name) ?>
                         </option>
                     <?php } ?>
                 </select>
@@ -123,8 +123,8 @@
                     <?php foreach($employees as $employee){ ?>
                         <option value="<?= $employee->id?>"
                             <?= (($employee->id == $record->employee_id) ? 'selected' : '') ?> >
-                            <?= $employee->name ?>
-                            (<?= $employee->company_name ?>)
+                            <?= html_escape($employee->name) ?>
+                            (<?= html_escape($employee->company_name) ?>)
                         </option>
                     <?php } ?>
                 </select>

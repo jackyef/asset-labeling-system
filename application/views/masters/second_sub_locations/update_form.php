@@ -17,7 +17,7 @@
             <label class="control-label col-sm-2" for="name">Name:</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" id="name" name="name" placeholder="Ex: Section A, Section Z, IT Dept., etc"
-                       value="<?= $record->name ?>"required>
+                       value="<?= html_escape($record->name) ?>"required>
             </div>
         </div>
         <div class="form-group">
@@ -26,7 +26,7 @@
                 <select class="form-control selectpicker" name="first_sub_location_id" id="first_sub_location_id" data-live-search="true">
                     <?php foreach($first_sub_locations as $first_sub_location){ ?>
                         <option value="<?= $first_sub_location->id?>"
-                        <?= $first_sub_location->id == $record->first_sub_location_id ? 'selected' : '' ?>><?= $first_sub_location->location_name.' / '.$first_sub_location->name ?></option>
+                        <?= $first_sub_location->id == $record->first_sub_location_id ? 'selected' : '' ?>><?= html_escape($first_sub_location->location_name.' / '.$first_sub_location->name) ?></option>
                     <?php } ?>
                 </select>
             </div>

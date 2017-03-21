@@ -17,7 +17,7 @@
             <label class="control-label col-sm-2" for="name">Name:</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" id="name" name="name" placeholder="Ex: John Doe, Budiman, Cristiano Ronaldo, etc"
-                       value="<?= $record->name ?>" required>
+                       value="<?= html_escape($record->name) ?>" required>
             </div>
         </div>
 
@@ -29,7 +29,7 @@
                     <?php foreach($companies as $company){ ?>
                         <option value="<?= $company->id?>"
                         <?= (($record->company_id == $company->id) ? 'selected' : '') ?>>
-                            <?= $company->name ?>
+                            <?= html_escape($company->name) ?>
                         </option>
                     <?php } ?>
                 </select>
@@ -59,21 +59,21 @@
                     <?php foreach($locations as $location){ ?>
                         <option value="<?= $location->id.',0,0' ?>"
                         <?= (($record->location_id.','.$record->first_sub_location_id.','.$record->second_sub_location_id == $location->id.',0,0') ? 'selected' : '') ?>>
-                            <?= $location->name ?>
+                            <?= html_escape($location->name) ?>
                         </option>
                     <?php } ?>
 
                     <?php foreach($first_sub_locations as $first_sub_location){ ?>
                         <option value="<?= $first_sub_location->location_id.','.$first_sub_location->id.',0' ?>"
                         <?= (($record->location_id.','.$record->first_sub_location_id.','.$record->second_sub_location_id == $first_sub_location->location_id.','.$first_sub_location->id.',0') ? 'selected' : '') ?>>
-                            <?= (($first_sub_location->location_id != 0) ? $locations[$first_sub_location->location_id]->name : '') ?>/<?= $first_sub_location->name ?>
+                            <?= (($first_sub_location->location_id != 0) ? html_escape($locations[$first_sub_location->location_id]->name) : '') ?>/<?= html_escape($first_sub_location->name) ?>
                         </option>
                     <?php } ?>
 
                     <?php foreach($second_sub_locations as $second_sub_location){ ?>
                         <option value="<?= $first_sub_locations[$second_sub_location->first_sub_location_id]->location_id.','.$second_sub_location->first_sub_location_id.','.$second_sub_location->id ?>"
                         <?= (($record->location_id.','.$record->first_sub_location_id.','.$record->second_sub_location_id == $first_sub_locations[$second_sub_location->first_sub_location_id]->location_id.','.$second_sub_location->first_sub_location_id.','.$second_sub_location->id) ? 'selected' : '') ?>>
-                            <?= (($first_sub_locations[$second_sub_location->first_sub_location_id]->location_id != 0) ? $locations[$first_sub_locations[$second_sub_location->first_sub_location_id]->location_id]->name : '') ?>/<?= ($second_sub_location->first_sub_location_id != 0) ? $first_sub_locations[$second_sub_location->first_sub_location_id]->name : ''?>/<?= $second_sub_location->name ?>
+                            <?= (($first_sub_locations[$second_sub_location->first_sub_location_id]->location_id != 0) ? html_escape($locations[$first_sub_locations[$second_sub_location->first_sub_location_id]->location_id]->name) : '') ?>/<?= ($second_sub_location->first_sub_location_id != 0) ? html_escape($first_sub_locations[$second_sub_location->first_sub_location_id]->name) : ''?>/<?= html_escape($second_sub_location->name) ?>
                         </option>
                     <?php } ?>
                 </select>

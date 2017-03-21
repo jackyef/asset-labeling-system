@@ -32,8 +32,8 @@
         foreach($records as $brand){
             echo '<tr>';
             echo '<td>'.$brand->id.'</td>';
-            echo '<td>'.$brand->name.'</td>';
-            echo '<td>'.$brand->item_type_name.'</td>';
+            echo '<td>'.html_escape($brand->name).'</td>';
+            echo '<td>'.html_escape($brand->item_type_name).'</td>';
             echo '<td> 
                         <a href="'. base_url(). 'master/brand/edit/'.$brand->id.'">
                         <button class="btn btn-xs btn-info"><span class="fa fa-edit"></span> Edit</button>

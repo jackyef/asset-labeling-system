@@ -24,7 +24,7 @@
             <div class="col-sm-10">
                 <select class="form-control selectpicker" name="location_id" id="location_id" data-live-search="true">
                     <?php foreach($locations as $location){ ?>
-                        <option value="<?= $location->id?>"><?= $location->name ?></option>
+                        <option value="<?= $location->id?>"><?= html_escape($location->name) ?></option>
                     <?php } ?>
                 </select>
             </div>

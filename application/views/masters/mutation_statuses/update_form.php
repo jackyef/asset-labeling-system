@@ -16,7 +16,8 @@
         <div class="form-group">
             <label class="control-label col-sm-2" for="name">Name:</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" id="name" name="name" placeholder="Ex: On Delivery, Received, etc" value="<?= $record->name ?>" required>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Ex: On Delivery, Received, etc"
+                       value="<?= html_escape($record->name) ?>" required>
             </div>
         </div>
         <div class="form-group">

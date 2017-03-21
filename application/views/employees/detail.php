@@ -20,7 +20,7 @@
         <div class="row">
             <div class="col-sm-12">
                 <h3>Employee:
-                    <?= $record->name ?>
+                    <?= html_escape($record->name) ?>
                 </h3>
                 <div class="col-md-5">
                     <div class="panel panel-primary" style="border-color: #229955;">
@@ -31,7 +31,7 @@
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Name</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->name ?>
+                                    <?= html_escape($record->name) ?>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -39,7 +39,7 @@
                                 <div class="col-sm-8">
                                     <span class="fa fa-building"></span>
                                     <a href="<?= base_url().'company/detail/'.$record->company_id ?>">
-                                        <?= $companies[$record->company_id]->name ?>
+                                        <?= html_escape($companies[$record->company_id]->name) ?>
                                     </a>
                                 </div>
                             </div>
@@ -62,9 +62,9 @@
                                 <div class="col-sm-8">
                                     <span class="fa fa-map-marker"></span>
                                     <?php echo
-                                        (($record->location_id != 0) ? $locations[$record->location_id]->name : '').
-                                        (($record->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.$first_sub_locations[$record->first_sub_location_id]->name : '').
-                                        (($record->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.$second_sub_locations[$record->second_sub_location_id]->name : '')
+                                        (($record->location_id != 0) ? html_escape($locations[$record->location_id]->name) : '').
+                                        (($record->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$record->first_sub_location_id]->name) : '').
+                                        (($record->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$record->second_sub_location_id]->name) : '')
                                     ?>
 
                                 </div>
@@ -115,23 +115,23 @@
                         str_pad($item->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($item->id, 5, '0', STR_PAD_LEFT).
                         '</a>'.
                         '</td>';
-                    echo '<td>'.$item->item_type_name.', '.$item->brand_name.'</td>';
-                    echo '<td>'.$item->model_name.'</td>';
+                    echo '<td>'.html_escape($item->item_type_name.', '.$item->brand_name).'</td>';
+                    echo '<td>'.html_escape($item->model_name).'</td>';
                     echo '<td>'.
                         '<i class="fa fa-calendar"></i> '.
                         date("d M Y", strtotime($item->date_of_purchase)).
                         '</td>';
                     echo '<td><a href="'.base_url().'company/detail/'.$item->company_id.'">'.
-                        $companies[$item->company_id]->name.
+                        html_escape($companies[$item->company_id]->name).
                         '</a></td>';
                     echo '<td>'.(($item->is_used == 1) ? 'Yes' : 'No' ).'</td>';
-                    echo '<td>'.$item->employee_name.
+                    echo '<td>'.html_escape($item->employee_name).
                         '<br/> <i class="fa fa-building"></i> '.
-                        $companies[$item->employee_company_id]->name.
+                        html_escape($companies[$item->employee_company_id]->name).
                         '<br/> <i class="fa fa-map-marker"></i> '.
-                        (($item->location_id != 0) ? $locations[$item->location_id]->name : '').
-                        (($item->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.$first_sub_locations[$item->first_sub_location_id]->name : '').
-                        (($item->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.$second_sub_locations[$item->second_sub_location_id]->name : '').
+                        (($item->location_id != 0) ? html_escape($locations[$item->location_id]->name) : '').
+                        (($item->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$item->first_sub_location_id]->name) : '').
+                        (($item->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$item->second_sub_location_id]->name) : '').
                         '</td>';
                     echo '<td> 
                     <a href="'. base_url(). 'item/edit/'.$item->id.'">

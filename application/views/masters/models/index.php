@@ -34,10 +34,10 @@
         foreach($records as $model){
             echo '<tr>';
             echo '<td>'.$model->id.'</td>';
-            echo '<td>'.$model->item_type_name.'</td>';
-            echo '<td>'.$model->brand_name.'</td>';
-            echo '<td>'.$model->name.'</td>';
-            echo '<td>'.$model->capacity_size.' '.$model->units.'</td>';
+            echo '<td>'.html_escape($model->item_type_name).'</td>';
+            echo '<td>'.html_escape($model->brand_name).'</td>';
+            echo '<td>'.html_escape($model->name).'</td>';
+            echo '<td>'.html_escape($model->capacity_size.' '.$model->units).'</td>';
             echo '<td> 
                         <a href="'. base_url(). 'master/model/edit/'.$model->id.'">
                         <button class="btn btn-xs btn-info"><span class="fa fa-edit"></span> Edit</button>
