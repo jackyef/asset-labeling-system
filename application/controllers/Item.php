@@ -710,4 +710,41 @@ class Item extends CI_Controller
         }
 
     }
+
+    public function item_delete(){
+        $data = $this->get_session_data();
+        // this should only be accessed by admins,
+        // check for admin privileges
+        $id = $this->uri->segment('3');
+        if($data['session_is_admin'] == 0) {
+            //not admin!
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span> You don\'t have access to do that!');
+            $this->session->set_flashdata('site_wide_msg_type', 'danger');
+            redirect(base_url() . 'item/detail/'.$id);
+        }
+
+        // we reached here, which means this user is indeed admin
+        // so we delete the item with the id, and also the mutation records
+
+        // first, delete the item
+        $this->db->trans_start(); # Starting Transaction
+        $this->load->model('Item_model');
+        $this->Item_model->delete($id);
+
+        // then delete the mutation records
+        $this->load->model('Mutation_model');
+        $this->Mutation_model->delete_where_item_id($id);
+        if ($this->db->trans_complete()) {
+            //Transaction succeeded! Both query is successfully executed
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> Successfully deleted item and its mutation records!');
+            $this->session->set_flashdata('site_wide_msg_type', 'success');
+            redirect(base_url() . 'item');
+        } else {
+            //show errors
+            $db_error = $this->db->error();
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span>An error occured! '. $db_error['code']);
+            $this->session->set_flashdata('site_wide_msg_type', 'danger');
+            redirect(base_url() . 'item/detail/'.$id);
+        }
+    }
 }

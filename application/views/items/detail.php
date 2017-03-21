@@ -215,6 +215,26 @@
                             </div>
                         </div>
                     </div>
+
+                    <?php if ($session_is_admin == 1): ?>
+                    <div class="panel panel-danger" >
+                        <div class="panel-heading"><span class="fa fa-info-circle"></span> Admin's area</div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <div class="col-sm-12">
+                                    <a href="<?= base_url().'item/delete/'.$record->id ?>">
+                                        <button class="btn btn-danger form-control"
+                                            onclick="return confirm('CAUTION! This WILL delete ALL mutation records of this item as well! ' +
+                                             'This process is irreversible! ' +
+                                             'Click \'Cancel\' if you don\'t want to do this!')">
+                                            <span class="fa fa-trash"></span>
+                                            Delete this item
+                                        </button></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
             </div>
         </div>
     </div>

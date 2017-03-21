@@ -295,11 +295,14 @@ class Assembled_item extends CI_Controller
             ];
             $this->Item_model->insert($to_insert);
 
+            $product_name = $this->input->post('product_name', TRUE);
+            $product_name = html_escape($product_name);
+            $product_name = $this->db->escape($product_name);
             // now, we insert the mutation record for the item we just inserted
             $to_insert2 = [
                 'item_id' => $id_to_insert,
                 'employee_id' => $this->input->post('employee_id', TRUE),
-                'note' => 'First item assignment',
+                'note' => 'First item assignment. Part of assembled item ['.$product_name.']. id: '.$id,
                 'mutation_date' => $date_of_purchase
             ];
             $this->Mutation_model->insert($to_insert2);
@@ -1062,5 +1065,60 @@ class Assembled_item extends CI_Controller
             redirect(base_url() . 'assembled-item/mutate/'.$id);
         }
 
+    }
+
+    public function assembled_item_delete(){
+        $data = $this->get_session_data();
+        // this should only be accessed by admins,
+        // check for admin privileges
+        $id = $this->uri->segment('3');
+        if($data['session_is_admin'] == 0) {
+            //not admin!
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span> You don\'t have access to do that!');
+            $this->session->set_flashdata('site_wide_msg_type', 'danger');
+            redirect(base_url() . 'assembled-item/detail/'.$id);
+        }
+
+        // we reached here, which means this user is indeed admin
+        // so we delete the assembled_item with the id, and also the mutation records
+
+        // first, delete the assembled_item
+        $this->db->trans_start(); # Starting Transaction
+        $this->load->model('Assembled_item_model');
+        $this->Assembled_item_model->delete($id);
+
+        // then delete the mutation records of this assembled_item_id
+        $this->load->model('Mutation_model');
+        $this->Mutation_model->delete_where_item_id($id);
+
+        // next, we're going to delete every item that is inside this assembled_item
+        // first get the items
+        $this->db->reset_query();
+        $this->db->select('i.*');
+        $query = $this->db->get_where('items i', array('i.assembled_item_id' => $id));
+        $items = $query->result();
+
+        $this->load->model('Item_model');
+        foreach($items as $item){
+            // loop for each item in the assembled item
+            // delete the item
+            $this->Item_model->delete($item->id);
+
+            // then the mutation records of the item
+            $this->Mutation_model->delete_where_item_id($item->id);
+        }
+
+        if ($this->db->trans_complete()) {
+            //Transaction succeeded! Both query is successfully executed
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> Successfully deleted assembled item and the items inside of it, along with their mutation records!');
+            $this->session->set_flashdata('site_wide_msg_type', 'success');
+            redirect(base_url() . 'assembled-item');
+        } else {
+            //show errors
+            $db_error = $this->db->error();
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span>An error occured! '. $db_error['code']);
+            $this->session->set_flashdata('site_wide_msg_type', 'danger');
+            redirect(base_url() . 'assembled-item/detail/'.$id);
+        }
     }
 }

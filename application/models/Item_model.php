@@ -31,6 +31,12 @@ class Item_model extends CI_Model {
         }
     }
 
+    public function delete_where_assembled_item_id($assembled_item_id){
+        if($this->db->delete('items', 'assembled_item_id = '. $assembled_item_id)){
+            return true;
+        }
+    }
+
     public function update($data, $old_id){
         $this->db->set($data);
         $this->db->where('id', $old_id);

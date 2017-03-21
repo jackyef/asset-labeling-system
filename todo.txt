@@ -22,13 +22,14 @@ TODO:
 - modify employee items held to show assembled item as well, and only item with part_of = 0 (DONE!)
 - modify item page to show only item with part_of = 0 (DONE!)
 - modify assembled item to show all assembled items (DONE!)
-
-- add delete item (also delete all mutation history records)
+- add delete item (also delete all mutation history records) (just for admin)
   - test if assembled item still works well after its contained item is deleted
   - test if mutation history are correctly deleted
+  (DONE!)
+- add delete assembled item (delete all mutation history record, as well as all the item inside of it) (just for admin) (DONE!)
+- do a full web-app test, try to find any errors that might exist (DONE!, check one note for results)
 
-- add delete assembled item (delete all mutation history record, as well as all the item inside of it)
-- do a full web-app test, try to find any errors that might exist
+- html_escape every views that uses database stored data
 
 - create help page that tells about
   - item_type-brand-model design

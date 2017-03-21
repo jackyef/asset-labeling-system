@@ -32,20 +32,20 @@
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Item Type</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->item_type_name ?>
+                                    <?= html_escape($record->item_type_name) ?>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Brand</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->brand_name ?>
+                                    <?= html_escape($record->brand_name) ?>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Product Name</strong></div>
                                 <div class="col-sm-8">
-                                    <?= $record->product_name ?>
+                                    <?= html_escape($record->product_name) ?>
                                 </div>
                             </div>
 
@@ -55,7 +55,7 @@
                                     <?php if ($record->operating_system_id == 0): ?>
                                         N/A
                                     <?php else: ?>
-                                        <?= $operating_systems[$record->operating_system_id]->name ?>
+                                        <?= html_escape($operating_systems[$record->operating_system_id]->name) ?>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -231,6 +231,31 @@
                             </div>
                         </div>
                     </div>
+                    <?php if ($session_is_admin == 1): ?>
+                        <div class="panel panel-danger" >
+                            <div class="panel-heading"><span class="fa fa-info-circle"></span> Admin's area</div>
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <a href="<?= base_url().'assembled-item/delete/'.$record->id ?>">
+                                            <button class="btn btn-danger form-control"
+                                                    onclick="return confirm('CAUTION! This WILL delete ALL the items inside of it, along with' +
+                                                     ' all of their mutation records as well! ' +
+                                             'This process is irreversible! ' +
+                                             'Click \'Cancel\' if you don\'t want to do this!')">
+                                                <span class="fa fa-trash"></span>
+                                                Delete this item
+                                            </button></a>
+                                        <div class="alert alert-warning">
+                                            NOTE: If you only want to remove the items inside, so that you can put the items inside of another assembled item, don't use this!
+                                            <br/>
+                                            For that purpose, you can simply <strong>REMOVE</strong> (not delete) the item.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
             </div>
         </div>
     </div>
