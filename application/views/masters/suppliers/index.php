@@ -31,7 +31,7 @@
         foreach($records as $supplier){
             echo '<tr>';
             echo '<td>'.$supplier->id.'</td>';
-            echo '<td>'.$supplier->name.'</td>';
+            echo '<td>'.html_escape($supplier->name).'</td>';
             echo '<td> 
                         <a href="'. base_url(). 'master/supplier/edit/'.$supplier->id.'">
                         <button class="btn btn-xs btn-info"><span class="fa fa-edit"></span> Edit</button>

@@ -24,7 +24,7 @@
             <div class="col-sm-10">
                 <select class="form-control selectpicker" name="first_sub_location_id" id="first_sub_location_id" data-live-search="true">
                     <?php foreach($first_sub_locations as $first_sub_location){ ?>
-                        <option value="<?= $first_sub_location->id?>"><?= $first_sub_location->location_name.' / '.$first_sub_location->name ?></option>
+                        <option value="<?= $first_sub_location->id?>"><?= html_escape($first_sub_location->location_name.' / '.$first_sub_location->name) ?></option>
                     <?php } ?>
                 </select>
             </div>

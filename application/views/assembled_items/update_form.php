@@ -72,7 +72,7 @@
                         <?php foreach($brands as $brand){ ?>
                             <option value="<?= $brand->id?>"
                             <?= (($brand->id == $record->brand_id) ? 'selected' : '') ?>>
-                                <?= $brand->item_type_name.' / '.$brand->name ?>
+                                <?= html_escape($brand->item_type_name.' / '.$brand->name) ?>
                             </option>
                         <?php } ?>
                     </select>
@@ -89,7 +89,7 @@
                 <label class="control-label col-sm-2" for="model_id">Product name:</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Ex: PX-8529, Dell Workstation 19, etc"
-                           value="<?= $record->product_name?>" required>
+                           value="<?= html_escape($record->product_name)?>" required>
                 </div>
             </div>
             <div class="form-group">
@@ -99,7 +99,7 @@
                         <?php foreach($suppliers as $supplier){ ?>
                             <option value="<?= $supplier->id?>"
                                 <?= (($supplier->id == $record->supplier_id) ? 'selected' : '') ?>>
-                                <?= $supplier->name ?>
+                                <?= html_escape($supplier->name) ?>
                             </option>
                         <?php } ?>
                     </select>
@@ -112,7 +112,7 @@
                         <?php foreach($companies as $company){ ?>
                             <option value="<?= $company->id?>"
                                 <?= (($company->id == $record->company_id) ? 'selected' : '') ?>>
-                                <?= $company->name ?>
+                                <?= html_escape($company->name) ?>
                             </option>
                         <?php } ?>
                     </select>
@@ -126,7 +126,7 @@
                         <?php foreach($operating_systems as $operating_system){ ?>
                             <option value="<?= $operating_system->id?>"
                                 <?= (($operating_system->id == $record->operating_system_id) ? 'selected' : '') ?>>
-                                <?= $operating_system->name ?>
+                                <?= html_escape($operating_system->name) ?>
                             </option>
                         <?php } ?>
                     </select>
@@ -140,8 +140,8 @@
                         <?php foreach($employees as $employee){ ?>
                             <option value="<?= $employee->id?>"
                                 <?= (($employee->id == $record->employee_id) ? 'selected' : '') ?>>
-                                <?= $employee->name ?>
-                                (<?= $employee->company_name ?>)
+                                <?= html_escape($employee->name) ?>
+                                (<?= html_escape($employee->company_name) ?>)
                             </option>
                         <?php } ?>
                     </select>

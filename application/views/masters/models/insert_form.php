@@ -24,7 +24,7 @@
             <div class="col-sm-10">
                 <select class="form-control selectpicker" name="brand_id" id="brand_id" data-live-search="true">
                     <?php foreach($brands as $brand){ ?>
-                        <option value="<?= $brand->id?>"><?= $brand->item_type_name.' / '.$brand->name ?></option>
+                        <option value="<?= $brand->id?>"><?= html_escape($brand->item_type_name.' / '.$brand->name) ?></option>
                     <?php } ?>
                 </select>
             </div>
@@ -36,7 +36,7 @@
             </div>
             <label class="control-label col-sm-1" for="name">Units:</label>
             <div class="col-sm-3">
-                <input type="text" class="form-control" id="units" name="units" placeholder="TB, GB, Inch, etc (Optional)">
+                <input type="text" class="form-control" id="units" name="units" placeholder="TB, GB, Inch, GHz, etc (Optional)">
             </div>
         </div>
         <div class="form-group">

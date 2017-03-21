@@ -17,7 +17,7 @@
             <label class="control-label col-sm-2" for="name">Name:</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" id="name" name="name" placeholder="Ex: MG2570, PGX2901, Viper-DDR3, etc"
-                       value="<?= $record->name ?>" required>
+                       value="<?= html_escape($record->name) ?>" required>
             </div>
         </div>
         <div class="form-group">
@@ -26,7 +26,7 @@
                 <select class="form-control selectpicker" name="brand_id" id="brand_id" data-live-search="true">
                     <?php foreach($brands as $brand){ ?>
                         <option value="<?= $brand->id?>" <?= $brand->id == $record->brand_id ? 'selected' : '' ?>>
-                            <?= $brand->item_type_name.' / '.$brand->name ?>
+                            <?= html_escape($brand->item_type_name.' / '.$brand->name) ?>
                         </option>
                     <?php } ?>
                 </select>
@@ -36,12 +36,12 @@
             <label class="control-label col-sm-2" for="name">Capacity/Size:</label>
             <div class="col-sm-3">
                 <input type="text" class="form-control" id="capacity_size" name="capacity_size" placeholder="500, 1000, 17, etc (Optional)"
-                       value="<?= $record->capacity_size ?>"!!1>
+                       value="<?= html_escape($record->capacity_size) ?>">
             </div>
             <label class="control-label col-sm-1" for="name">Units:</label>
             <div class="col-sm-3">
-                <input type="text" class="form-control" id="units" name="units" placeholder="TB, GB, Inch, etc (Optional)"
-                       value="<?= $record->units ?>">
+                <input type="text" class="form-control" id="units" name="units" placeholder="TB, GB, Inch, GHz, etc (Optional)"
+                       value="<?= html_escape($record->units) ?>">
             </div>
         </div>
         <div class="form-group">

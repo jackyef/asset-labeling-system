@@ -33,9 +33,9 @@
         foreach($records as $second_sub_loc){
             echo '<tr>';
             echo '<td>'.$second_sub_loc->id.'</td>';
-            echo '<td>'.$second_sub_loc->name.'</td>';
-            echo '<td>'.$second_sub_loc->first_sub_location_name.'</td>';
-            echo '<td>'.$second_sub_loc->location_name.'</td>';
+            echo '<td>'.html_escape($second_sub_loc->name).'</td>';
+            echo '<td>'.html_escape($second_sub_loc->first_sub_location_name).'</td>';
+            echo '<td>'.html_escape($second_sub_loc->location_name).'</td>';
             echo '<td> 
                         <a href="'. base_url(). 'master/ssub-location/edit/'.$second_sub_loc->id.'">
                         <button class="btn btn-xs btn-info"><span class="fa fa-edit"></span> Edit</button>

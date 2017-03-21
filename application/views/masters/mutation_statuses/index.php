@@ -31,7 +31,7 @@
         foreach($records as $mutation_status){
             echo '<tr>';
             echo '<td>'.$mutation_status->id.'</td>';
-            echo '<td>'.$mutation_status->name.'</td>';
+            echo '<td>'.html_escape($mutation_status->name).'</td>';
             echo '<td> 
                         <a href="'. base_url(). 'master/mutation-status/edit/'.$mutation_status->id.'">
                         <button class="btn btn-xs btn-info"><span class="fa fa-edit"></span> Edit</button>

@@ -41,25 +41,25 @@
                 str_pad($item->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($item->id, 5, '0', STR_PAD_LEFT).
                 '</a>'.
                 '</td>';
-            echo '<td>'.$item->item_type_name.', '.$item->brand_name.'</td>';
-            echo '<td>'.$item->product_name.'</td>';
+            echo '<td>'.html_escape($item->item_type_name.', '.$item->brand_name).'</td>';
+            echo '<td>'.html_escape($item->product_name).'</td>';
             echo '<td>'.
                     '<i class="fa fa-calendar"></i> '.
                     date("d M Y", strtotime($item->date_of_purchase)).
                 '</td>';
             echo '<td><a href="'.base_url().'company/detail/'.$item->company_id.'">'.
-                $companies[$item->company_id]->name.
+                html_escape($companies[$item->company_id]->name).
                 '</a></td>';
             echo '<td>'.(($item->is_used == 1) ? 'Yes' : 'No' ).'</td>';
             echo '<td>'.
                 '<a href="'.base_url().'employee/detail/'.$item->employee_id.'">'.
-                $item->employee_name. '</a>'.
+                html_escape($item->employee_name). '</a>'.
                 '<br/> <i class="fa fa-building"></i> '.
-                $companies[$item->employee_company_id]->name.
+                html_escape($companies[$item->employee_company_id]->name).
                 '<br/> <i class="fa fa-map-marker"></i> '.
-                (($item->location_id != 0) ? $locations[$item->location_id]->name : '').
-                (($item->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.$first_sub_locations[$item->first_sub_location_id]->name : '').
-                (($item->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.$second_sub_locations[$item->second_sub_location_id]->name : '').
+                (($item->location_id != 0) ? html_escape($locations[$item->location_id]->name) : '').
+                (($item->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$item->first_sub_location_id]->name) : '').
+                (($item->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$item->second_sub_location_id]->name) : '').
                 '</td>';
             echo '<td> 
                         <a href="'. base_url(). 'assembled-item/edit/'.$item->id.'">

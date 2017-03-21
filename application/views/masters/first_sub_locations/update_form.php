@@ -26,7 +26,7 @@
                 <select class="form-control selectpicker" name="location_id" id="location_id" data-live-search="true">
                     <?php foreach($locations as $location){ ?>
                         <option value="<?= $location->id?>"
-                        <?= $location->id == $record->location_id ? 'selected' : '' ?>><?= $location->name ?></option>
+                        <?= $location->id == $record->location_id ? 'selected' : '' ?>><?= html_escape($location->name) ?></option>
                     <?php } ?>
                 </select>
             </div>

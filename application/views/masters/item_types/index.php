@@ -32,7 +32,7 @@
         foreach($records as $item_type){
             echo '<tr>';
             echo '<td>'.$item_type->id.'</td>';
-            echo '<td>'.$item_type->name.'</td>';
+            echo '<td>'.html_escape($item_type->name).'</td>';
             echo '<td>'. (($item_type->is_assembled == 1) ? 'Yes' : 'No') . '</td>';
             echo '<td> 
                         <a href="'. base_url(). 'master/item-type/edit/'.$item_type->id.'">

@@ -17,7 +17,7 @@
             <label class="control-label col-sm-2" for="name">Name:</label>
             <div class="col-sm-10">
                 <input type="text" class="form-control" id="name" name="name" placeholder="Ex: Samsung, Asus, etc"
-                       value="<?= $record->name ?>"required>
+                       value="<?= html_escape($record->name) ?>"required>
             </div>
         </div>
         <div class="form-group">
@@ -26,7 +26,7 @@
                 <select class="form-control selectpicker" name="item_type_id" id="item_type_id" data-live-search="true">
                     <?php foreach($item_types as $item_type){ ?>
                         <option value="<?= $item_type->id?>"
-                        <?= $item_type->id == $record->item_type_id ? 'selected' : '' ?>><?= $item_type->name ?></option>
+                        <?= $item_type->id == $record->item_type_id ? 'selected' : '' ?>><?= html_escape($item_type->name) ?></option>
                     <?php } ?>
                 </select>
             </div>

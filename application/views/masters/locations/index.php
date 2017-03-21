@@ -31,7 +31,7 @@
         foreach($records as $location){
             echo '<tr>';
             echo '<td>'.$location->id.'</td>';
-            echo '<td>'.$location->name.'</td>';
+            echo '<td>'.html_escape($location->name).'</td>';
             echo '<td> 
                         <a href="'. base_url(). 'master/location/edit/'.$location->id.'">
                         <button class="btn btn-xs btn-info"><span class="fa fa-edit"></span> Edit</button>
