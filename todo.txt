@@ -34,13 +34,14 @@ TODO:
   - mutation between employee concept, NOT location concept
   (DONE!)
 - ANCHORING: anchor every item_code to item detail, employee to employee detail, company to company detail (Probably done)
+- REPORTING: utilize column selector and datatable print feature (DONE! ..sort of)
+- Read barcode and redirect to item detail page (DONE!)
 
+- Generate barcode images, print on 2 columns!
+- Can select items to print
+- Print barcode (look at QZ Tray) printer honeywell PC42T
 
-- REPORTING: utilize column selector and datatable print feature
-- dashboard with statistics as admin homepage
-- Generate barcode images
-- Print barcode (look at QZ Tray)
-- Read barcode and redirect to item detail page
+- dashboard with statistics as admin homepage (not really necessary)
 ==========
 
 0. Pikirkan mengenai operating system, bagaimana seharusnya?

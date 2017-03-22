@@ -15,10 +15,11 @@
     <link rel="stylesheet" href="<?= base_url() ?>css/bootstrap-datepicker3.standalone.min.css">
 <!--    <link rel="stylesheet" href="--><?//= base_url() ?><!--css/dataTables.min.css">-->
     <link rel="stylesheet" href="<?= base_url() ?>css/dataTables.bootstrap.min.css">
-    <link rel="stylesheet" href="<?= base_url() ?>css/dataTables-ext.min.css">
+    <link rel="stylesheet" href="<?= base_url() ?>css/dataTables-ext2.min.css">
 <!--    <link rel="stylesheet" href="--><?//= base_url() ?><!--css/jquery.dataTables.css">-->
     <link rel="stylesheet" href="<?= base_url() ?>css/font-awesome.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>css/sidenav.css">
+    <link rel="stylesheet" href="<?= base_url() ?>css/print.css">
     <script src="<?= base_url() ?>js/jquery.js"></script>
     <script src="<?= base_url() ?>js/bootstrap.min.js"></script>
     <script src="<?= base_url() ?>js/bootstrap-select.js"></script>
@@ -26,7 +27,7 @@
 <!--    <script src="--><?//= base_url() ?><!--js/dataTables.min.js"></script>-->
     <script src="<?= base_url() ?>js/jquery.dataTables.min.js"></script>
     <script src="<?= base_url() ?>js/dataTables.bootstrap.min.js"></script>
-    <script src="<?= base_url() ?>js/dataTables-ext.min.js"></script>
+    <script src="<?= base_url() ?>js/dataTables-ext2.min.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -101,6 +102,7 @@
                 <li><a href="<?= base_url().'mutation-history'?>">Mutation History</a></li>
                 <li><a href="<?= base_url().'company'?>">Company</a></li>
                 <li><a href="<?= base_url().'employee'?>">Employee</a></li>
+                <li><a href="<?= base_url().'barcode'?>">Barcode</a></li>
                 <?php else: ?>
                 <!-- If not admin, and not logged in, then only show Home, Help, About, etc. -->
                 <li><a href="<?= base_url() ?>">Home</a></li>
