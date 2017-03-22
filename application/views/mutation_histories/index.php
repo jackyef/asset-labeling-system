@@ -9,13 +9,37 @@
 
 <div class="row">
     <div class="col-sm-12">
-    <div class="pull-left">
-        <ol class="breadcrumb">
-            <li><a href="<?= base_url()?>">Home</a></li>
-            <li>Mutation History</li>
-        </ol>
-    </div>
+        <div class="pull-left">
+            <ol class="breadcrumb">
+                <li><a href="<?= base_url()?>">Home</a></li>
+                <li>Mutation History</li>
+            </ol>
+        </div>
+
+        <div class="pull-right">
+            <div class="col-sm-6">
+                Filter from:
+                <div class="input-group date" data-provide="datepicker-inline ">
+                    <input type="text" class="form-control datepicker" id="date_start" name="date_start">
+                    <div class="input-group-addon">
+                        <span class="fa fa-calendar"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                to:
+                <div class="input-group date" data-provide="datepicker-inline ">
+                    <input type="text" class="form-control datepicker" id="date_end" name="date_end">
+                    <div class="input-group-addon">
+                        <span class="fa fa-calendar"></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     <div class="clearfix"></div>
+    <br/>
     <table class="table table-striped table-responsive data-table-mutation">
         <!-- add the data-table class to tell the page to paginate this table -->
         <thead>
@@ -47,7 +71,8 @@
             echo '<td>'.html_escape($mutation->model_name).'</td>';
             echo '<td>'.
                     '<i class="fa fa-calendar"></i> '.
-                    date("d M Y", strtotime($mutation->mutation_date)).
+//                    date("d M Y", strtotime($mutation->mutation_date)).
+                    date("Y-m-d", strtotime($mutation->mutation_date)).
                 '</td>';
 
             if($mutation->prev_employee_id == 0){
@@ -83,15 +108,15 @@
             echo '</td>';
 
             echo '<td>';
-            if(strlen($mutation->note) <= 50){
+//            if(strlen($mutation->note) <= 50){
                 echo html_escape($mutation->note);
-            } else {
-                // truncate the note if it is greater than 50 characters long
-                echo '<span class="first50">'.
-                    html_escape(substr($mutation->note, 0, 49)). '...'.
-                     '</span>';
-                echo '<h6><a href="'.base_url().'mutation-history/edit/'.$mutation->id.'#note">see more</a></h6>';
-            }
+//            } else {
+//                // truncate the note if it is greater than 50 characters long
+//                echo '<span class="first50">'.
+//                    html_escape(substr($mutation->note, 0, 49)). '...'.
+//                     '</span>';
+//                echo '<h6><a href="'.base_url().'mutation-history/edit/'.$mutation->id.'#note">see more</a></h6>';
+//            }
             echo '</td>';
 
             echo '<td>';
@@ -117,11 +142,152 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
+
         $('.data-table-mutation').DataTable({
-            "order": [[ 0, "desc" ]],
+            "order": [[ 4, "desc" ]],
             responsive: true,
-            colReorder: true
+            colReorder: false,
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'print',
+                    autoPrint: false,
+                    exportOptions: {
+                        columns: ':visible',
+                        pageSize: 'A4',
+                        stripHtml: false
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: ':visible',
+                        format: {
+                            body: function (data, column, row) {
+                                data = data.replace(/<br\s*\/?>/i, "\r\nof\r\n"); //replace the first linebreak with 'of'
+                                data = data.replace(/<br\s*\/?>/i, "\r\nat\r\n"); //replace the second linebreak with 'at'
+                                data = data.replace(/\s*<span class="fa fa-arrow-right"><\/span>\s*/ig, ", "); //replace right arrow icons with comma
+                                data = data.replace(/\s+/ig, " "); //multiple spaces with 1 space
+                                var html = data;
+                                var div = document.createElement("div");
+                                div.innerHTML = html;
+                                var text = div.textContent || div.innerText || "";
+                                return text;
+                            }
+                        }
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: ':visible',
+                        format: {
+                            body: function (data, column, row) {
+                                data = data.replace(/<br\s*\/?>/i, "\r\nof\r\n"); //replace the first linebreak with 'of'
+                                data = data.replace(/<br\s*\/?>/i, "\r\nat\r\n"); //replace the second linebreak with 'at'
+                                data = data.replace(/\s*<span class="fa fa-arrow-right"><\/span>\s*/ig, ", "); //replace right arrow icons with comma
+                                var html = data;
+                                var div = document.createElement("div");
+                                div.innerHTML = html;
+                                var text = div.textContent || div.innerText || "";
+                                return text;
+                            }
+                        },
+                        pageSize: 'A4'
+
+                    },
+                    sType: 'html'
+                },
+                'colvis'
+            ]
         });
+
+        // handles datepicker on pages that uses it
+        $('#date_start').datepicker({
+            format: 'DD, dd MM yyyy',
+            autoclose: true,
+            todayHighlight: true,
+            todayBtn: true,
+            disableTouchKeyboard: true
+        });
+        $('#date_end').datepicker({
+            format: 'DD, dd MM yyyy',
+            autoclose: true,
+            todayHighlight: true,
+            todayBtn: true,
+            disableTouchKeyboard: true
+        });
+
+        var startDate = $('#date_start').datepicker('getDate');
+        var endDate = $('#date_end').datepicker('getDate');
+
+        // Add event listeners to the two range filtering inputs
+        var table = $('.data-table-mutation').DataTable();
+        $('#date_start').datepicker().on('changeDate', function () {
+            table.draw();
+        });
+        $('#date_end').datepicker().on('changeDate', function () {
+            table.draw();
+        } );
+
+
+        // push new parameter for filtering purposes
+        $.fn.dataTableExt.afnFiltering.push(
+            function( oSettings, aData, iDataIndex ) {
+
+                var iFini = new Date($('#date_start').datepicker('getDate')).toLocaleString();
+                var iFfin = new Date($('#date_end').datepicker('getDate')).toLocaleString();
+                var iStartDateCol = 4;
+                var iEndDateCol = 4;
+
+                iFini = iFini.split(',');
+                iFini = iFini[0].split('/');
+                iFfin = iFfin.split(',');
+                iFfin = iFfin[0].split('/'); // now IFini and IFfin are array of month, day, year
+
+                if(iFini[0].length == 1){
+                    // pads single digit month
+                    iFini[0] = '0' + iFini[0].toString();
+                }
+                if(iFini[1].length == 1){
+                    // pads single digit date
+                    iFini[1] = '0' + iFini[1].toString();
+                }
+                if(iFfin[0].length == 1){
+                    // pads single digit month
+                    iFfin[0] = '0' + iFfin[0].toString();
+                }
+                if(iFfin[1].length == 1){
+                    // pads single digit date
+                    iFfin[1] = '0' + iFfin[1].toString();
+                }
+
+                iFini=iFini[2] +'-'+ iFini[0] +'-'+iFini[1];
+                iFfin=iFfin[2] +'-'+ iFfin[0] +'-'+iFfin[1];
+
+                var rowDate = aData[iStartDateCol].substring(1); //remove the leading space in the first index we put on the column
+
+                // 1970-01-01 means the datepickers are blank, so don't do any filtering
+                if ( iFini === "1970-01-01" && iFfin === "1970-01-01" )
+                {
+                    return true;
+                }
+                else if ( iFini <= rowDate && iFfin === "1970-01-01")
+                {
+                    return true;
+                }
+                else if ( iFfin >= rowDate && iFini === "1970-01-01")
+                {
+                    return true;
+                }
+                else if (iFini <= rowDate && iFfin >= rowDate)
+                {
+                    return true;
+                }
+                return false;
+            }
+        );
+
     });
 
 </script>

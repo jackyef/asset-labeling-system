@@ -22,8 +22,10 @@
         <h2>About</h2>
         <hr/>
         <div class="col-sm-4">
+            <center>
             <img src="https://media.licdn.com/media/AAEAAQAAAAAAAAehAAAAJDY2OTc3OWFhLWNjNTQtNGNjZS1iZTcxLTZhYmFmYjcwZTZhYQ.jpg"
                  class="img-responsive img-circle img-thumbnail" />
+            </center>
         </div>
         <div class="col-sm-8">
             <h4>Jacky Efendi</h4>
@@ -35,7 +37,7 @@
             Currently self-studying at Udacity, Coursera, Edx, and FreeCodeCamp.
             <br/>
             <br/>
-                Connect with me: <a href="https://github.com/jackyef/asset-labeling-system" target="_blank">
+                Connect with me: <a href="https://github.com/jackyef/asset-labeling-system" target="_blank"><br/>
                     <button class="btn " >
                         <span class="fa fa-github fa-2x" style="min-width: 1em"></span>
                     </button></a>

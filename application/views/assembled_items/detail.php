@@ -290,7 +290,7 @@
                     echo '<td>'.html_escape($mutation->product_name).'</td>';
                     echo '<td>'.
                         '<i class="fa fa-calendar"></i> '.
-                        date("d M Y", strtotime($mutation->mutation_date)).
+                        date("Y-m-d", strtotime($mutation->mutation_date)).
                         '</td>';
 
                     if($mutation->prev_employee_id == 0){
@@ -360,7 +360,7 @@
     <script type="text/javascript">
         $(document).ready(function(){
             $('.data-table-mutation').DataTable({
-                "order": [[ 0, "desc" ]],
+                "order": [[ 4, "desc" ]],
                 responsive: true,
                 colReorder: true
             });

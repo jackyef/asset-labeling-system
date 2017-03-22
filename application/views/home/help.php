@@ -38,7 +38,7 @@
                         Basically, assets are items that can be used repeatedly. They're not consumable and usually can be used
                         for quite a long time. Some companies also set a certain value threshold for an item to be considered
                         an asset. For example, your company might not want to bother to consider a single pen as an asset, so they
-                        not want you to track the mutation of that item using this web-app.
+                        might not want you to track the mutation of that item using this web-app.
                     </p>
                     <hr/>
                 </div>
