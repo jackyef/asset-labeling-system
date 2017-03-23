@@ -102,7 +102,14 @@
                 <li><a href="<?= base_url().'mutation-history'?>">Mutation History</a></li>
                 <li><a href="<?= base_url().'company'?>">Company</a></li>
                 <li><a href="<?= base_url().'employee'?>">Employee</a></li>
-                <li><a href="<?= base_url().'barcode'?>">Barcode</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Barcode <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="<?= base_url()?>barcode">Read barcode</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="<?= base_url()?>barcode/print">Generate labels</a></li>
+                    </ul>
+                </li>
                 <?php else: ?>
                 <!-- If not admin, and not logged in, then only show Home, Help, About, etc. -->
                 <li><a href="<?= base_url() ?>">Home</a></li>

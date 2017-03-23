@@ -183,3 +183,8 @@ $route['employee/detail/:num'] = 'employee/detail/:num';
 $route['mutation-history'] = 'mutation_history/index';
 $route['mutation-history/edit/:num'] = 'mutation_history/mutation_history_update_form/:num';
 $route['mutation-history/edit/submit/:num'] = 'mutation_history/mutation_history_update/:num';
+
+
+$route['barcode'] = 'barcode/index';
+$route['barcode/print'] = 'barcode/print_barcode_form';
+$route['barcode/print/submit'] = 'barcode/print_barcode';
