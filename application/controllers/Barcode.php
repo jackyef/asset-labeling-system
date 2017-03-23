@@ -332,16 +332,21 @@ class Barcode extends CI_Controller
 //
 //        }
         if(sizeof($files) == 1){
+            // if only 1 image, just let user download the image
             header('Content-Type: image/png');
             header('Content-Disposition: attachment; filename="barcode.png"');
             header('Content-Type: application/octet-stream; Content-Disposition: filename="barcode.png"');
             imagepng($files[0]);
         } else {
+            // else, let user download the zip archive
             header('Content-Type: application/zip');
             header('Content-disposition: attachment; filename='.$zipname);
             header('Content-Length: ' . filesize($zipname));
             readfile($zipname);
         }
+
+        // delete the temporary file
+        unlink('barcodes.zip');
     }
     private function append_side_white($img_resource_x, $img_resource_y) {
 

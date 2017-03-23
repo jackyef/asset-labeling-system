@@ -21,7 +21,7 @@
     <form class="form-horizontal" action="<?php echo base_url(); ?>barcode/print/submit" target="_blank" method="POST">
         <div class="form-group">
             <div class="alert alert-warning">
-                <span class="fa fa-info-circle"></span> This page generate barcodes specifically designed for Honeywell PC52T printer.
+                <span class="fa fa-info-circle"></span> This page generate barcodes specifically designed for Honeywell PC42T printer.
             </div>
             <label class="control-label col-sm-2" for="name">Choose item codes to print:</label>
             <div class="col-sm-10">
