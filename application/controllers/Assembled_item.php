@@ -82,18 +82,72 @@ class Assembled_item extends CI_Controller
         $this->parser->parse('templates/header.php', $data);
 
         // parse the content of this route here!
+        // for mutation limits
+        $from =  date("Y-m-d", strtotime($this->input->post("date_start", TRUE)));
+        $to =  date("Y-m-d", strtotime($this->input->post("date_end", TRUE)));
+        $limit = $this->input->post("limit", TRUE) ?: 100;
+        $company_id = $this->input->post("company_id", TRUE) ?: 0;
+        $brand_id = $this->input->post("brand_id", TRUE) ?: 0;
 
-        $this->db->select('ai.*, it.name as item_type_name, it.id as item_type_id, 
+        $date_start = $this->input->post("date_start", TRUE);
+        $date_end = $this->input->post("date_end", TRUE);
+
+        if ($to == "1970-01-01"){
+            $to = "2300-12-31";
+        }
+        if ($limit == 0){
+            $limit = 100;
+        }
+
+        $data['date_start'] = $date_start;
+        $data['date_end'] = $date_end;
+        $data['limit'] = $limit;
+        $data['company_id'] = $company_id;
+        $data['brand_id'] = $brand_id;
+
+        $sql = "SELECT 
+                    ai.*, it.name as item_type_name, it.id as item_type_id, 
                             b.name as brand_name,
                             e.name as employee_name, e.location_id as location_id, 
                             e.first_sub_location_id as first_sub_location_id, 
                             e.second_sub_location_id as second_sub_location_id, 
-                            e.company_id as employee_company_id');
-        $this->db->from('assembled_items ai, item_types it, brands b, employees e');
-        $this->db->where('ai.brand_id = b.id AND b.item_type_id = it.id AND
-                          ai.employee_id = e.id ');
-//        $this->db->order_by('l.name, f.name asc');
-        $data['records'] = $this->db->get()->result();
+                            e.company_id as employee_company_id
+                FROM assembled_items ai, item_types it, brands b, employees e
+                WHERE ai.brand_id = b.id AND b.item_type_id = it.id AND
+                          ai.employee_id = e.id AND 
+                      ai.date_of_purchase BETWEEN '$from' AND '$to' ";
+
+        if($company_id != 0){
+            $sql .= " AND ai.company_id = $company_id";
+        }
+        if($brand_id != 0){
+            $sql .= " AND ai.brand_id = $brand_id";
+        }
+        $sql .= " ORDER BY ai.id desc";
+        $sql .= " LIMIT 0, $limit";
+
+        $query = $this->db->query($sql);
+        $data['records'] = $query->result();
+
+//        $this->db->select('ai.*, it.name as item_type_name, it.id as item_type_id,
+//                            b.name as brand_name,
+//                            e.name as employee_name, e.location_id as location_id,
+//                            e.first_sub_location_id as first_sub_location_id,
+//                            e.second_sub_location_id as second_sub_location_id,
+//                            e.company_id as employee_company_id');
+//        $this->db->from('assembled_items ai, item_types it, brands b, employees e');
+//        $this->db->where('ai.brand_id = b.id AND b.item_type_id = it.id AND
+//                          ai.employee_id = e.id ');
+////        $this->db->order_by('l.name, f.name asc');
+//        $data['records'] = $this->db->get()->result();
+
+        // searching for assembled item brands
+        $this->db->select('b.*, i.name as item_type_name');
+        $this->db->from('brands b, item_types i');
+        $this->db->where('b.item_type_id = i.id and i.is_assembled = 1');
+        $this->db->order_by('item_type_name, b.name asc');
+        $data['brands'] = $this->db->get()->result();
+
 
         $this->db->reset_query();
         $this->db->select('c.* ');
@@ -477,6 +531,9 @@ class Assembled_item extends CI_Controller
         }
     }
 
+    /**
+     *
+     */
     public function detail(){
         // this shows the form for inserting a new mutation status
 
@@ -499,6 +556,7 @@ class Assembled_item extends CI_Controller
                           ai.employee_id = e.id AND ai.company_id = c.id AND ai.supplier_id = s.id');
 
         $query = $this->db->get_where('assembled_items', array('ai.id' => $id));
+
         $data['record'] = $query->result()[0];
         $data['id'] = $id;
 
@@ -522,14 +580,37 @@ class Assembled_item extends CI_Controller
 
 
         $this->db->reset_query();
-        $this->db->select('mu.*, it.name as item_type_name, it.id as item_type_id, 
-                            ai.product_name as product_name,
-                            b.name as brand_name, ai.operating_system_id as operating_system_id');
 
-        $this->db->from('assembled_items ai, item_types it, brands b');
-        $this->db->where('mu.item_id = ai.id AND ai.brand_id = b.id AND b.item_type_id = it.id');
-        $this->db->order_by('mu.id desc');
-        $query = $this->db->get_where('mutations mu', array('mu.item_id' => $id));
+        // for mutation limits
+        $from =  date("Y-m-d", strtotime($this->input->post("date_start", TRUE)));
+        $to =  date("Y-m-d", strtotime($this->input->post("date_end", TRUE)));
+        $limit = $this->input->post("limit", TRUE);
+
+        $date_start = $this->input->post("date_start", TRUE);
+        $date_end = $this->input->post("date_end", TRUE);
+
+        if ($to == "1970-01-01"){
+            $to = "2300-12-31";
+        }
+        if ($limit == 0){
+            $limit = 100;
+        }
+
+        $data['date_start'] = $date_start;
+        $data['date_end'] = $date_end;
+        $data['limit'] = $limit;
+
+        $query = $this->db->query("
+                              SELECT mu.*, it.name as item_type_name, it.id as item_type_id, 
+                                        ai.product_name as product_name,
+                                        b.name as brand_name, ai.operating_system_id as operating_system_id
+                              FROM mutations mu, assembled_items ai, item_types it, brands b
+                              WHERE mu.item_id = ai.id AND ai.brand_id = b.id AND b.item_type_id = it.id AND 
+                                    mu.item_id = $id AND 
+                                    mutation_date BETWEEN '$from' AND '$to'
+                              ORDER BY mu.id desc 
+                              LIMIT 0, $limit");
+
         $data['mutations'] = $query->result();
 
         $this->db->reset_query();
@@ -615,25 +696,38 @@ class Assembled_item extends CI_Controller
         $id = $this->uri->segment('3');
         $item_id = $this->uri->segment('4');
 
-
+        $this->db->trans_start(); # Starting Transaction
         $data2 = [
             'assembled_item_id' => 0
         ];
+        // updates the item assembled_item_id to 0
         $this->load->model('Item_model');
-        if($this->Item_model->update($data2, $item_id)){
-            //success
-            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> Successfully removed an item from the assembled item!');
+        $this->Item_model->update($data2, $item_id);
+
+        // create a mutation record
+        $data3 = [
+            'item_id' => $item_id,
+            'prev_employee_id' => $this->input->post('employee_id', TRUE),
+            'employee_id' => $this->input->post('employee_id', TRUE),
+            'note' => 'Removed from the assembled item with id: '.$id.'.',
+            'mutation_date' => date('Y-m-d')
+        ];
+
+        $this->load->model('Mutation_model');
+        $this->Mutation_model->insert($data3);
+
+        if ($this->db->trans_complete()) {
+            //Transaction succeeded! All queries are successfully executed
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> The item removed from assembled item!');
             $this->session->set_flashdata('site_wide_msg_type', 'success');
             redirect(base_url() . 'assembled-item/detail/'.$id);
         } else {
-            //error
+            //show errors
             $db_error = $this->db->error();
             $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span>An error occured! <br/>'.json_encode($db_error));
             $this->session->set_flashdata('site_wide_msg_type', 'danger');
             redirect(base_url() . 'assembled-item/detail/'.$id);
-        };
-
-
+        }
     }
 
     public function add_item_form(){

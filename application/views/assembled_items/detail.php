@@ -22,6 +22,10 @@
                 <h3>Item
                     Code:
                     <?= (str_pad($record->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($record->id, 5, '0', STR_PAD_LEFT)) ?>
+                    <?php
+                        $item_codes = array();
+                        array_push($item_codes, (str_pad($record->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($record->id, 5, '0', STR_PAD_LEFT)));
+                    ?>
                 </h3>
                 <div class="col-md-7">
                     <div class="panel panel-primary">
@@ -127,6 +131,9 @@
                                         </tr>
                                     <?php }?>
                                     <?php foreach($items as $item): ?>
+                                        <?php
+                                            array_push($item_codes, (str_pad($item->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($item->id, 5, '0', STR_PAD_LEFT)));
+                                        ?>
                                         <tr>
                                         <td><?= html_escape($item->item_type_name.', '.$item->brand_name.', '.$item->model_name)?>
                                         <?php if($item->model_units != ''): ?>
@@ -135,9 +142,11 @@
                                         (<a href="<?= base_url().'item/detail/'.$item->id?>"><?= (str_pad($item->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($item->id, 5, '0', STR_PAD_LEFT)) ?></a>)
                                         </td>
                                         <td valign="middle">
-                                            <a href="<?= base_url().'assembled-item/remove/'.$id.'/'.$item->id ?>">
+                                            <form method="POST" action="<?= base_url().'assembled-item/remove/'.$id.'/'.$item->id ?>">
                                                 <button class="btn btn-xs btn-danger">
-                                                    <span class="fa fa-times"></span> Remove</button></a>
+                                                        <input type="hidden" name="employee_id" id="employee_id" value="<?= $item->employee_id?>" />
+                                                        <span class="fa fa-times"></span> Remove</button>
+                                            </form>
                                         </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -156,13 +165,22 @@
                             <div class="divider">&nbsp;</div>
 
                             <div class="form-group">
-                                <div class="col-sm-12">
+                                <div class="col-sm-6">
                                     <a href="<?= base_url().'assembled-item/edit/'.$record->id ?>">
                                         <button class="btn btn-primary form-control">
                                             <span class="fa fa-edit"></span>
                                             Edit item information
                                         </button>
                                     </a>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <form action="<?= base_url().'barcode/print/submit' ?>" method="post">
+                                        <?php foreach ($item_codes as $item_code): ?>
+                                            <input type="hidden" name="item_codes[]" value="<?= $item_code ?>"/>
+                                        <?php endforeach; ?>
+                                        <button class="btn btn-primary form-control"><span class="fa fa-barcode"></span> Get barcodes for these items</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
@@ -263,6 +281,44 @@
         <div class="col-sm-12">
             <h3>Mutation History</h3>
             <hr />
+            <div class="pull-right">
+                <form action="<?= base_url().'assembled-item/detail/'.$record->id ?>" method="POST">
+                    <div class="col-sm-4">
+                        <div class="input-group date" data-provide="datepicker-inline ">
+                            <div class="input-group-addon">
+                                <span class="fa fa-calendar"></span> From:
+                            </div>
+                            <input type="text" class="form-control datepicker" id="date_start" name="date_start">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="input-group date" data-provide="datepicker-inline ">
+                            <div class="input-group-addon">
+                                <span class="fa fa-calendar"></span> to:
+                            </div>
+                            <input type="text" class="form-control datepicker" id="date_end" name="date_end">
+                        </div>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <div class="input-group" >
+                            <div class="input-group-addon">
+                                <span class="fa fa-times"></span> Limit
+                            </div>
+                            <input type="number" class="form-control" id="limit" name="limit"
+                                   value="<?= (isset($limit) ? $limit : '100')?>"
+                                   min="10" step="10">
+                        </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <button class="btn btn-success">Go!</button>
+                    </div>
+                </form>
+
+            </div>
+            <div class="clearfix"></div>
+            <br/>
             <table class="table table-striped table-responsive data-table-mutation">
                 <!-- add the data-table class to tell the page to paginate this table -->
                 <thead>
@@ -326,13 +382,15 @@
                     echo '</td>';
 
                     echo '<td>';
-                    if(strlen($mutation->note) <= 50){
-                        echo html_escape($mutation->note);
-                    } else {
-                        // truncate the note if it is greater than 50 characters long
-                        echo html_escape(substr($mutation->note, 0, 50)). '...';
-                        echo '<h6><a href="'.base_url().'mutation-history/edit/'.$mutation->id.'#note">see more</a></h6>';
-                    }
+        //            if(strlen($mutation->note) <= 50){
+                            echo html_escape($mutation->note);
+        //            } else {
+        //                // truncate the note if it is greater than 50 characters long
+        //                echo '<span class="first50">'.
+        //                    html_escape(substr($mutation->note, 0, 49)). '...'.
+        //                     '</span>';
+        //                echo '<h6><a href="'.base_url().'mutation-history/edit/'.$mutation->id.'#note">see more</a></h6>';
+        //            }
                     echo '</td>';
 
                     echo '<td>';
@@ -359,11 +417,86 @@
 
     <script type="text/javascript">
         $(document).ready(function(){
+            // handles datepicker on pages that uses it
+            $('#date_start').datepicker({
+                format: 'DD, dd MM yyyy',
+                autoclose: true,
+                todayHighlight: true,
+                todayBtn: true,
+                disableTouchKeyboard: true
+            });
+            $('#date_end').datepicker({
+                format: 'DD, dd MM yyyy',
+                autoclose: true,
+                todayHighlight: true,
+                todayBtn: true,
+                disableTouchKeyboard: true
+            });
+
+            $('#date_start').datepicker('update', '<?= $date_start ?>');
+            $('#date_end').datepicker('update', '<?= $date_end ?>');
+
+
             $('.data-table-mutation').DataTable({
                 "order": [[ 4, "desc" ]],
                 responsive: true,
-                colReorder: true
+                colReorder: false,
+                dom: 'Bflrtip',
+                buttons: [
+                    {
+                        extend: 'print',
+                        autoPrint: false,
+                        exportOptions: {
+                            columns: ':visible',
+                            pageSize: 'A4',
+                            stripHtml: false
+                        }
+                    },
+                    {
+                        extend: 'excelHtml5',
+                        exportOptions: {
+                            columns: ':visible',
+                            format: {
+                                body: function (data, column, row) {
+                                    data = data.replace(/<br\s*\/?>/i, "\r\nof\r\n"); //replace the first linebreak with 'of'
+                                    data = data.replace(/<br\s*\/?>/i, "\r\nat\r\n"); //replace the second linebreak with 'at'
+                                    data = data.replace(/\s*<span class="fa fa-arrow-right"><\/span>\s*/ig, ", "); //replace right arrow icons with comma
+                                    data = data.replace(/\s+/ig, " "); //multiple spaces with 1 space
+                                    var html = data;
+                                    var div = document.createElement("div");
+                                    div.innerHTML = html;
+                                    var text = div.textContent || div.innerText || "";
+                                    return text;
+                                }
+                            }
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        exportOptions: {
+                            columns: ':visible',
+                            format: {
+                                body: function (data, column, row) {
+                                    data = data.replace(/<br\s*\/?>/i, "\r\nof\r\n"); //replace the first linebreak with 'of'
+                                    data = data.replace(/<br\s*\/?>/i, "\r\nat\r\n"); //replace the second linebreak with 'at'
+                                    data = data.replace(/\s*<span class="fa fa-arrow-right"><\/span>\s*/ig, ", "); //replace right arrow icons with comma
+                                    var html = data;
+                                    var div = document.createElement("div");
+                                    div.innerHTML = html;
+                                    var text = div.textContent || div.innerText || "";
+                                    return text;
+                                }
+                            },
+                            pageSize: 'A4'
+
+                        },
+                        sType: 'html'
+                    },
+                    'colvis'
+                ]
             });
+
+
         });
 
     </script>

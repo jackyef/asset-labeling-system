@@ -52,8 +52,115 @@ class Mutation_history extends CI_Controller
 
         return $data;
     }
-
     public function index(){
+        // mutation history index page
+        // just show table of every mutations sort by id descending
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Mutation History';
+        $this->parser->parse('templates/header.php', $data);
+
+        // parse the content of this route here!
+        $from =  date("Y-m-d", strtotime($this->input->post("date_start", TRUE)));
+        $to =  date("Y-m-d", strtotime($this->input->post("date_end", TRUE)));
+        $limit = $this->input->post("limit", TRUE);
+
+        $date_start = $this->input->post("date_start", TRUE);
+        $date_end = $this->input->post("date_end", TRUE);
+
+        if ($to == "1970-01-01"){
+            $to = "2300-12-31";
+        }
+        if ($limit == 0){
+            $limit = 100;
+        }
+
+        $data['date_start'] = $date_start;
+        $data['date_end'] = $date_end;
+        $data['limit'] = $limit;
+
+        $query = $this->db->query("
+                (
+                SELECT mu.*, it.name as item_type_name, it.id as item_type_id, 
+                            b.name as brand_name, m.name as model_name,
+                            i.operating_system_id, '0' as 'assembled' 
+                FROM mutations mu, items i, item_types it, brands b, models m
+                WHERE mu.item_id = i.id AND i.model_id = m.id AND 
+                        m.brand_id = b.id AND b.item_type_id = it.id AND 
+                        assembled_item_id = 0 AND 
+                        mutation_date BETWEEN '$from' AND '$to' 
+                ORDER BY mu.mutation_date desc
+                )
+                UNION 
+                (
+                SELECT mu.*, it.name as item_type_name, it.id as item_type_id, 
+                            b.name as brand_name, ai.product_name as model_name,
+                            ai.operating_system_id as operating_system_id, '1' as 'assembled'
+                FROM mutations mu, assembled_items ai, item_types it, brands b
+                WHERE mu.item_id = ai.id AND ai.brand_id = b.id AND b.item_type_id = it.id AND 
+                        mutation_date BETWEEN '$from' AND '$to'
+                ORDER BY mu.mutation_date desc
+                )
+                LIMIT 0, $limit
+        ");
+
+        $data['records'] = $query->result();
+//        echo json_encode($data['records']);
+
+        // for debugging purposes
+//        echo sizeof($result1);
+//        echo '<br/>';
+//        echo sizeof($result2);
+//        echo '<br/>';
+//        echo json_encode($data['records']);
+
+        $this->db->reset_query();
+        $this->db->select('e.* ');
+        $this->db->from('employees e');
+        foreach($this->db->get()->result() as $employee){
+            $data['employees'][$employee->id] = $employee;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('ms.* ');
+        $this->db->from('mutation_statuses ms');
+        foreach($this->db->get()->result() as $ms){
+            $data['mutation_statuses'][$ms->id] = $ms;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('c.* ');
+        $this->db->from('companies c');
+        foreach($this->db->get()->result() as $company){
+            $data['companies'][$company->id] = $company;
+        }
+        $this->db->reset_query();
+        $this->db->select('l.* ');
+        $this->db->from('locations l');
+        foreach($this->db->get()->result() as $location){
+            $data['locations'][$location->id] = $location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('f.* ');
+        $this->db->from('first_sub_locations f');
+        foreach($this->db->get()->result() as $first_sub_location){
+            $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('s.* ');
+        $this->db->from('second_sub_locations s');
+        foreach($this->db->get()->result() as $second_sub_location){
+            $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
+        }
+
+        $this->load->view('mutation_histories/index.php', $data);
+
+        $this->load->view('templates/footer.php', $data);
+    }
+    private function index_backup(){
         // mutation history index page
         // just show table of every mutations sort by id descending
 
@@ -264,4 +371,25 @@ class Mutation_history extends CI_Controller
         }
     }
 
+    function fetch_mutation_history(){
+        $this->load->model("Mutation_model");
+        $fetch_data = $this->Mutation_model->make_datatables();
+        $data = array();
+        foreach($fetch_data as $row)
+        {
+            $sub_array = array();
+            $sub_array[] = $row->id;
+            $sub_array[] = $row->model_name;
+//            $sub_array[] = '<button type="button" name="update" id="'.$row->id.'" class="btn btn-warning btn-xs">Update</button>';
+//            $sub_array[] = '<button type="button" name="delete" id="'.$row->id.'" class="btn btn-danger btn-xs">Delete</button>';
+            $data[] = $sub_array;
+        }
+        $output = array(
+            "draw"              => intval($_POST["draw"]),
+            "recordsTotal"      => $this->Mutation_model->get_all_data(),
+            "recordsFiltered"   => $this->Mutation_model->get_filtered_data(),
+            "data"              => $data
+        );
+        echo json_encode($output);
+    }
 }

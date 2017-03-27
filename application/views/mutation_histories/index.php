@@ -17,25 +17,39 @@
         </div>
 
         <div class="pull-right">
-            <div class="col-sm-6">
-                Filter from:
-                <div class="input-group date" data-provide="datepicker-inline ">
-                    <input type="text" class="form-control datepicker" id="date_start" name="date_start">
-                    <div class="input-group-addon">
-                        <span class="fa fa-calendar"></span>
+            <form action="<?= base_url().'mutation-history' ?>" method="POST">
+                <div class="col-sm-4">
+                    <div class="input-group date" data-provide="datepicker-inline ">
+                        <div class="input-group-addon">
+                            <span class="fa fa-calendar"></span> From:
+                        </div>
+                        <input type="text" class="form-control datepicker" id="date_start" name="date_start">
                     </div>
                 </div>
-            </div>
 
-            <div class="col-sm-6">
-                to:
-                <div class="input-group date" data-provide="datepicker-inline ">
-                    <input type="text" class="form-control datepicker" id="date_end" name="date_end">
-                    <div class="input-group-addon">
-                        <span class="fa fa-calendar"></span>
+                <div class="col-sm-4">
+                    <div class="input-group date" data-provide="datepicker-inline ">
+                        <div class="input-group-addon">
+                            <span class="fa fa-calendar"></span> to:
+                        </div>
+                        <input type="text" class="form-control datepicker" id="date_end" name="date_end">
                     </div>
                 </div>
-            </div>
+
+                <div class="col-sm-3">
+                    <div class="input-group" >
+                        <div class="input-group-addon">
+                            <span class="fa fa-times"></span> Limit
+                        </div>
+                        <input type="number" class="form-control" id="limit" name="limit"
+                               value="<?= (isset($limit) ? $limit : '100')?>"
+                               min="10" step="10">
+                    </div>
+                </div>
+                <div class="col-sm-1">
+                    <button class="btn btn-success">Go!</button>
+                </div>
+            </form>
 
         </div>
     <div class="clearfix"></div>
@@ -127,7 +141,7 @@
             }
             echo '</td>';
 
-            echo '<td> 
+            echo '<td>
                         <a href="'. base_url(). 'mutation-history/edit/'.$mutation->id.'">
                         <button class="btn btn-xs btn-info" ><span class="fa fa-edit"></span> Edit</button>
                         </a>
@@ -145,9 +159,15 @@
 
         $('.data-table-mutation').DataTable({
             "order": [[ 4, "desc" ]],
+//            "processing": true,
+//            "serverSide": true,
+//            "ajax":{
+//                url: "<?php //echo base_url() . 'mutation_history/fetch_mutation_history'; ?>//",
+//                type: "POST"
+//            },
             responsive: true,
             colReorder: false,
-            dom: 'Bfrtip',
+            dom: 'Bflrtip',
             buttons: [
                 {
                     extend: 'print',
@@ -218,76 +238,79 @@
             disableTouchKeyboard: true
         });
 
-        var startDate = $('#date_start').datepicker('getDate');
-        var endDate = $('#date_end').datepicker('getDate');
+        $('#date_start').datepicker('update', '<?= $date_start ?>');
+        $('#date_end').datepicker('update', '<?= $date_end ?>');
+
+//        var startDate = $('#date_start').datepicker('getDate');
+//        var endDate = $('#date_end').datepicker('getDate');
 
         // Add event listeners to the two range filtering inputs
-        var table = $('.data-table-mutation').DataTable();
-        $('#date_start').datepicker().on('changeDate', function () {
-            table.draw();
-        });
-        $('#date_end').datepicker().on('changeDate', function () {
-            table.draw();
-        } );
-
-
-        // push new parameter for filtering purposes
-        $.fn.dataTableExt.afnFiltering.push(
-            function( oSettings, aData, iDataIndex ) {
-
-                var iFini = new Date($('#date_start').datepicker('getDate')).toLocaleString();
-                var iFfin = new Date($('#date_end').datepicker('getDate')).toLocaleString();
-                var iStartDateCol = 4;
-                var iEndDateCol = 4;
-
-                iFini = iFini.split(',');
-                iFini = iFini[0].split('/');
-                iFfin = iFfin.split(',');
-                iFfin = iFfin[0].split('/'); // now IFini and IFfin are array of month, day, year
-
-                if(iFini[0].length == 1){
-                    // pads single digit month
-                    iFini[0] = '0' + iFini[0].toString();
-                }
-                if(iFini[1].length == 1){
-                    // pads single digit date
-                    iFini[1] = '0' + iFini[1].toString();
-                }
-                if(iFfin[0].length == 1){
-                    // pads single digit month
-                    iFfin[0] = '0' + iFfin[0].toString();
-                }
-                if(iFfin[1].length == 1){
-                    // pads single digit date
-                    iFfin[1] = '0' + iFfin[1].toString();
-                }
-
-                iFini=iFini[2] +'-'+ iFini[0] +'-'+iFini[1];
-                iFfin=iFfin[2] +'-'+ iFfin[0] +'-'+iFfin[1];
-
-                var rowDate = aData[iStartDateCol].substring(1); //remove the leading space in the first index we put on the column
-
-                // 1970-01-01 means the datepickers are blank, so don't do any filtering
-                if ( iFini === "1970-01-01" && iFfin === "1970-01-01" )
-                {
-                    return true;
-                }
-                else if ( iFini <= rowDate && iFfin === "1970-01-01")
-                {
-                    return true;
-                }
-                else if ( iFfin >= rowDate && iFini === "1970-01-01")
-                {
-                    return true;
-                }
-                else if (iFini <= rowDate && iFfin >= rowDate)
-                {
-                    return true;
-                }
-                return false;
-            }
-        );
-
+//        var table = $('.data-table-mutation').DataTable();
+//        $('#date_start').datepicker().on('changeDate', function () {
+//            table.draw();
+//        });
+//        $('#date_end').datepicker().on('changeDate', function () {
+//            table.draw();
+//        } );
+//
+//
+//        // push new parameter for filtering purposes
+//        $.fn.dataTableExt.afnFiltering.push(
+//            function( oSettings, aData, iDataIndex ) {
+//
+//                var iFini = new Date($('#date_start').datepicker('getDate')).toLocaleString();
+//                var iFfin = new Date($('#date_end').datepicker('getDate')).toLocaleString();
+//                var iStartDateCol = 4;
+//                var iEndDateCol = 4;
+//
+//                iFini = iFini.split(',');
+//                iFini = iFini[0].split('/');
+//                iFfin = iFfin.split(',');
+//                iFfin = iFfin[0].split('/'); // now IFini and IFfin are array of month, day, year
+//
+//                if(iFini[0].length == 1){
+//                    // pads single digit month
+//                    iFini[0] = '0' + iFini[0].toString();
+//                }
+//                if(iFini[1].length == 1){
+//                    // pads single digit date
+//                    iFini[1] = '0' + iFini[1].toString();
+//                }
+//                if(iFfin[0].length == 1){
+//                    // pads single digit month
+//                    iFfin[0] = '0' + iFfin[0].toString();
+//                }
+//                if(iFfin[1].length == 1){
+//                    // pads single digit date
+//                    iFfin[1] = '0' + iFfin[1].toString();
+//                }
+//
+//                iFini=iFini[2] +'-'+ iFini[0] +'-'+iFini[1];
+//                iFfin=iFfin[2] +'-'+ iFfin[0] +'-'+iFfin[1];
+//
+//                var rowDate = aData[iStartDateCol].substring(1); //remove the leading space in the first index we put on the column
+//
+//                // 1970-01-01 means the datepickers are blank, so don't do any filtering
+//                if ( iFini === "1970-01-01" && iFfin === "1970-01-01" )
+//                {
+//                    return true;
+//                }
+//                else if ( iFini <= rowDate && iFfin === "1970-01-01")
+//                {
+//                    return true;
+//                }
+//                else if ( iFfin >= rowDate && iFini === "1970-01-01")
+//                {
+//                    return true;
+//                }
+//                else if (iFini <= rowDate && iFfin >= rowDate)
+//                {
+//                    return true;
+//                }
+//                return false;
+//            }
+//        );
+//
     });
 
 </script>

@@ -36,10 +36,59 @@ TODO:
 - ANCHORING: anchor every item_code to item detail, employee to employee detail, company to company detail (Probably done)
 - REPORTING: utilize column selector and datatable print feature (DONE! ..sort of)
 - Read barcode and redirect to item detail page (DONE!)
+- Generate barcode images, print on 2 columns! (DONE!)
+- Can select items to print (DONE!)
 
-- Generate barcode images, print on 2 columns!
-- Can select items to print
-- Print barcode (look at QZ Tray) printer honeywell PC42T
+- Print barcode button in item detail page (DONE!)
+- Reporting in item and assembled item mutation history (DONE!)
+
+- Mutation history page don't load all immediately (datatable server side processing)
+  - Kayaknya ga bisa dilakukan dengan tetap menggunakan datatable karena mutasi itu UNION, dan ga semua ke select
+  - Ga terlalu penting sepertinya, total mutation history selama 2 tahun baru 2000an.
+  - Coba test dengan 100rb data di mutation history, lalu jadikan argumen (Gagal, 5000 aja uda lambat)
+  - DONE! Added query to select between 2 dates and limits result to a certain amount of records
+  - Added to item detail and assembled item detail page as well (the mutations history)
+
+- Items and assembled item also shouldn't all load immediately.
+    filter by:
+        location, (to be added)
+        purchase date,
+        company_id,
+        model_id (brand_id for assembled item)
+    - Also apply to the item table in employee detail page
+(DONE!)
+
+- Add item separate location independent of employee location
+    This will change:
+    - table structure of item/assembled item (add current loc, fsub, ssub)
+    - table structure of mutation (add prev loc, fsub, ssub, and current loc, fsub, ssub)
+
+    - Insert item/assembled item (form + controller logic)
+    - Update item/assembled item (form + controller logic) (location is not updatable, must from mutate, same as employee)
+    - Mutate item/assembled item (mutate form + controller logic)
+
+    - Adding item to assembled item logic (this process includes mutation, so we have to modify it too)
+    - Removing item out of assembled item logic (this process includes mutation, so we have to modify it too)
+
+    - Edit mutation form (logic still the same, just add prev_lov and destination info in form in read-only state)
+
+    - Detail page of item/assembled item (show location info)
+    - Index page of item/assembled item (show location info)
+    - Item table in Employee detail page (show location info)
+
+
+- Add location to mutation history as well
+    This will change:
+
+
+- Masalah kalau orang lari,
+    kalau barangnya juga dibawa lari, berarti memang tidak ada solusi yg memungkinkan untuk itu
+    kalau barangnya tidak dibawa lari, ada 2 kemungkinan,
+        barang sama dia di lokasi terakhir dia (masih tercover)
+        barang di tempat lain (tak tercover, tidak tau lokasi barang)
+
+
+- User management (roles permission) (not really necessary, I think?)
 
 - dashboard with statistics as admin homepage (not really necessary)
 ==========

@@ -229,7 +229,7 @@
                 '<div class="col-sm-offset-6 col-sm-4">' +
                 '<div class="well-sm bg-info">' +
                 '<span class="fa fa-info-circle">' +
-                '</span>' +
+                '</span> ' +
                 'Change this if this part has its own different warranty period.' +
                 '</div>' +
                 '</div>' +

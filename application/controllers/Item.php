@@ -83,17 +83,73 @@ class Item extends CI_Controller
 
         // parse the content of this route here!
 
-        $this->db->select('i.*, it.name as item_type_name, it.id as item_type_id, 
-                            b.name as brand_name, m.name as model_name, 
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id, 
-                            e.company_id as employee_company_id');
-        $this->db->from('items i, item_types it, brands b, models m, employees e');
-        $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
-                          i.employee_id = e.id AND assembled_item_id = 0');
-//        $this->db->order_by('l.name, f.name asc');
-        $data['records'] = $this->db->get()->result();
+        // for mutation limits
+        $from =  date("Y-m-d", strtotime($this->input->post("date_start", TRUE)));
+        $to =  date("Y-m-d", strtotime($this->input->post("date_end", TRUE)));
+        $limit = $this->input->post("limit", TRUE) ?: 100;
+        $company_id = $this->input->post("company_id", TRUE) ?: 0;
+        $model_id = $this->input->post("model_id", TRUE) ?: 0;
+
+        $date_start = $this->input->post("date_start", TRUE);
+        $date_end = $this->input->post("date_end", TRUE);
+
+        if ($to == "1970-01-01"){
+            $to = "2300-12-31";
+        }
+        if ($limit == 0){
+            $limit = 100;
+        }
+
+        $data['date_start'] = $date_start;
+        $data['date_end'] = $date_end;
+        $data['limit'] = $limit;
+        $data['company_id'] = $company_id;
+        $data['model_id'] = $model_id;
+
+        $sql = "SELECT 
+                    i.*, it.name as item_type_name, it.id as item_type_id, 
+                    b.name as brand_name, m.name as model_name, 
+                    e.name as employee_name, e.location_id as location_id, 
+                    e.first_sub_location_id as first_sub_location_id, 
+                    e.second_sub_location_id as second_sub_location_id, 
+                    e.company_id as employee_company_id
+                FROM items i, item_types it, brands b, models m, employees e
+                WHERE i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND 
+                      i.employee_id = e.id AND i.assembled_item_id = 0 AND 
+                      i.date_of_purchase BETWEEN '$from' AND '$to' ";
+
+        if($company_id != 0){
+            $sql .= " AND i.company_id = $company_id";
+        }
+        if($model_id != 0){
+            $sql .= " AND i.model_id = $model_id";
+        }
+        $sql .= " ORDER BY i.id desc";
+        $sql .= " LIMIT 0, $limit";
+
+        $query = $this->db->query($sql);
+        $data['records'] = $query->result();
+
+        $this->db->reset_query();
+        $this->db->select('m.*, b.name as brand_name, it.name as item_type_name ');
+        $this->db->from('models m, brands b, item_types it');
+        $this->db->where('m.brand_id = b.id AND b.item_type_id = it.id');
+        $this->db->order_by('it.name, b.name, m.name asc');
+        foreach($this->db->get()->result() as $model){
+            $data['models'][$model->id] = $model;
+        }
+
+//        $this->db->select('i.*, it.name as item_type_name, it.id as item_type_id,
+//                            b.name as brand_name, m.name as model_name,
+//                            e.name as employee_name, e.location_id as location_id,
+//                            e.first_sub_location_id as first_sub_location_id,
+//                            e.second_sub_location_id as second_sub_location_id,
+//                            e.company_id as employee_company_id');
+//        $this->db->from('items i, item_types it, brands b, models m, employees e');
+//        $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
+//                          i.employee_id = e.id AND assembled_item_id = 0');
+////        $this->db->order_by('l.name, f.name asc');
+//        $data['records'] = $this->db->get()->result();
 
         $this->db->reset_query();
         $this->db->select('c.* ');
@@ -263,6 +319,23 @@ class Item extends CI_Controller
         }
     }
 
+    public function insert_100k(){
+        // insert a 100k new mutation
+        $i = 0;
+        while ($i < 100000) {
+            $data2 = [
+                'item_id' => 13,
+                'employee_id' => 2,
+                'note' => '100,000 dummy records',
+                'mutation_date' => '2017-03-27'
+            ];
+            // insert mutation data to db
+            $this->load->model('Mutation_model');
+            $this->Mutation_model->insert($data2);
+            $i++;
+        }
+    }
+
     public function item_update_form(){
         // this shows the form for inserting a new mutation status
 
@@ -428,15 +501,37 @@ class Item extends CI_Controller
         $data['record'] = $query->result()[0];
         $data['id'] = $id;
 
-        $this->db->select('mu.*, it.name as item_type_name, it.id as item_type_id, 
-                            b.name as brand_name, m.name as model_name,
-                            m.capacity_size as model_capacity_size,
-                            m.units as model_units, i.operating_system_id as operating_system_id');
+        $this->db->reset_query();
 
-        $this->db->from('items i, item_types it, brands b, models m');
-        $this->db->where('mu.item_id = i.id AND i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id');
-        $this->db->order_by('mu.id desc');
-        $query = $this->db->get_where('mutations mu', array('mu.item_id' => $id));
+        // for mutation limits
+        $from =  date("Y-m-d", strtotime($this->input->post("date_start", TRUE)));
+        $to =  date("Y-m-d", strtotime($this->input->post("date_end", TRUE)));
+        $limit = $this->input->post("limit", TRUE);
+
+        $date_start = $this->input->post("date_start", TRUE);
+        $date_end = $this->input->post("date_end", TRUE);
+
+        if ($to == "1970-01-01"){
+            $to = "2300-12-31";
+        }
+        if ($limit == 0){
+            $limit = 100;
+        }
+
+        $data['date_start'] = $date_start;
+        $data['date_end'] = $date_end;
+        $data['limit'] = $limit;
+
+        $query = $this->db->query("
+                            SELECT mu.*, it.name as item_type_name, it.id as item_type_id, 
+                                b.name as brand_name, m.name as model_name,
+                                m.capacity_size as model_capacity_size,
+                                m.units as model_units, i.operating_system_id as operating_system_id
+                            FROM mutations mu, items i, item_types it, brands b, models m 
+                            WHERE mu.item_id = i.id AND i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND 
+                                  mu.item_id = $id AND mu.mutation_date BETWEEN '$from' AND '$to'
+                            ORDER BY mu.id desc
+        ");
         $data['mutations'] = $query->result();
 
         $this->db->reset_query();
