@@ -225,10 +225,11 @@ class Employee extends CI_Controller
         //get list of item this employee hold
         $this->db->select('i.*, it.name as item_type_name, it.id as item_type_id, 
                             b.name as brand_name, m.name as model_name, 
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id, 
-                            e.company_id as employee_company_id');
+                            e.name as employee_name, e.location_id as employee_location_id, 
+                            e.first_sub_location_id as employee_first_sub_location_id, 
+                            e.second_sub_location_id as employee_second_sub_location_id, 
+                            e.company_id as employee_company_id, 
+                            0 as assembled');
         $this->db->from('item_types it, brands b, models m, employees e');
         $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
                           i.employee_id = e.id AND assembled_item_id = 0');
@@ -237,19 +238,20 @@ class Employee extends CI_Controller
 
         $this->db->select('ai.*, it.name as item_type_name, it.id as item_type_id, 
                             b.name as brand_name, ai.product_name as model_name, 
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id, 
-                            e.company_id as employee_company_id');
+                            e.name as employee_name, e.location_id as employee_location_id, 
+                            e.first_sub_location_id as employee_first_sub_location_id, 
+                            e.second_sub_location_id as employee_second_sub_location_id, 
+                            e.company_id as employee_company_id,
+                            1 as assembled');
         $this->db->from('item_types it, brands b, employees e');
         $this->db->where('ai.brand_id = b.id AND b.item_type_id = it.id AND
                           ai.employee_id = e.id');
         $query = $this->db->get_where('assembled_items ai', array('ai.employee_id' => $id));
         $result2 = $query->result();
 
-        foreach($result2 as $entry){
-            $entry->assembled = 1; //mark this record as an assembled item, so we can redirect correctly
-        }
+//        foreach($result2 as $entry){
+//            $entry->assembled = 1; //mark this record as an assembled item, so we can redirect correctly
+//        }
 
         $data['items'] = array_merge($result1, $result2);
         // for debugging purposes

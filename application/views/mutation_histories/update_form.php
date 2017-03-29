@@ -123,13 +123,16 @@
                                         <?php } ?>
                                     <?php endif; ?>
                                 </select>
-                                <div class="col-sm-12">
-                                    <?php if($record->mutation_status_id != 0): ?>
-                                        <?= (($employees[$record->prev_employee_id]->location_id != 0) ? '<span class="fa fa-map-marker"></span> '.html_escape($locations[$employees[$record->prev_employee_id]->location_id]->name) : '') ?>
-                                        <?= (($employees[$record->prev_employee_id]->first_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$employees[$record->prev_employee_id]->first_sub_location_id]->name) : '') ?>
-                                        <?= (($employees[$record->prev_employee_id]->second_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$employees[$record->prev_employee_id]->second_sub_location_id]->name) : '') ?>
-                                    <?php endif; ?>
-                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <?php if($record->mutation_status_id != 0 && $record->prev_location_id != 0): ?>
+                                    <div class="form-control" disabled>
+                                        <?= (($record->prev_location_id != 0) ? '<span class="fa fa-map-marker"></span> '.html_escape($locations[$record->prev_location_id]->name) : '') ?>
+                                        <?= (($record->prev_first_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$record->prev_first_sub_location_id]->name) : '') ?>
+                                        <?= (($record->prev_second_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$record->prev_second_sub_location_id]->name) : '') ?>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <div class="form-group">
@@ -146,11 +149,15 @@
                                         </option>
                                     <?php } ?>
                                 </select>
-                                <div class="col-sm-12">
-                                    <?= (($employees[$record->employee_id]->location_id != 0) ? '<span class="fa fa-map-marker"></span> '.html_escape($locations[$employees[$record->employee_id]->location_id]->name) : '') ?>
-                                    <?= (($employees[$record->employee_id]->first_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$employees[$record->employee_id]->first_sub_location_id]->name) : '') ?>
-                                    <?= (($employees[$record->employee_id]->second_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$employees[$record->employee_id]->second_sub_location_id]->name) : '') ?>
+                            </div>
+                            <div class="col-sm-12">
+                                <?php if ($record->location_id != 0): ?>
+                                <div class="form-control" disabled>
+                                    <?= (($record->location_id != 0) ? '<span class="fa fa-map-marker"></span> '.html_escape($locations[$record->location_id]->name) : '') ?>
+                                    <?= (($record->first_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$record->first_sub_location_id]->name) : '') ?>
+                                    <?= (($record->second_sub_location_id != 0) ? '<span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$record->second_sub_location_id]->name) : '') ?>
                                 </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <input type="hidden" name="assembled" id="assembled" value="<?= $assembled ?>"/>

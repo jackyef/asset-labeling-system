@@ -90,7 +90,6 @@ class Mutation_history extends CI_Controller
                         m.brand_id = b.id AND b.item_type_id = it.id AND 
                         assembled_item_id = 0 AND 
                         mutation_date BETWEEN '$from' AND '$to' 
-                ORDER BY mu.mutation_date desc
                 )
                 UNION 
                 (
@@ -100,8 +99,8 @@ class Mutation_history extends CI_Controller
                 FROM mutations mu, assembled_items ai, item_types it, brands b
                 WHERE mu.item_id = ai.id AND ai.brand_id = b.id AND b.item_type_id = it.id AND 
                         mutation_date BETWEEN '$from' AND '$to'
-                ORDER BY mu.mutation_date desc
                 )
+                ORDER BY mutation_date desc 
                 LIMIT 0, $limit
         ");
 

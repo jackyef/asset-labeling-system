@@ -72,7 +72,8 @@ class Item extends CI_Controller
             return $max_a_item_id;
         }
     }
-    public function index(){
+    public function index()
+    {
         // item index page
         // just show table of every item sort by id
 
@@ -84,8 +85,8 @@ class Item extends CI_Controller
         // parse the content of this route here!
 
         // for mutation limits
-        $from =  date("Y-m-d", strtotime($this->input->post("date_start", TRUE)));
-        $to =  date("Y-m-d", strtotime($this->input->post("date_end", TRUE)));
+        $from = date("Y-m-d", strtotime($this->input->post("date_start", TRUE)));
+        $to = date("Y-m-d", strtotime($this->input->post("date_end", TRUE)));
         $limit = $this->input->post("limit", TRUE) ?: 100;
         $company_id = $this->input->post("company_id", TRUE) ?: 0;
         $model_id = $this->input->post("model_id", TRUE) ?: 0;
@@ -93,25 +94,37 @@ class Item extends CI_Controller
         $date_start = $this->input->post("date_start", TRUE);
         $date_end = $this->input->post("date_end", TRUE);
 
-        if ($to == "1970-01-01"){
+        if ($to == "1970-01-01") {
             $to = "2300-12-31";
         }
-        if ($limit == 0){
+        if ($limit == 0) {
             $limit = 100;
         }
+
+        // get location ids
+        $locs = $this->input->post('location_id', TRUE) ?: '0,0,0';
+        $locs_id = explode(',', $locs);
+        $location_id = $locs_id[0];
+        $first_sub_location_id = $locs_id[1];
+        $second_sub_location_id = $locs_id[2];
 
         $data['date_start'] = $date_start;
         $data['date_end'] = $date_end;
         $data['limit'] = $limit;
         $data['company_id'] = $company_id;
         $data['model_id'] = $model_id;
+        $data['location_id'] = $location_id;
+        $data['first_sub_location_id'] = $first_sub_location_id;
+        $data['second_sub_location_id'] = $second_sub_location_id;
+
+
 
         $sql = "SELECT 
                     i.*, it.name as item_type_name, it.id as item_type_id, 
                     b.name as brand_name, m.name as model_name, 
-                    e.name as employee_name, e.location_id as location_id, 
-                    e.first_sub_location_id as first_sub_location_id, 
-                    e.second_sub_location_id as second_sub_location_id, 
+                    e.name as employee_name, e.location_id as employee_location_id, 
+                    e.first_sub_location_id as employee_first_sub_location_id, 
+                    e.second_sub_location_id as employee_second_sub_location_id, 
                     e.company_id as employee_company_id
                 FROM items i, item_types it, brands b, models m, employees e
                 WHERE i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND 
@@ -124,6 +137,17 @@ class Item extends CI_Controller
         if($model_id != 0){
             $sql .= " AND i.model_id = $model_id";
         }
+        if($location_id != 0){
+            $sql .= " AND i.location_id = $location_id";
+        }
+        if($first_sub_location_id != 0){
+            $sql .= " AND i.first_sub_location_id = $first_sub_location_id";
+        }
+        if($second_sub_location_id != 0){
+            $sql .= " AND i.second_sub_location_id = $second_sub_location_id";
+        }
+
+
         $sql .= " ORDER BY i.id desc";
         $sql .= " LIMIT 0, $limit";
 
@@ -157,9 +181,11 @@ class Item extends CI_Controller
         foreach($this->db->get()->result() as $company){
             $data['companies'][$company->id] = $company;
         }
+
         $this->db->reset_query();
         $this->db->select('l.* ');
         $this->db->from('locations l');
+        $this->db->order_by('l.name asc');
         foreach($this->db->get()->result() as $location){
             $data['locations'][$location->id] = $location;
         }
@@ -167,6 +193,7 @@ class Item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('f.* ');
         $this->db->from('first_sub_locations f');
+        $this->db->order_by('f.name asc');
         foreach($this->db->get()->result() as $first_sub_location){
             $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
         }
@@ -174,6 +201,7 @@ class Item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('s.* ');
         $this->db->from('second_sub_locations s');
+        $this->db->order_by('s.name asc');
         foreach($this->db->get()->result() as $second_sub_location){
             $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
         }
@@ -236,6 +264,7 @@ class Item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('l.* ');
         $this->db->from('locations l');
+        $this->db->order_by('l.name asc');
         foreach($this->db->get()->result() as $location){
             $data['locations'][$location->id] = $location;
         }
@@ -243,6 +272,7 @@ class Item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('f.* ');
         $this->db->from('first_sub_locations f');
+        $this->db->order_by('f.name asc');
         foreach($this->db->get()->result() as $first_sub_location){
             $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
         }
@@ -250,6 +280,7 @@ class Item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('s.* ');
         $this->db->from('second_sub_locations s');
+        $this->db->order_by('s.name asc');
         foreach($this->db->get()->result() as $second_sub_location){
             $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
         }
@@ -273,6 +304,13 @@ class Item extends CI_Controller
         $date_of_purchase = date("Y-m-d", strtotime($this->input->post('date_of_purchase', TRUE)));
         $warranty_expiry_date = date("Y-m-d", strtotime($this->input->post('warranty_expiry_date', TRUE)));
 
+        // get location ids
+        $locs = $this->input->post('location_id', TRUE);
+        $locs_id = explode(',',$locs);
+        $location_id = $locs_id[0];
+        $first_sub_location_id = $locs_id[1];
+        $second_sub_location_id = $locs_id[2];
+
         // final checking to ensure $warranty_expiry_date is not earlier than purchase date
         // in case front end is breached
         if($warranty_expiry_date < $date_of_purchase){
@@ -287,6 +325,9 @@ class Item extends CI_Controller
             'supplier_id' => $this->input->post('supplier_id', TRUE),
             'company_id' => $this->input->post('company_id', TRUE),
             'operating_system_id' => $this->input->post('operating_system_id', TRUE),
+            'location_id' => $location_id,
+            'first_sub_location_id' => $first_sub_location_id,
+            'second_sub_location_id' => $second_sub_location_id,
             'employee_id' => $this->input->post('employee_id', TRUE),
             'is_used' => $is_used,
             'note' => $this->input->post('note', TRUE),
@@ -299,6 +340,9 @@ class Item extends CI_Controller
         $data2 = [
             'item_id' => $id_to_insert,
             'employee_id' => $this->input->post('employee_id', TRUE),
+            'location_id' => $location_id,
+            'first_sub_location_id' => $first_sub_location_id,
+            'second_sub_location_id' => $second_sub_location_id,
             'note' => 'First item assignment',
             'mutation_date' => $date_of_purchase
         ];
@@ -348,9 +392,9 @@ class Item extends CI_Controller
 
         $this->db->select('i.*, it.name as item_type_name, it.id as item_type_id, 
                             b.name as brand_name, m.name as model_name, 
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id');
+                            e.name as employee_name, e.location_id as employee_location_id, 
+                            e.first_sub_location_id as employee_first_sub_location_id, 
+                            e.second_sub_location_id as employee_second_sub_location_id');
         $this->db->from('items i, item_types it, brands b, models m, employees e');
         $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
                           i.employee_id = e.id ');
@@ -487,9 +531,9 @@ class Item extends CI_Controller
                             b.name as brand_name, m.name as model_name,
                             m.capacity_size as model_capacity_size,
                             m.units as model_units, 
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id,
+                            e.name as employee_name, e.location_id as employee_location_id, 
+                            e.first_sub_location_id as employee_first_sub_location_id, 
+                            e.second_sub_location_id as employee_second_sub_location_id,
                             e.company_id as employee_company_id,
                             c.name as company_name, 
                             s.name as supplier_name');
@@ -530,7 +574,7 @@ class Item extends CI_Controller
                             FROM mutations mu, items i, item_types it, brands b, models m 
                             WHERE mu.item_id = i.id AND i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND 
                                   mu.item_id = $id AND mu.mutation_date BETWEEN '$from' AND '$to'
-                            ORDER BY mu.id desc
+                            ORDER BY mu.mutation_date, mu.id desc
         ");
         $data['mutations'] = $query->result();
 
@@ -621,9 +665,9 @@ class Item extends CI_Controller
                             b.name as brand_name, m.name as model_name,
                             m.capacity_size as model_capacity_size,
                             m.units as model_units, 
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id,
+                            e.name as employee_name, e.location_id as employee_location_id, 
+                            e.first_sub_location_id as employee_first_sub_location_id, 
+                            e.second_sub_location_id as employee_second_sub_location_id,
                             e.company_id as employee_company_id,
                             c.name as company_name, 
                             s.name as supplier_name');
@@ -698,6 +742,7 @@ class Item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('l.* ');
         $this->db->from('locations l');
+        $this->db->order_by('l.name asc');
         foreach($this->db->get()->result() as $location){
             $data['locations'][$location->id] = $location;
         }
@@ -705,6 +750,7 @@ class Item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('f.* ');
         $this->db->from('first_sub_locations f');
+        $this->db->order_by('f.name asc');
         foreach($this->db->get()->result() as $first_sub_location){
             $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
         }
@@ -712,6 +758,7 @@ class Item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('s.* ');
         $this->db->from('second_sub_locations s');
+        $this->db->order_by('s.name asc');
         foreach($this->db->get()->result() as $second_sub_location){
             $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
         }
@@ -730,14 +777,25 @@ class Item extends CI_Controller
             redirect(base_url() . 'item');
         }
 
+        // get location ids
+        $locs = $this->input->post('location_id', TRUE);
+        $locs_id = explode(',',$locs);
+        $location_id = $locs_id[0];
+        $first_sub_location_id = $locs_id[1];
+        $second_sub_location_id = $locs_id[2];
+        $prev_location_id = $this->input->post('prev_location_id', TRUE);
+        $prev_first_sub_location_id = $this->input->post('prev_first_sub_location_id', TRUE);
+        $prev_second_sub_location_id = $this->input->post('prev_second_sub_location_id', TRUE);
+
+
         $id = $this->uri->segment('4');
         $this->db->select('i.*, it.name as item_type_name, it.id as item_type_id, 
                             b.name as brand_name, m.name as model_name,
                             m.capacity_size as model_capacity_size,
                             m.units as model_units, 
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id,
+                            e.name as employee_name, e.location_id as employee_location_id, 
+                            e.first_sub_location_id as employee_first_sub_location_id, 
+                            e.second_sub_location_id as employee_second_sub_location_id,
                             e.company_id as employee_company_id,
                             c.name as company_name, 
                             s.name as supplier_name');
@@ -759,9 +817,12 @@ class Item extends CI_Controller
         $employee_id = $this->input->post('employee_id', TRUE);
         $prev_employee_id =$this->input->post('prev_employee_id', TRUE);
 
-        if ($employee_id == $prev_employee_id){
-            //prevents mutation from and to the same employee
-            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span> You can\'t mutate to the same employee!');
+        if ($employee_id == $prev_employee_id &&
+            $location_id == $prev_location_id &&
+            $first_sub_location_id == $prev_first_sub_location_id &&
+            $second_sub_location_id == $prev_second_sub_location_id){
+            //prevents mutation from and to the same employee and location
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span> You can\'t mutate to the same employee and locations! You have to at least mutate to a different employee or location!');
             $this->session->set_flashdata('site_wide_msg_type', 'danger');
             redirect(base_url().'item/mutate/'.$id);
         }
@@ -775,6 +836,12 @@ class Item extends CI_Controller
             'item_id' => $id,
             'prev_employee_id' => $this->input->post('prev_employee_id', TRUE),
             'employee_id' => $this->input->post('employee_id', TRUE),
+            'prev_location_id' => $prev_location_id,
+            'prev_first_sub_location_id' => $prev_first_sub_location_id,
+            'prev_second_sub_location_id' => $prev_second_sub_location_id,
+            'location_id' => $location_id,
+            'first_sub_location_id' => $first_sub_location_id,
+            'second_sub_location_id' => $second_sub_location_id,
             'mutation_status_id' => $this->input->post('mutation_status_id', TRUE),
             'note' => $this->input->post('note', TRUE),
             'mutation_date' => $mutation_date
@@ -784,9 +851,12 @@ class Item extends CI_Controller
         $this->load->model('Mutation_model');
         $this->Mutation_model->insert($data);
 
-        // now update item with the new employee id
+        // now update item with the new employee id and location
         $data2 = [
-            'employee_id' => $this->input->post('employee_id', TRUE)
+            'employee_id' => $this->input->post('employee_id', TRUE),
+            'location_id' => $location_id,
+            'first_sub_location_id' => $first_sub_location_id,
+            'second_sub_location_id' => $second_sub_location_id,
         ];
 
         $this->load->model('Item_model');

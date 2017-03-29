@@ -100,6 +100,7 @@
                 <th> Owned by </th>
                 <th> Is used? </th>
                 <th> Held by </th>
+                <th> Item location </th>
                 <th style="min-width: 1em"> Action </th>
                 </thead>
                 <?php
@@ -125,11 +126,14 @@
                         html_escape($companies[$item->company_id]->name).
                         '</a></td>';
                     echo '<td>'.(($item->is_used == 1) ? 'Yes' : 'No' ).'</td>';
-                    echo '<td>'.html_escape($item->employee_name).
+                    echo '<td>'.
+                        '<i class="fa fa-user"></i> '.
+                        html_escape($item->employee_name).
                         '<br/> <i class="fa fa-building"></i> '.
                         html_escape($companies[$item->employee_company_id]->name).
-                        '<br/> <i class="fa fa-map-marker"></i> '.
-                        (($item->location_id != 0) ? html_escape($locations[$item->location_id]->name) : '').
+                        '</td>';
+                    echo '<td>'.
+                        (($item->location_id != 0) ? '<i class="fa fa-map-marker"></i> '.html_escape($locations[$item->location_id]->name) : '').
                         (($item->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$item->first_sub_location_id]->name) : '').
                         (($item->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$item->second_sub_location_id]->name) : '').
                         '</td>';

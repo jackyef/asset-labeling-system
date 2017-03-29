@@ -75,7 +75,35 @@
 
 
             <div class="col-sm-4">
-                <button class="btn btn-success">Go!</button>
+                <select class="form-control selectpicker" name="location_id" id="location_id" data-live-search="true">
+                    <option value="0,0,0">
+                        Choose location
+                    </option>
+                    <?php foreach($locations as $location){ ?>
+                        <option value="<?= $location->id.',0,0' ?>"
+                            <?= (($location_id.','.$first_sub_location_id.','.$second_sub_location_id == $location->id.',0,0') ? 'selected' : '') ?>>
+                            <?= html_escape($location->name) ?>
+                        </option>
+                    <?php } ?>
+
+                    <?php foreach($first_sub_locations as $first_sub_location){ ?>
+                        <option value="<?= $first_sub_location->location_id.','.$first_sub_location->id.',0' ?>"
+                            <?= (($location_id.','.$first_sub_location_id.','.$second_sub_location_id == $first_sub_location->location_id.','.$first_sub_location->id.',0') ? 'selected' : '') ?>>
+                            <?= (($first_sub_location->location_id != 0) ? html_escape($locations[$first_sub_location->location_id]->name) : '') ?>/<?= html_escape($first_sub_location->name) ?>
+                        </option>
+                    <?php } ?>
+
+                    <?php foreach($second_sub_locations as $second_sub_location){ ?>
+                        <option value="<?= $first_sub_locations[$second_sub_location->first_sub_location_id]->location_id.','.$second_sub_location->first_sub_location_id.','.$second_sub_location->id ?>"
+                            <?= (($location_id.','.$first_sub_location_id.','.$second_sub_location_id == $first_sub_locations[$second_sub_location->first_sub_location_id]->location_id.','.$second_sub_location->first_sub_location_id.','.$second_sub_location->id) ? 'selected' : '') ?>>
+                            <?= (($first_sub_locations[$second_sub_location->first_sub_location_id]->location_id != 0) ? html_escape($locations[$first_sub_locations[$second_sub_location->first_sub_location_id]->location_id]->name) : '') ?>/<?= ($second_sub_location->first_sub_location_id != 0) ? html_escape($first_sub_locations[$second_sub_location->first_sub_location_id]->name) : ''?>/<?= html_escape($second_sub_location->name) ?>
+                        </option>
+                    <?php } ?>
+                </select>
+            </div>
+
+            <div class="col-sm-4 col-sm-offset-8">
+                <button class="btn btn-success"><i class="fa fa-filter"></i> Filter results</button>
             </div>
 
 
@@ -95,6 +123,7 @@
         <th> Owned by </th>
         <th> Is used? </th>
         <th> Held by </th>
+        <th> Item location </th>
         <th style="min-width: 1em"> Action </th>
         </thead>
         <?php
@@ -118,12 +147,14 @@
                 '</a></td>';
             echo '<td>'.(($item->is_used == 1) ? 'Yes' : 'No' ).'</td>';
             echo '<td>'.
+                '<i class="fa fa-user"></i> '.
                 '<a href="'.base_url().'employee/detail/'.$item->employee_id.'">'.
                 html_escape($item->employee_name). '</a>'.
                 '<br/> <i class="fa fa-building"></i> '.
                 html_escape($companies[$item->employee_company_id]->name).
-                '<br/> <i class="fa fa-map-marker"></i> '.
-                (($item->location_id != 0) ? html_escape($locations[$item->location_id]->name) : '').
+                '</td>';
+            echo '<td>'.
+                (($item->location_id != 0) ? '<i class="fa fa-map-marker"></i> '.html_escape($locations[$item->location_id]->name) : '').
                 (($item->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$item->first_sub_location_id]->name) : '').
                 (($item->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$item->second_sub_location_id]->name) : '').
                 '</td>';

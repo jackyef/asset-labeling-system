@@ -144,6 +144,39 @@
                 </div>
             </div>
         </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="name">Location:</label>
+            <div class="col-sm-10">
+                <select class="form-control selectpicker" name="location_id" id="location_id" data-live-search="true" disabled
+                        title="You must mutate this item to change its location">
+                    <option value="0,0,0">
+                        Not specified
+                    </option>
+                    <?php foreach($locations as $location){ ?>
+                        <option value="<?= $location->id.',0,0' ?>"
+                            <?= (($record->location_id.','.$record->first_sub_location_id.','.$record->second_sub_location_id == $location->id.',0,0') ? 'selected' : '') ?>>
+                            <?= html_escape($location->name) ?>
+                        </option>
+                    <?php } ?>
+
+                    <?php foreach($first_sub_locations as $first_sub_location){ ?>
+                        <option value="<?= $first_sub_location->location_id.','.$first_sub_location->id.',0' ?>"
+                            <?= (($record->location_id.','.$record->first_sub_location_id.','.$record->second_sub_location_id == $first_sub_location->location_id.','.$first_sub_location->id.',0') ? 'selected' : '') ?>>
+                            <?= (($first_sub_location->location_id != 0) ? html_escape($locations[$first_sub_location->location_id]->name) : '') ?>/<?= html_escape($first_sub_location->name) ?>
+                        </option>
+                    <?php } ?>
+
+                    <?php foreach($second_sub_locations as $second_sub_location){ ?>
+                        <option value="<?= $first_sub_locations[$second_sub_location->first_sub_location_id]->location_id.','.$second_sub_location->first_sub_location_id.','.$second_sub_location->id ?>"
+                            <?= (($record->location_id.','.$record->first_sub_location_id.','.$record->second_sub_location_id == $first_sub_locations[$second_sub_location->first_sub_location_id]->location_id.','.$second_sub_location->first_sub_location_id.','.$second_sub_location->id) ? 'selected' : '') ?>>
+                            <?= (($first_sub_locations[$second_sub_location->first_sub_location_id]->location_id != 0) ? html_escape($locations[$first_sub_locations[$second_sub_location->first_sub_location_id]->location_id]->name) : '') ?>/<?= ($second_sub_location->first_sub_location_id != 0) ? html_escape($first_sub_locations[$second_sub_location->first_sub_location_id]->name) : ''?>/<?= html_escape($second_sub_location->name) ?>
+                        </option>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+
         <div class="form-group">
             <label class="control-label col-sm-2" for="note">Note:</label>
             <div class="col-sm-10">
@@ -162,6 +195,7 @@
 <script type="text/javascript">
     // update the date pickers to take the record's value
     $(document).ready(function(){
+
         $('#warranty_expiry_date').datepicker({
             format: 'DD, dd MM yyyy',
             autoclose: true,

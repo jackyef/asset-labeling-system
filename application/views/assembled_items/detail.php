@@ -106,7 +106,14 @@
                                     </a>
                                 </div>
                             </div>
-
+                            <div class="form-group">
+                                <div class="col-sm-4"><strong>Current location</strong></div>
+                                <div class="col-sm-8">
+                                    <?= (($record->location_id != 0) ? '<i class="fa fa-map-marker"></i> '.html_escape($locations[$record->location_id]->name) : '') ?>
+                                    <?= (($record->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$record->first_sub_location_id]->name) : '') ?>
+                                    <?= (($record->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$record->second_sub_location_id]->name) : '') ?>
+                                </div>
+                            </div>
 
                             <div class="divider">&nbsp;</div>
 
@@ -143,9 +150,13 @@
                                         </td>
                                         <td valign="middle">
                                             <form method="POST" action="<?= base_url().'assembled-item/remove/'.$id.'/'.$item->id ?>">
+                                                <input type="hidden" name="employee_id" id="employee_id" value="<?= $item->employee_id?>" />
+                                                <input type="hidden" name="location_id" id="location_id" value="<?= $item->location_id?>" />
+                                                <input type="hidden" name="first_sub_location_id" id="first_sub_location_id" value="<?= $item->first_sub_location_id?>" />
+                                                <input type="hidden" name="second_sub_location_id" id="second_sub_location_id" value="<?= $item->second_sub_location_id?>" />
+
                                                 <button class="btn btn-xs btn-danger">
-                                                        <input type="hidden" name="employee_id" id="employee_id" value="<?= $item->employee_id?>" />
-                                                        <span class="fa fa-times"></span> Remove</button>
+                                                    <span class="fa fa-times"></span> Remove</button>
                                             </form>
                                         </td>
                                         </tr>
@@ -242,7 +253,7 @@
                                     <a href="<?= base_url().'assembled-item/mutate/'.$record->id ?>">
                                         <button class="btn btn-primary form-control">
                                             <span class="fa fa-refresh"></span>
-                                            Mutate to another employee
+                                            Mutate assembled item
                                         </button>
                                     </a>
                                 </div>
@@ -353,15 +364,21 @@
                         echo '<td> - </td>';
                     } else {
                         echo '<td>';
+                        echo '<i class="fa fa-user"></i> ';
                         echo '<a href="'.base_url().'employee/detail/'.$mutation->prev_employee_id.'">';
                         echo html_escape($employees[$mutation->prev_employee_id]->name);
                         echo '</a>';
                         echo '<br/> <i class="fa fa-building"></i> '.
-                            html_escape($companies[$employees[$mutation->prev_employee_id]->company_id]->name).
-                            '<br/> <i class="fa fa-map-marker"></i> '.
-                            (($employees[$mutation->prev_employee_id]->location_id != 0) ? html_escape($locations[$employees[$mutation->prev_employee_id]->location_id]->name) : '').
-                            (($employees[$mutation->prev_employee_id]->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$employees[$mutation->prev_employee_id]->first_sub_location_id]->name) : '').
-                            (($employees[$mutation->prev_employee_id]->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$employees[$mutation->prev_employee_id]->second_sub_location_id]->name) : '');
+                            html_escape($companies[$employees[$mutation->prev_employee_id]->company_id]->name);
+//                            '<br/> <i class="fa fa-map-marker"></i> '.
+//                            (($employees[$mutation->prev_employee_id]->location_id != 0) ? html_escape($locations[$employees[$mutation->prev_employee_id]->location_id]->name) : '').
+//                            (($employees[$mutation->prev_employee_id]->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$employees[$mutation->prev_employee_id]->first_sub_location_id]->name) : '').
+//                            (($employees[$mutation->prev_employee_id]->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$employees[$mutation->prev_employee_id]->second_sub_location_id]->name) : '');
+                        echo '<br/>'.
+                            (($mutation->prev_location_id != 0) ? '<i class="fa fa-map-marker"></i> '.html_escape($locations[$mutation->prev_location_id]->name) : '').
+                            (($mutation->prev_first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$mutation->prev_first_sub_location_id]->name) : '').
+                            (($mutation->prev_second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$mutation->prev_second_sub_location_id]->name) : '');
+
                         echo '</td>';
                     }
 
@@ -369,15 +386,21 @@
                     if($mutation->employee_id == 0){
                         echo '-';
                     } else {
+                        echo '<i class="fa fa-user"></i> ';
                         echo '<a href="'.base_url().'employee/detail/'.$mutation->employee_id.'">';
                         echo html_escape($employees[$mutation->employee_id]->name);
                         echo '</a>';
                         echo '<br/> <i class="fa fa-building"></i> '.
-                            html_escape($companies[$employees[$mutation->employee_id]->company_id]->name).
-                            '<br/> <i class="fa fa-map-marker"></i> '.
-                            (($employees[$mutation->employee_id]->location_id != 0) ? html_escape($locations[$employees[$mutation->employee_id]->location_id]->name) : '').
-                            (($employees[$mutation->employee_id]->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$employees[$mutation->employee_id]->first_sub_location_id]->name) : '').
-                            (($employees[$mutation->employee_id]->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$employees[$mutation->employee_id]->second_sub_location_id]->name) : '');
+                            html_escape($companies[$employees[$mutation->employee_id]->company_id]->name);
+//                            '<br/> <i class="fa fa-map-marker"></i> '.
+//                            (($employees[$mutation->employee_id]->location_id != 0) ? html_escape($locations[$employees[$mutation->employee_id]->location_id]->name) : '').
+//                            (($employees[$mutation->employee_id]->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$employees[$mutation->employee_id]->first_sub_location_id]->name) : '').
+//                            (($employees[$mutation->employee_id]->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$employees[$mutation->employee_id]->second_sub_location_id]->name) : '');
+                        echo '<br/>'.
+                            (($mutation->location_id != 0) ? '<i class="fa fa-map-marker"></i> '.html_escape($locations[$mutation->location_id]->name) : '').
+                            (($mutation->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$mutation->first_sub_location_id]->name) : '').
+                            (($mutation->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$mutation->second_sub_location_id]->name) : '');
+
                     }
                     echo '</td>';
 
@@ -438,7 +461,7 @@
 
 
             $('.data-table-mutation').DataTable({
-                "order": [[ 4, "desc" ]],
+                "order": [[ 4, "desc" ], [0, "desc"]],
                 responsive: true,
                 colReorder: false,
                 dom: 'Bflrtip',
