@@ -10,6 +10,8 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
     <title> {title} </title>
+    <link rel="shortcut icon" type="image/png" href="<?= base_url()?>favicon.png"/>
+
     <link rel="stylesheet" href="<?= base_url() ?>css/bootstrap.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>css/bootstrap-select.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>css/bootstrap-datepicker3.standalone.min.css">
@@ -64,20 +66,20 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" style="padding-top: 0em; margin-top: 0.3em; margin-bottom: 0.3em" href="<?= base_url()?>">
+            <a class="navbar-brand" style="padding-top: .35em; margin-top: 0em; margin-bottom: 0em" href="<?= base_url()?>">
 <!--                <span class="fa-stack fa-sm" >-->
 <!--                      <i class="fa fa-square-o fa-stack-2x"></i>-->
 <!--                      <i class="fa fa-tag fa-stack-1x"></i>-->
 <!--                      <i class="fa fa-laptop fa-stack-1x"></i>-->
 <!--                </span>-->
-                <span class="fa fa-sm fa-laptop fa-3x"></span>
+                <span class="fa fa-sm fa-laptop fa-2x"></span>
                 <span class="fa fa-sm fa-tag" ></span>
             </a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav" style="margin-top: 0.3em; margin-bottom: 0.3em">
+            <ul class="nav navbar-nav" style="margin-top: 0em; margin-bottom: 0em">
                 <!-- this Masters dropdown is admin-only -->
                 <?php if ($is_logged_in == 1): ?>
                 <?php if ($session_is_admin == 1): ?>
@@ -128,7 +130,7 @@
 
 
             <!-- this is the right part of the nav-bar -->
-            <ul class="nav navbar-nav navbar-right" style="margin-top: 0.3em; margin-bottom: 0.3em">
+            <ul class="nav navbar-nav navbar-right" style="margin-top: 0em; margin-bottom: 0em">
                 <?php if ($is_logged_in == 1): ?>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Hi, {session_username}! <span class="caret"></span></a>

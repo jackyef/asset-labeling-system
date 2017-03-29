@@ -104,6 +104,16 @@
                                 </div>
                             </div>
 
+
+                            <div class="form-group">
+                                <div class="col-sm-4"><strong>Current location</strong></div>
+                                <div class="col-sm-8">
+                                    <?= (($record->location_id != 0) ? '<i class="fa fa-map-marker"></i> '.html_escape($locations[$record->location_id]->name) : '') ?>
+                                    <?= (($record->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$record->first_sub_location_id]->name) : '') ?>
+                                    <?= (($record->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$record->second_sub_location_id]->name) : '') ?>
+                                </div>
+                            </div>
+
                             <div class="divider">&nbsp;</div>
                             <div class="form-group">
                                 <div class="col-sm-4"><strong>Held by</strong></div>
@@ -173,11 +183,14 @@
 
                                 </div>
                                 <input type="hidden" value="<?= $record->employee_id ?>" name="employee_id" id="employee_id"/> <!-- mutate to holder of this assembled item -->
+                                <input type="hidden" value="<?= $record->location_id ?>" name="location_id" id="location_id"/> <!-- mutate to location of this assembled item -->
+                                <input type="hidden" value="<?= $record->first_sub_location_id ?>" name="first_sub_location_id" id="first_sub_location_id"/> <!-- mutate to location of this assembled item -->
+                                <input type="hidden" value="<?= $record->second_sub_location_id ?>" name="second_sub_location_id" id="second_sub_location_id"/> <!-- mutate to location of this assembled item -->
                                 <div class="form-group">
                                     <div class="col-sm-12">
                                         <select class="form-control selectpicker" name="item_id_prev_employee_id" id="item_id_prev_employee_id" data-live-search="true">
                                             <?php foreach($items_to_add as $item_to_add){ ?>
-                                                <option value="<?= $item_to_add->id.','.$item_to_add->employee_id?>">
+                                                <option value="<?= $item_to_add->id.','.$item_to_add->employee_id.','.$item_to_add->location_id.','.$item_to_add->first_sub_location_id.','.$item_to_add->second_sub_location_id?>">
                                                     <?= html_escape($item_to_add->item_type_name) ?> / <?= html_escape($item_to_add->brand_name) ?> / <?= html_escape($item_to_add->model_name) ?>
                                                     (<?= (str_pad($item_to_add->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($item_to_add->id, 5, '0', STR_PAD_LEFT)) ?>)
                                                     <?= html_escape($item_to_add->employee_name) ?>

@@ -82,18 +82,92 @@ class Assembled_item extends CI_Controller
         $this->parser->parse('templates/header.php', $data);
 
         // parse the content of this route here!
+        // for mutation limits
+        $from =  date("Y-m-d", strtotime($this->input->post("date_start", TRUE)));
+        $to =  date("Y-m-d", strtotime($this->input->post("date_end", TRUE)));
+        $limit = $this->input->post("limit", TRUE) ?: 100;
+        $company_id = $this->input->post("company_id", TRUE) ?: 0;
+        $brand_id = $this->input->post("brand_id", TRUE) ?: 0;
 
-        $this->db->select('ai.*, it.name as item_type_name, it.id as item_type_id, 
+        $date_start = $this->input->post("date_start", TRUE);
+        $date_end = $this->input->post("date_end", TRUE);
+
+        if ($to == "1970-01-01"){
+            $to = "2300-12-31";
+        }
+        if ($limit == 0){
+            $limit = 100;
+        }
+
+        // get location ids
+        $locs = $this->input->post('location_id', TRUE) ?: '0,0,0';
+        $locs_id = explode(',', $locs);
+        $location_id = $locs_id[0];
+        $first_sub_location_id = $locs_id[1];
+        $second_sub_location_id = $locs_id[2];
+
+        $data['date_start'] = $date_start;
+        $data['date_end'] = $date_end;
+        $data['limit'] = $limit;
+        $data['company_id'] = $company_id;
+        $data['brand_id'] = $brand_id;
+        $data['location_id'] = $location_id;
+        $data['first_sub_location_id'] = $first_sub_location_id;
+        $data['second_sub_location_id'] = $second_sub_location_id;
+
+        $sql = "SELECT 
+                    ai.*, it.name as item_type_name, it.id as item_type_id, 
                             b.name as brand_name,
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id, 
-                            e.company_id as employee_company_id');
-        $this->db->from('assembled_items ai, item_types it, brands b, employees e');
-        $this->db->where('ai.brand_id = b.id AND b.item_type_id = it.id AND
-                          ai.employee_id = e.id ');
-//        $this->db->order_by('l.name, f.name asc');
-        $data['records'] = $this->db->get()->result();
+                            e.name as employee_name, e.location_id as employee_location_id, 
+                            e.first_sub_location_id as employee_first_sub_location_id, 
+                            e.second_sub_location_id as employee_second_sub_location_id, 
+                            e.company_id as employee_company_id
+                FROM assembled_items ai, item_types it, brands b, employees e
+                WHERE ai.brand_id = b.id AND b.item_type_id = it.id AND
+                          ai.employee_id = e.id AND 
+                      ai.date_of_purchase BETWEEN '$from' AND '$to' ";
+
+        if($company_id != 0){
+            $sql .= " AND ai.company_id = $company_id";
+        }
+        if($brand_id != 0){
+            $sql .= " AND ai.brand_id = $brand_id";
+        }
+        if($location_id != 0){
+            $sql .= " AND ai.location_id = $location_id";
+        }
+        if($first_sub_location_id != 0){
+            $sql .= " AND ai.first_sub_location_id = $first_sub_location_id";
+        }
+        if($second_sub_location_id != 0){
+            $sql .= " AND ai.second_sub_location_id = $second_sub_location_id";
+        }
+
+        $sql .= " ORDER BY ai.id desc";
+        $sql .= " LIMIT 0, $limit";
+
+        $query = $this->db->query($sql);
+        $data['records'] = $query->result();
+
+//        $this->db->select('ai.*, it.name as item_type_name, it.id as item_type_id,
+//                            b.name as brand_name,
+//                            e.name as employee_name, e.location_id as location_id,
+//                            e.first_sub_location_id as first_sub_location_id,
+//                            e.second_sub_location_id as second_sub_location_id,
+//                            e.company_id as employee_company_id');
+//        $this->db->from('assembled_items ai, item_types it, brands b, employees e');
+//        $this->db->where('ai.brand_id = b.id AND b.item_type_id = it.id AND
+//                          ai.employee_id = e.id ');
+////        $this->db->order_by('l.name, f.name asc');
+//        $data['records'] = $this->db->get()->result();
+
+        // searching for assembled item brands
+        $this->db->select('b.*, i.name as item_type_name');
+        $this->db->from('brands b, item_types i');
+        $this->db->where('b.item_type_id = i.id and i.is_assembled = 1');
+        $this->db->order_by('item_type_name, b.name asc');
+        $data['brands'] = $this->db->get()->result();
+
 
         $this->db->reset_query();
         $this->db->select('c.* ');
@@ -104,6 +178,7 @@ class Assembled_item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('l.* ');
         $this->db->from('locations l');
+        $this->db->order_by('l.name asc');
         foreach($this->db->get()->result() as $location){
             $data['locations'][$location->id] = $location;
         }
@@ -111,6 +186,7 @@ class Assembled_item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('f.* ');
         $this->db->from('first_sub_locations f');
+        $this->db->order_by('f.name asc');
         foreach($this->db->get()->result() as $first_sub_location){
             $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
         }
@@ -118,6 +194,7 @@ class Assembled_item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('s.* ');
         $this->db->from('second_sub_locations s');
+        $this->db->order_by('s.name asc');
         foreach($this->db->get()->result() as $second_sub_location){
             $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
         }
@@ -133,7 +210,7 @@ class Assembled_item extends CI_Controller
 
         $data = $this->get_session_data();
 
-        $data['title'] = 'ALS - Item';
+        $data['title'] = 'ALS - Assembled Item';
         $this->parser->parse('templates/header.php', $data);
 
         //model for adding items
@@ -190,6 +267,7 @@ class Assembled_item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('l.* ');
         $this->db->from('locations l');
+        $this->db->order_by('l.name asc');
         foreach($this->db->get()->result() as $location){
             $data['locations'][$location->id] = $location;
         }
@@ -197,6 +275,7 @@ class Assembled_item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('f.* ');
         $this->db->from('first_sub_locations f');
+        $this->db->order_by('f.name asc');
         foreach($this->db->get()->result() as $first_sub_location){
             $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
         }
@@ -204,9 +283,11 @@ class Assembled_item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('s.* ');
         $this->db->from('second_sub_locations s');
+        $this->db->order_by('s.name asc');
         foreach($this->db->get()->result() as $second_sub_location){
             $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
         }
+
 
         $this->parser->parse('assembled_items/insert_form.php', $data);
 
@@ -230,6 +311,13 @@ class Assembled_item extends CI_Controller
         $date_of_purchase = date("Y-m-d", strtotime($this->input->post('date_of_purchase', TRUE)));
         $warranty_expiry_date = date("Y-m-d", strtotime($this->input->post('warranty_expiry_date', TRUE)));
 
+        // get location ids
+        $locs = $this->input->post('location_id', TRUE);
+        $locs_id = explode(',',$locs);
+        $location_id = $locs_id[0];
+        $first_sub_location_id = $locs_id[1];
+        $second_sub_location_id = $locs_id[2];
+
         // final checking to ensure $warranty_expiry_date is not earlier than purchase date
         // in case front end is breached
         if($warranty_expiry_date < $date_of_purchase){
@@ -245,6 +333,9 @@ class Assembled_item extends CI_Controller
             'supplier_id' => $this->input->post('supplier_id', TRUE),
             'company_id' => $this->input->post('company_id', TRUE),
             'operating_system_id' => $this->input->post('operating_system_id', TRUE),
+            'location_id' => $location_id,
+            'first_sub_location_id' => $first_sub_location_id,
+            'second_sub_location_id' => $second_sub_location_id,
             'employee_id' => $this->input->post('employee_id', TRUE),
             'is_used' => $is_used,
             'note' => $this->input->post('note', TRUE),
@@ -257,6 +348,9 @@ class Assembled_item extends CI_Controller
         $data2 = [
             'item_id' => $id_to_insert,
             'employee_id' => $this->input->post('employee_id', TRUE),
+            'location_id' => $location_id,
+            'first_sub_location_id' => $first_sub_location_id,
+            'second_sub_location_id' => $second_sub_location_id,
             'note' => 'First item assignment',
             'mutation_date' => $date_of_purchase
         ];
@@ -286,6 +380,9 @@ class Assembled_item extends CI_Controller
                 'supplier_id' => $this->input->post('supplier_id', TRUE),
                 'company_id' => $this->input->post('company_id', TRUE),
                 'operating_system_id' => 0,
+                'location_id' => $location_id,
+                'first_sub_location_id' => $first_sub_location_id,
+                'second_sub_location_id' => $second_sub_location_id,
                 'assembled_item_id' => $id,
                 'employee_id' => $this->input->post('employee_id', TRUE),
                 'is_used' => $is_used,
@@ -302,6 +399,9 @@ class Assembled_item extends CI_Controller
             $to_insert2 = [
                 'item_id' => $id_to_insert,
                 'employee_id' => $this->input->post('employee_id', TRUE),
+                'location_id' => $location_id,
+                'first_sub_location_id' => $first_sub_location_id,
+                'second_sub_location_id' => $second_sub_location_id,
                 'note' => 'First item assignment. Part of assembled item ['.$product_name.']. id: '.$id,
                 'mutation_date' => $date_of_purchase
             ];
@@ -337,9 +437,9 @@ class Assembled_item extends CI_Controller
 
         $this->db->select('ai.*, it.name as item_type_name, it.id as item_type_id, 
                             b.name as brand_name, 
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id');
+                            e.name as employee_name, e.location_id as employee_location_id, 
+                            e.first_sub_location_id as employee_first_sub_location_id, 
+                            e.second_sub_location_id as employee_second_sub_location_id');
         $this->db->from('item_types it, brands b, models m, employees e');
         $this->db->where('ai.brand_id = b.id AND b.item_type_id = it.id AND
                           ai.employee_id = e.id ');
@@ -477,6 +577,9 @@ class Assembled_item extends CI_Controller
         }
     }
 
+    /**
+     *
+     */
     public function detail(){
         // this shows the form for inserting a new mutation status
 
@@ -488,9 +591,9 @@ class Assembled_item extends CI_Controller
 
         $this->db->select('ai.*, it.name as item_type_name, it.id as item_type_id, 
                             b.name as brand_name,
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id,
+                            e.name as employee_name, e.location_id as employee_location_id, 
+                            e.first_sub_location_id as employee_first_sub_location_id, 
+                            e.second_sub_location_id as employee_second_sub_location_id,
                             e.company_id as employee_company_id,
                             c.name as company_name, 
                             s.name as supplier_name');
@@ -499,6 +602,7 @@ class Assembled_item extends CI_Controller
                           ai.employee_id = e.id AND ai.company_id = c.id AND ai.supplier_id = s.id');
 
         $query = $this->db->get_where('assembled_items', array('ai.id' => $id));
+
         $data['record'] = $query->result()[0];
         $data['id'] = $id;
 
@@ -507,29 +611,52 @@ class Assembled_item extends CI_Controller
                             b.name as brand_name, m.name as model_name,
                             m.capacity_size as model_capacity_size,
                             m.units as model_units, 
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id,
+                            e.name as employee_name, e.location_id as employee_location_id, 
+                            e.first_sub_location_id as employee_first_sub_location_id, 
+                            e.second_sub_location_id as employee_second_sub_location_id,
                             e.company_id as employee_company_id,
                             c.name as company_name, 
                             s.name as supplier_name');
         $this->db->from('item_types it, brands b, models m, employees e, companies c, suppliers s');
         $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
                           i.employee_id = e.id AND i.company_id = c.id AND i.supplier_id = s.id');
-
+        $this->db->order_by('i.id, item_type_name, brand_name, model_name asc');
         $query = $this->db->get_where('items i', array('i.assembled_item_id' => $id));
         $data['items'] = $query->result();
 
 
         $this->db->reset_query();
-        $this->db->select('mu.*, it.name as item_type_name, it.id as item_type_id, 
-                            ai.product_name as product_name,
-                            b.name as brand_name, ai.operating_system_id as operating_system_id');
 
-        $this->db->from('assembled_items ai, item_types it, brands b');
-        $this->db->where('mu.item_id = ai.id AND ai.brand_id = b.id AND b.item_type_id = it.id');
-        $this->db->order_by('mu.id desc');
-        $query = $this->db->get_where('mutations mu', array('mu.item_id' => $id));
+        // for mutation limits
+        $from =  date("Y-m-d", strtotime($this->input->post("date_start", TRUE)));
+        $to =  date("Y-m-d", strtotime($this->input->post("date_end", TRUE)));
+        $limit = $this->input->post("limit", TRUE);
+
+        $date_start = $this->input->post("date_start", TRUE);
+        $date_end = $this->input->post("date_end", TRUE);
+
+        if ($to == "1970-01-01"){
+            $to = "2300-12-31";
+        }
+        if ($limit == 0){
+            $limit = 100;
+        }
+
+        $data['date_start'] = $date_start;
+        $data['date_end'] = $date_end;
+        $data['limit'] = $limit;
+
+        $query = $this->db->query("
+                              SELECT mu.*, it.name as item_type_name, it.id as item_type_id, 
+                                        ai.product_name as product_name,
+                                        b.name as brand_name, ai.operating_system_id as operating_system_id
+                              FROM mutations mu, assembled_items ai, item_types it, brands b
+                              WHERE mu.item_id = ai.id AND ai.brand_id = b.id AND b.item_type_id = it.id AND 
+                                    mu.item_id = $id AND 
+                                    mutation_date BETWEEN '$from' AND '$to'
+                              ORDER BY mu.mutation_date, mu.id desc 
+                              LIMIT 0, $limit");
+
         $data['mutations'] = $query->result();
 
         $this->db->reset_query();
@@ -615,25 +742,49 @@ class Assembled_item extends CI_Controller
         $id = $this->uri->segment('3');
         $item_id = $this->uri->segment('4');
 
-
+        $this->db->trans_start(); # Starting Transaction
         $data2 = [
             'assembled_item_id' => 0
         ];
+        // updates the item assembled_item_id to 0
         $this->load->model('Item_model');
-        if($this->Item_model->update($data2, $item_id)){
-            //success
-            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> Successfully removed an item from the assembled item!');
+        $this->Item_model->update($data2, $item_id);
+
+        // removing item doesn't change the location, so the previous and current location will be the same in the mutation record
+        $location_id = $this->input->post('location_id', TRUE);
+        $first_sub_location_id = $this->input->post('first_sub_location_id', TRUE);
+        $second_sub_location_id = $this->input->post('second_sub_location_id', TRUE);
+
+        // create a mutation record
+        $data3 = [
+            'item_id' => $item_id,
+            'prev_employee_id' => $this->input->post('employee_id', TRUE),
+            'employee_id' => $this->input->post('employee_id', TRUE),
+            'prev_location_id' => $location_id,
+            'prev_first_sub_location_id' => $first_sub_location_id,
+            'prev_second_sub_location_id' => $second_sub_location_id,
+            'location_id' => $location_id,
+            'first_sub_location_id' => $first_sub_location_id,
+            'second_sub_location_id' => $second_sub_location_id,
+            'note' => 'Removed from the assembled item with id: '.$id.'.',
+            'mutation_date' => date('Y-m-d')
+        ];
+
+        $this->load->model('Mutation_model');
+        $this->Mutation_model->insert($data3);
+
+        if ($this->db->trans_complete()) {
+            //Transaction succeeded! All queries are successfully executed
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> The item removed from assembled item!');
             $this->session->set_flashdata('site_wide_msg_type', 'success');
             redirect(base_url() . 'assembled-item/detail/'.$id);
         } else {
-            //error
+            //show errors
             $db_error = $this->db->error();
             $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span>An error occured! <br/>'.json_encode($db_error));
             $this->session->set_flashdata('site_wide_msg_type', 'danger');
             redirect(base_url() . 'assembled-item/detail/'.$id);
-        };
-
-
+        }
     }
 
     public function add_item_form(){
@@ -647,9 +798,9 @@ class Assembled_item extends CI_Controller
 
         $this->db->select('ai.*, it.name as item_type_name, it.id as item_type_id, 
                             b.name as brand_name,
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id,
+                            e.name as employee_name, e.location_id as employee_location_id, 
+                            e.first_sub_location_id as employee_first_sub_location_id, 
+                            e.second_sub_location_id as employee_second_sub_location_id,
                             e.company_id as employee_company_id,
                             c.name as company_name, 
                             s.name as supplier_name');
@@ -666,9 +817,9 @@ class Assembled_item extends CI_Controller
                             b.name as brand_name, m.name as model_name,
                             m.capacity_size as model_capacity_size,
                             m.units as model_units, 
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id,
+                            e.name as employee_name, e.location_id as employee_location_id, 
+                            e.first_sub_location_id as employee_first_sub_location_id, 
+                            e.second_sub_location_id as employee_second_sub_location_id,
                             e.company_id as employee_company_id,
                             c.name as company_name, 
                             s.name as supplier_name');
@@ -685,9 +836,9 @@ class Assembled_item extends CI_Controller
                             b.name as brand_name, m.name as model_name,
                             m.capacity_size as model_capacity_size,
                             m.units as model_units, 
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id,
+                            e.name as employee_name, e.location_id as employee_location_id, 
+                            e.first_sub_location_id as employee_first_sub_location_id, 
+                            e.second_sub_location_id as employee_second_sub_location_id,
                             e.company_id as employee_company_id,
                             c.name as company_name, 
                             s.name as supplier_name');
@@ -806,14 +957,23 @@ class Assembled_item extends CI_Controller
         $item_id_prev_employee_id = explode(',', $item_id_prev_employee_id);
         $item_id = $item_id_prev_employee_id[0];
         $prev_employee_id = $item_id_prev_employee_id[1];
+        $prev_location_id = $item_id_prev_employee_id[2];
+        $prev_first_sub_location_id = $item_id_prev_employee_id[3];
+        $prev_second_sub_location_id = $item_id_prev_employee_id[4];
 
-
+        $location_id = $this->input->post('location_id', TRUE);
+        $first_sub_location_id = $this->input->post('first_sub_location_id', TRUE);
+        $second_sub_location_id = $this->input->post('second_sub_location_id', TRUE);
         $this->db->trans_start(); # Starting Transaction
         $data2 = [
             'assembled_item_id' => $id,
-            'employee_id' => $this->input->post('employee_id', TRUE)
+            'employee_id' => $this->input->post('employee_id', TRUE),
+            'location_id' => $location_id,
+            'first_sub_location_id' => $first_sub_location_id,
+            'second_sub_location_id' => $second_sub_location_id,
+
         ];
-        // updates the item assembled_item_id and change the holder
+        // updates the item assembled_item_id and change the holder and location
         $this->load->model('Item_model');
         $this->Item_model->update($data2, $item_id);
 
@@ -822,6 +982,12 @@ class Assembled_item extends CI_Controller
             'item_id' => $item_id,
             'prev_employee_id' => $prev_employee_id,
             'employee_id' => $this->input->post('employee_id', TRUE),
+            'prev_location_id' => $prev_location_id,
+            'prev_first_sub_location_id' => $prev_first_sub_location_id,
+            'prev_second_sub_location_id' => $prev_second_sub_location_id,
+            'location_id' => $location_id,
+            'first_sub_location_id' => $first_sub_location_id,
+            'second_sub_location_id' => $second_sub_location_id,
             'note' => 'Mutated to assemble the assembled item with id: '.$id.'.',
             'mutation_date' => date('Y-m-d')
         ];
@@ -829,6 +995,8 @@ class Assembled_item extends CI_Controller
         $this->load->model('Mutation_model');
         $this->Mutation_model->insert($data3);
 
+//        echo json_encode($data3);
+//        return;
 
         if ($this->db->trans_complete()) {
             //Transaction succeeded! All queries are successfully executed
@@ -855,9 +1023,9 @@ class Assembled_item extends CI_Controller
 
         $this->db->select('ai.*, it.name as item_type_name, it.id as item_type_id, 
                             b.name as brand_name,
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id,
+                            e.name as employee_name, e.location_id as employee_location_id, 
+                            e.first_sub_location_id as employee_first_sub_location_id, 
+                            e.second_sub_location_id as employee_second_sub_location_id,
                             e.company_id as employee_company_id,
                             c.name as company_name, 
                             s.name as supplier_name');
@@ -875,9 +1043,9 @@ class Assembled_item extends CI_Controller
                             b.name as brand_name, m.name as model_name,
                             m.capacity_size as model_capacity_size,
                             m.units as model_units, 
-                            e.name as employee_name, e.location_id as location_id, 
-                            e.first_sub_location_id as first_sub_location_id, 
-                            e.second_sub_location_id as second_sub_location_id,
+                            e.name as employee_name, e.location_id as employee_location_id, 
+                            e.first_sub_location_id as employee_first_sub_location_id, 
+                            e.second_sub_location_id as employee_second_sub_location_id,
                             e.company_id as employee_company_id,
                             c.name as company_name, 
                             s.name as supplier_name');
@@ -954,6 +1122,7 @@ class Assembled_item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('l.* ');
         $this->db->from('locations l');
+        $this->db->order_by('l.name asc');
         foreach($this->db->get()->result() as $location){
             $data['locations'][$location->id] = $location;
         }
@@ -961,6 +1130,7 @@ class Assembled_item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('f.* ');
         $this->db->from('first_sub_locations f');
+        $this->db->order_by('f.name asc');
         foreach($this->db->get()->result() as $first_sub_location){
             $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
         }
@@ -968,10 +1138,10 @@ class Assembled_item extends CI_Controller
         $this->db->reset_query();
         $this->db->select('s.* ');
         $this->db->from('second_sub_locations s');
+        $this->db->order_by('s.name asc');
         foreach($this->db->get()->result() as $second_sub_location){
             $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
         }
-
 
         $this->load->view('assembled_items/mutate_form.php', $data);
 
@@ -987,13 +1157,27 @@ class Assembled_item extends CI_Controller
             redirect(base_url() . 'assembled-item/mutate/'.$id);
         }
 
+        // get location ids
+        $locs = $this->input->post('location_id', TRUE);
+        $locs_id = explode(',',$locs);
+        $location_id = $locs_id[0];
+        $first_sub_location_id = $locs_id[1];
+        $second_sub_location_id = $locs_id[2];
+        $prev_location_id = $this->input->post('prev_location_id', TRUE);
+        $prev_first_sub_location_id = $this->input->post('prev_first_sub_location_id', TRUE);
+        $prev_second_sub_location_id = $this->input->post('prev_second_sub_location_id', TRUE);
+
+
 
         $employee_id = $this->input->post('employee_id', TRUE);
         $prev_employee_id =$this->input->post('prev_employee_id', TRUE);
 
-        if ($employee_id == $prev_employee_id){
-            //prevents mutation from and to the same employee
-            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span>You can\'t mutate to the same employee!');
+        if ($employee_id == $prev_employee_id &&
+            $location_id == $prev_location_id &&
+            $first_sub_location_id == $prev_first_sub_location_id &&
+            $second_sub_location_id == $prev_second_sub_location_id){
+            //prevents mutation from and to the same employee and location
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span> You can\'t mutate to the same employee and locations! You have to at least mutate to a different employee or location!');
             $this->session->set_flashdata('site_wide_msg_type', 'danger');
             redirect(base_url().'assembled-item/mutate/'.$id);
         }
@@ -1007,6 +1191,12 @@ class Assembled_item extends CI_Controller
             'item_id' => $id,
             'prev_employee_id' => $this->input->post('prev_employee_id', TRUE),
             'employee_id' => $this->input->post('employee_id', TRUE),
+            'prev_location_id' => $prev_location_id,
+            'prev_first_sub_location_id' => $prev_first_sub_location_id,
+            'prev_second_sub_location_id' => $prev_second_sub_location_id,
+            'location_id' => $location_id,
+            'first_sub_location_id' => $first_sub_location_id,
+            'second_sub_location_id' => $second_sub_location_id,
             'mutation_status_id' => $this->input->post('mutation_status_id', TRUE),
             'note' => $this->input->post('note', TRUE),
             'mutation_date' => $mutation_date
@@ -1016,9 +1206,12 @@ class Assembled_item extends CI_Controller
         $this->load->model('Mutation_model');
         $this->Mutation_model->insert($data);
 
-        // now update the assembled_item with the new employee id
+        // now update the assembled_item with the new employee id and location
         $data2 = [
-            'employee_id' => $this->input->post('employee_id', TRUE)
+            'employee_id' => $this->input->post('employee_id', TRUE),
+            'location_id' => $location_id,
+            'first_sub_location_id' => $first_sub_location_id,
+            'second_sub_location_id' => $second_sub_location_id,
         ];
         $this->load->model('Assembled_item_model');
         $this->Assembled_item_model->update($data2, $id);
@@ -1038,6 +1231,12 @@ class Assembled_item extends CI_Controller
                 'item_id' => $item->id,
                 'prev_employee_id' => $this->input->post('prev_employee_id', TRUE),
                 'employee_id' => $this->input->post('employee_id', TRUE),
+                'prev_location_id' => $prev_location_id,
+                'prev_first_sub_location_id' => $prev_first_sub_location_id,
+                'prev_second_sub_location_id' => $prev_second_sub_location_id,
+                'location_id' => $location_id,
+                'first_sub_location_id' => $first_sub_location_id,
+                'second_sub_location_id' => $second_sub_location_id,
                 'mutation_status_id' => $this->input->post('mutation_status_id', TRUE),
                 'note' => $this->input->post('note', TRUE),
                 'mutation_date' => $mutation_date
@@ -1047,7 +1246,10 @@ class Assembled_item extends CI_Controller
 
             // update the item holder information
             $data2 = [
-                'employee_id' => $this->input->post('employee_id', TRUE)
+                'employee_id' => $this->input->post('employee_id', TRUE),
+                'location_id' => $location_id,
+                'first_sub_location_id' => $first_sub_location_id,
+                'second_sub_location_id' => $second_sub_location_id,
             ];
             $this->Item_model->update($data2, $item->id);
 

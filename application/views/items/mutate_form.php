@@ -68,6 +68,15 @@
                                     <?php endif; ?>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <div class="col-sm-4"><strong>Current Location</strong></div>
+                                <div class="col-sm-8">
+                                    <?= (($record->location_id != 0) ? '<i class="fa fa-map-marker"></i> '.html_escape($locations[$record->location_id]->name) : '') ?>
+                                    <?= (($record->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$record->first_sub_location_id]->name) : '') ?>
+                                    <?= (($record->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$record->second_sub_location_id]->name) : '') ?>
+
+                                </div>
+                            </div>
 
                         </div>
                     </div>
@@ -156,9 +165,42 @@
                             <div class="col-sm-12">
                                 <select class="form-control selectpicker" name="employee_id" id="employee_id" data-live-search="true">
                                     <?php foreach($employees as $employee){ ?>
-                                        <option value="<?= $employee->id?>">
+                                        <option value="<?= $employee->id?>"
+                                        <?= (($employee->id == $record->employee_id) ? 'selected' : '') ?>>
                                             <?= html_escape($employee->name) ?>
                                             (<?= html_escape($employee->company_name) ?>)
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-12">
+                                <input type="hidden" name="prev_location_id" id="prev_location_id" value="<?= $record->location_id ?>"/>
+                                <input type="hidden" name="prev_first_sub_location_id" id="prev_first_sub_location_id" value="<?= $record->first_sub_location_id ?>"/>
+                                <input type="hidden" name="prev_second_sub_location_id" id="prev_second_sub_location_id" value="<?= $record->second_sub_location_id ?>"/>
+                                <select class="form-control selectpicker" name="location_id" id="location_id" data-live-search="true">
+                                    <option value="0,0,0">
+                                        Not specified
+                                    </option>
+                                    <?php foreach($locations as $location){ ?>
+                                        <option value="<?= $location->id.',0,0' ?>"
+                                            <?= (($record->location_id.','.$record->first_sub_location_id.','.$record->second_sub_location_id == $location->id.',0,0') ? 'selected' : '') ?>>
+                                            <?= html_escape($location->name) ?>
+                                        </option>
+                                    <?php } ?>
+
+                                    <?php foreach($first_sub_locations as $first_sub_location){ ?>
+                                        <option value="<?= $first_sub_location->location_id.','.$first_sub_location->id.',0' ?>"
+                                            <?= (($record->location_id.','.$record->first_sub_location_id.','.$record->second_sub_location_id == $first_sub_location->location_id.','.$first_sub_location->id.',0') ? 'selected' : '') ?>>
+                                            <?= (($first_sub_location->location_id != 0) ? html_escape($locations[$first_sub_location->location_id]->name) : '') ?>/<?= html_escape($first_sub_location->name) ?>
+                                        </option>
+                                    <?php } ?>
+
+                                    <?php foreach($second_sub_locations as $second_sub_location){ ?>
+                                        <option value="<?= $first_sub_locations[$second_sub_location->first_sub_location_id]->location_id.','.$second_sub_location->first_sub_location_id.','.$second_sub_location->id ?>"
+                                            <?= (($record->location_id.','.$record->first_sub_location_id.','.$record->second_sub_location_id == $first_sub_locations[$second_sub_location->first_sub_location_id]->location_id.','.$second_sub_location->first_sub_location_id.','.$second_sub_location->id) ? 'selected' : '') ?>>
+                                            <?= (($first_sub_locations[$second_sub_location->first_sub_location_id]->location_id != 0) ? html_escape($locations[$first_sub_locations[$second_sub_location->first_sub_location_id]->location_id]->name) : '') ?>/<?= ($second_sub_location->first_sub_location_id != 0) ? html_escape($first_sub_locations[$second_sub_location->first_sub_location_id]->name) : ''?>/<?= html_escape($second_sub_location->name) ?>
                                         </option>
                                     <?php } ?>
                                 </select>

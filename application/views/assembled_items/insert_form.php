@@ -131,6 +131,35 @@
                 </div>
             </div>
         </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="name">Location:</label>
+            <div class="col-sm-10">
+                <select class="form-control selectpicker" name="location_id" id="location_id" data-live-search="true">
+                    <option value="0,0,0">
+                        Not specified
+                    </option>
+                    <?php foreach($locations as $location){ ?>
+                        <option value="<?= $location->id.',0,0' ?>">
+                            <?= html_escape($location->name) ?>
+                        </option>
+                    <?php } ?>
+
+                    <?php foreach($first_sub_locations as $first_sub_location){ ?>
+                        <option value="<?= $first_sub_location->location_id.','.$first_sub_location->id.',0' ?>">
+                            <?= (($first_sub_location->location_id != 0) ? html_escape($locations[$first_sub_location->location_id]->name) : '') ?>/<?= html_escape($first_sub_location->name) ?>
+                        </option>
+                    <?php } ?>
+
+                    <?php foreach($second_sub_locations as $second_sub_location){ ?>
+                        <option value="<?= $first_sub_locations[$second_sub_location->first_sub_location_id]->location_id.','.$second_sub_location->first_sub_location_id.','.$second_sub_location->id ?>">
+                            <?= (($first_sub_locations[$second_sub_location->first_sub_location_id]->location_id != 0) ? html_escape($locations[$first_sub_locations[$second_sub_location->first_sub_location_id]->location_id]->name) : '') ?>/<?= ($second_sub_location->first_sub_location_id != 0) ? html_escape($first_sub_locations[$second_sub_location->first_sub_location_id]->name) : ''?>/<?= html_escape($second_sub_location->name) ?>
+                        </option>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+
         <div class="form-group">
             <label class="control-label col-sm-2" for="note">Note:</label>
             <div class="col-sm-10">
@@ -229,7 +258,7 @@
                 '<div class="col-sm-offset-6 col-sm-4">' +
                 '<div class="well-sm bg-info">' +
                 '<span class="fa fa-info-circle">' +
-                '</span>' +
+                '</span> ' +
                 'Change this if this part has its own different warranty period.' +
                 '</div>' +
                 '</div>' +

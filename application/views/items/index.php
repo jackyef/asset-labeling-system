@@ -19,6 +19,101 @@
         <a href="<?php echo base_url(); ?>item/new"><button class="btn btn-primary"><span class="fa fa-plus"></span> New Item</button> </a>
     </div>
     <div class="clearfix"></div>
+
+    <div class="pull-right">
+        <form action="<?= base_url().'item' ?>" method="POST">
+            <div class="col-sm-4">
+                <div class="input-group date" data-provide="datepicker-inline ">
+                    <div class="input-group-addon">
+                        <span class="fa fa-calendar"></span> From:
+                    </div>
+                    <input type="text" class="form-control datepicker" id="date_start" name="date_start">
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="input-group date" data-provide="datepicker-inline ">
+                    <div class="input-group-addon">
+                        <span class="fa fa-calendar"></span> to:
+                    </div>
+                    <input type="text" class="form-control datepicker" id="date_end" name="date_end">
+                </div>
+            </div>
+
+            <div class="col-sm-4">
+                <div class="input-group" >
+                    <div class="input-group-addon">
+                        <span class="fa fa-times"></span> Limit
+                    </div>
+                    <input type="number" class="form-control" id="limit" name="limit"
+                           value="<?= (isset($limit) ? $limit : '100')?>"
+                           min="10" step="10">
+                </div>
+            </div>
+            <div class="col-sm-4 form-group">
+                    <select class="form-control selectpicker" name="model_id" id="model_id" data-live-search="true">
+                        <option value="0">Select model</option>
+                        <?php foreach($models as $model){ ?>
+                            <option value="<?= $model->id?>"
+                                <?= (($model_id == $model->id) ? 'selected' : '') ?>>
+                                <?= html_escape($model->item_type_name.' / '.$model->brand_name. ' / '. $model->name) ?>
+                                <?= (($model->capacity_size) ? html_escape('('.$model->capacity_size.' '.$model->units.')') : '') ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+            </div>
+
+            <div class="col-sm-4 form-group">
+                    <select class="form-control selectpicker" name="company_id" id="company_id" data-live-search="true">
+                        <option value="0">Select company</option>
+                        <?php foreach($companies as $company){ ?>
+                            <option value="<?= $company->id?>"
+                                <?= (($company_id == $company->id) ? 'selected' : '') ?>>
+                                <?= html_escape($company->name) ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+            </div>
+
+
+            <div class="col-sm-4">
+                <select class="form-control selectpicker" name="location_id" id="location_id" data-live-search="true">
+                    <option value="0,0,0">
+                        Choose location
+                    </option>
+                    <?php foreach($locations as $location){ ?>
+                        <option value="<?= $location->id.',0,0' ?>"
+                            <?= (($location_id.','.$first_sub_location_id.','.$second_sub_location_id == $location->id.',0,0') ? 'selected' : '') ?>>
+                            <?= html_escape($location->name) ?>
+                        </option>
+                    <?php } ?>
+
+                    <?php foreach($first_sub_locations as $first_sub_location){ ?>
+                        <option value="<?= $first_sub_location->location_id.','.$first_sub_location->id.',0' ?>"
+                            <?= (($location_id.','.$first_sub_location_id.','.$second_sub_location_id == $first_sub_location->location_id.','.$first_sub_location->id.',0') ? 'selected' : '') ?>>
+                            <?= (($first_sub_location->location_id != 0) ? html_escape($locations[$first_sub_location->location_id]->name) : '') ?>/<?= html_escape($first_sub_location->name) ?>
+                        </option>
+                    <?php } ?>
+
+                    <?php foreach($second_sub_locations as $second_sub_location){ ?>
+                        <option value="<?= $first_sub_locations[$second_sub_location->first_sub_location_id]->location_id.','.$second_sub_location->first_sub_location_id.','.$second_sub_location->id ?>"
+                            <?= (($location_id.','.$first_sub_location_id.','.$second_sub_location_id == $first_sub_locations[$second_sub_location->first_sub_location_id]->location_id.','.$second_sub_location->first_sub_location_id.','.$second_sub_location->id) ? 'selected' : '') ?>>
+                            <?= (($first_sub_locations[$second_sub_location->first_sub_location_id]->location_id != 0) ? html_escape($locations[$first_sub_locations[$second_sub_location->first_sub_location_id]->location_id]->name) : '') ?>/<?= ($second_sub_location->first_sub_location_id != 0) ? html_escape($first_sub_locations[$second_sub_location->first_sub_location_id]->name) : ''?>/<?= html_escape($second_sub_location->name) ?>
+                        </option>
+                    <?php } ?>
+                </select>
+            </div>
+
+            <div class="col-sm-4 col-sm-offset-8">
+                <button class="btn btn-success"><i class="fa fa-filter"></i> Filter results</button>
+            </div>
+
+
+        </form>
+
+    </div>
+    <div class="clearfix"></div>
+    <br/>
     <table class="table table-striped table-responsive data-table">
         <!-- add the data-table class to tell the page to paginate this table -->
         <thead>
@@ -30,6 +125,7 @@
         <th> Owned by </th>
         <th> Is used? </th>
         <th> Held by </th>
+        <th> Item location </th>
         <th style="min-width: 1em"> Action </th>
         </thead>
         <?php
@@ -45,22 +141,25 @@
             echo '<td>'.html_escape($item->model_name).'</td>';
             echo '<td>'.
                     '<i class="fa fa-calendar"></i> '.
-                    date("d M Y", strtotime($item->date_of_purchase)).
+//                    date("d M Y", strtotime($item->date_of_purchase)).
+                    date("Y-m-d", strtotime($item->date_of_purchase)).
                 '</td>';
             echo '<td><a href="'.base_url().'company/detail/'.$item->company_id.'">'.
                 html_escape($companies[$item->company_id]->name).
                 '</a></td>';
             echo '<td>'.(($item->is_used == 1) ? 'Yes' : 'No' ).'</td>';
             echo '<td>'.
+                '<i class="fa fa-user"></i> '.
                 '<a href="'.base_url().'employee/detail/'.$item->employee_id.'">'.
                 html_escape($item->employee_name). '</a>'.
                 '<br/> <i class="fa fa-building"></i> '.
                 html_escape($companies[$item->employee_company_id]->name).
-                '<br/> <i class="fa fa-map-marker"></i> '.
-                (($item->location_id != 0) ? html_escape($locations[$item->location_id]->name) : '').
+                '</td>';
+            echo '<td>'.
+                (($item->location_id != 0) ? '<i class="fa fa-map-marker"></i> '.html_escape($locations[$item->location_id]->name) : '').
                 (($item->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$item->first_sub_location_id]->name) : '').
                 (($item->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$item->second_sub_location_id]->name) : '').
-                '</td>';
+              '</td>';
             echo '<td> 
                         <a href="'. base_url(). 'item/edit/'.$item->id.'">
                         <button class="btn btn-xs btn-info" ><span class="fa fa-edit"></span> Edit</button>
@@ -79,5 +178,27 @@
 
 </div>
 </div>
+<script>
+    $(document).ready(function() {
+        // handles datepicker on pages that uses it
+        $('#date_start').datepicker({
+            format: 'DD, dd MM yyyy',
+            autoclose: true,
+            todayHighlight: true,
+            todayBtn: true,
+            disableTouchKeyboard: true
+        });
+        $('#date_end').datepicker({
+            format: 'DD, dd MM yyyy',
+            autoclose: true,
+            todayHighlight: true,
+            todayBtn: true,
+            disableTouchKeyboard: true
+        });
+
+        $('#date_start').datepicker('update', '<?= $date_start ?>');
+        $('#date_end').datepicker('update', '<?= $date_end ?>');
+    });
+</script>
 
 
