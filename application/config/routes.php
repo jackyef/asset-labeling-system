@@ -179,6 +179,7 @@ $route['employee'] = 'employee/index';
 $route['employee/edit/:num'] = 'employee/employee_update_form/:num';
 $route['employee/edit/submit/:num'] = 'employee/employee_update/:num';
 $route['employee/detail/:num'] = 'employee/detail/:num';
+$route['employee/mutate-multiple/:num'] = 'employee/mutate_multiple_items/:num';
 
 $route['mutation-history'] = 'mutation_history/index';
 $route['mutation-history/edit/:num'] = 'mutation_history/mutation_history_update_form/:num';

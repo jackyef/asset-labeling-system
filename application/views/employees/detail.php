@@ -23,9 +23,9 @@
                     <?= html_escape($record->name) ?>
                 </h3>
                 <div class="col-md-5">
-                    <div class="panel panel-primary" style="border-color: #229955;">
-                        <div class="panel-heading" style="background-color: #229955;">
-                            <h3 class="panel-title" style="color: white;">Basic information</h3>
+                    <div class="panel panel-primary" >
+                        <div class="panel-heading" >
+                            <h3 class="panel-title" >Basic information</h3>
                         </div>
                         <div class="panel-body">
                             <div class="form-group">
@@ -79,6 +79,124 @@
                                         </button>
                                     </a>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-7">
+                    <div class="panel panel-danger" style="border-color: #d9534f;">
+                        <div class="panel-heading" style="background-color: #d9534f;">
+                            <h3 class="panel-title" style="color: white;">
+                                Mutate multiple employee's items
+                                <a data-toggle="collapse" href="#collapse1"><i class="pull-right fa fa-chevron-down"></i></a>
+                                <div class="clearfix"></div>
+                            </h3>
+                        </div>
+                        <div id="collapse1" class="panel-collapse collapse">
+                            <div class="panel-body">
+                            <form class="form-horizontal" action="<?php echo base_url(); ?>employee/mutate-multiple/<?= $record->id ?>" method="POST">
+
+                                <div class="form-group">
+                                    <label class="col-sm-12" for="item_ids[]">Select items:</label>
+                                    <div class="col-sm-12">
+                                        <select class="form-control selectpicker"
+                                                multiple="multiple" name="item_ids[]" id="item_ids[]" data-live-search="true" required>
+                                            <?php foreach($items as $item){ ?>
+                                                <option
+                                                        value="<?= $item->id.','.$item->assembled ?>">
+                                                    <?= str_pad($item->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($item->id, 5, '0', STR_PAD_LEFT).' - '.
+                                                    html_escape($item->item_type_name.', '. $item->brand_name.', '.$item->model_name.' ('.$item->employee_name.')') ?></option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-12" for="date_of_purchase">Mutation date:</label>
+                                    <div class="col-sm-12">
+                                        <div class="input-group date" data-provide="datepicker-inline ">
+                                            <input type="text" class="form-control datepicker" id="mutation_date" name="mutation_date" />
+                                            <div class="input-group-addon">
+                                                <span class="fa fa-calendar"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-12" for="employee_id">Mutate to:</label>
+                                    <input type="hidden" name="prev_employee_id" id="prev_employee_id" value="<?= $record->id ?>"/>
+                                    <div class="col-sm-12">
+                                        <select class="form-control selectpicker" name="employee_id" id="employee_id" data-live-search="true">
+                                            <?php foreach($employees as $employee){ ?>
+                                                <option value="<?= $employee->id?>"
+                                                    <?= (($employee->id == $record->id) ? 'selected' : '') ?>>
+                                                    <?= html_escape($employee->name) ?>
+                                                    (<?= html_escape($employee->company_name) ?>)
+                                                </option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <input type="hidden" name="prev_location_id" id="prev_location_id" value="<?= $record->location_id ?>"/>
+                                        <input type="hidden" name="prev_first_sub_location_id" id="prev_first_sub_location_id" value="<?= $record->first_sub_location_id ?>"/>
+                                        <input type="hidden" name="prev_second_sub_location_id" id="prev_second_sub_location_id" value="<?= $record->second_sub_location_id ?>"/>
+                                        <select class="form-control selectpicker" name="location_id" id="location_id" data-live-search="true">
+                                            <option value="0,0,0">
+                                                Not specified
+                                            </option>
+                                            <?php foreach($locations as $location){ ?>
+                                                <option value="<?= $location->id.',0,0' ?>"
+                                                    <?= (($record->location_id.','.$record->first_sub_location_id.','.$record->second_sub_location_id == $location->id.',0,0') ? 'selected' : '') ?>>
+                                                    <?= html_escape($location->name) ?>
+                                                </option>
+                                            <?php } ?>
+
+                                            <?php foreach($first_sub_locations as $first_sub_location){ ?>
+                                                <option value="<?= $first_sub_location->location_id.','.$first_sub_location->id.',0' ?>"
+                                                    <?= (($record->location_id.','.$record->first_sub_location_id.','.$record->second_sub_location_id == $first_sub_location->location_id.','.$first_sub_location->id.',0') ? 'selected' : '') ?>>
+                                                    <?= (($first_sub_location->location_id != 0) ? html_escape($locations[$first_sub_location->location_id]->name) : '') ?>/<?= html_escape($first_sub_location->name) ?>
+                                                </option>
+                                            <?php } ?>
+
+                                            <?php foreach($second_sub_locations as $second_sub_location){ ?>
+                                                <option value="<?= $first_sub_locations[$second_sub_location->first_sub_location_id]->location_id.','.$second_sub_location->first_sub_location_id.','.$second_sub_location->id ?>"
+                                                    <?= (($record->location_id.','.$record->first_sub_location_id.','.$record->second_sub_location_id == $first_sub_locations[$second_sub_location->first_sub_location_id]->location_id.','.$second_sub_location->first_sub_location_id.','.$second_sub_location->id) ? 'selected' : '') ?>>
+                                                    <?= (($first_sub_locations[$second_sub_location->first_sub_location_id]->location_id != 0) ? html_escape($locations[$first_sub_locations[$second_sub_location->first_sub_location_id]->location_id]->name) : '') ?>/<?= ($second_sub_location->first_sub_location_id != 0) ? html_escape($first_sub_locations[$second_sub_location->first_sub_location_id]->name) : ''?>/<?= html_escape($second_sub_location->name) ?>
+                                                </option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-12" for="employee_id">Mutation status:</label>
+                                    <div class="col-sm-12">
+                                        <select class="form-control selectpicker" name="mutation_status_id" id="mutation_status_id" data-live-search="true">
+                                            <?php foreach($mutation_statuses as $ms){ ?>
+                                                <option value="<?= $ms->id?>">
+                                                    <?= html_escape($ms->name) ?>
+                                                </option>
+                                            <?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-12" for="note">Note:</label>
+                                    <div class="col-sm-12">
+                                        <textarea class="form-control" rows="4" id="note" name="note" placeholder="Ex: Sesuai dengan Surat no. XX, etc"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <button type="submit" class="btn btn-primary form-control">
+                                            <span class="fa fa-refresh"></span>
+                                            Mutate
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                             </div>
                         </div>
                     </div>
@@ -156,5 +274,21 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    // update the date pickers to take the record's value
+    $(document).ready(function(){
+        $('#mutation_date').datepicker({
+            format: 'DD, dd MM yyyy',
+            autoclose: true,
+            todayHighlight: true,
+            todayBtn: true,
+            disableTouchKeyboard: true
+        });
+
+        $('#mutation_date').datepicker('update', new Date());
+
+    });
+
+</script>
 
 

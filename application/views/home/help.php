@@ -50,17 +50,8 @@
                         that this system works on.
                         <br/>
                         <br/>
-                        An asset mutation is an event where an asset is given to an employee for that employee hold.
-                        <br/>
-                        <br/>
-                        So, for every mutation records, we are going to record the asset's information, along with the record
-                        of the previous holding employee, and the target holding employee.
-                        <br/>
-                        <br/>
-                        Why do we do it this way? Because in a company, every assets, at any given time, should be held by an
-                        employee! There has to be one employee who is responsible of the asset! Otherwise, if no employee is
-                        responsible for the asset, that asset is basically gone. No one knows where it is, and no one knows who
-                        know where to find it.
+                        An asset mutation is an event where an asset is given to an employee for that employee hold OR when an
+                        asset changed its location, while still being held by the same responsible employee.
 
                         <blockquote class="blockquote-reverse bg-success col-sm-12">
                             <span class="fa fa-2x fa-quote-left pull-left"></span>
@@ -71,6 +62,11 @@
 
                             <div class="clearfix"></div>
                         </blockquote>
+
+                        Based on that quote alone, it might seems that it is enough to just record the employee information in mutations,
+                        but it is not! If we fully rely on employee as our pointer to the assets, in the event of the employee running away,
+                        we will have basically lose our (only) pointer to the assets!
+
                      </p>
                     <hr/>
                 </div>
@@ -78,13 +74,12 @@
                 <div class="col-sm-12" id="assets-location">
                     <h3 >Okay, but how would I know the location of the asset?</h3>
                     <p>
-                        Simple, we store the information of every employee's current location. Either the asset will be with
-                        the employee, or the employee will be able to point us to where the asset actually is, because, well,
-                        the employee is responsible of the assets that s/he holds.
+                        Every time a mutation occurs, the previous location and the destination of the particular mutation
+                        are recorded. In addition, the previous employee and the destined employee are recorded as well.
+                        This gives us the most possible available information for us to figure out the whereabout of our
+                        assets in a certain time.
                         <br/>
                         <br/>
-                        This allow us to have the ability to not store both the employee's information and the asset's
-                        location information everytime a mutation occurs, instead, we only store the employee's information.
 
                         <img src="<?= base_url().'images/help1.png'?>" class="img-thumbnail img-responsive img-rounded"
                             alt="An example of mutation records."/>
