@@ -46,6 +46,9 @@ class Employee extends CI_Controller
             $data['is_logged_in'] = 0;
         }
 
+        //get site_wide_msg, if exists
+        $data['site_wide_msg'] = $this->session->flashdata('site_wide_msg');
+        $data['site_wide_msg_type'] = $this->session->flashdata('site_wide_msg_type');
         return $data;
     }
 
@@ -262,8 +265,209 @@ class Employee extends CI_Controller
 //        echo json_encode($data['items']);
 
 
+        $this->db->reset_query();
+        $this->db->select('e.*, c.name as company_name');
+        $this->db->from('employees e, companies c');
+        $this->db->where('e.company_id = c.id');
+        $this->db->order_by('e.name asc');
+        foreach($this->db->get()->result() as $employee){
+            $data['employees'][$employee->id] = $employee;
+        }
+        $this->db->reset_query();
+        $this->db->select('ms.* ');
+        $this->db->from('mutation_statuses ms');
+        $this->db->order_by('ms.name asc');
+        foreach($this->db->get()->result() as $ms){
+            $data['mutation_statuses'][$ms->id] = $ms;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('l.* ');
+        $this->db->from('locations l');
+        $this->db->order_by('l.name asc');
+        foreach($this->db->get()->result() as $location){
+            $data['locations'][$location->id] = $location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('f.* ');
+        $this->db->from('first_sub_locations f');
+        $this->db->order_by('f.name asc');
+        foreach($this->db->get()->result() as $first_sub_location){
+            $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('s.* ');
+        $this->db->from('second_sub_locations s');
+        $this->db->order_by('s.name asc');
+        foreach($this->db->get()->result() as $second_sub_location){
+            $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
+        }
+
         $this->load->view('employees/detail.php', $data);
 
         $this->load->view('templates/footer.php', $data);
+    }
+
+    public function mutate_multiple_items(){
+        $data = $this->get_session_data();
+        // check if it's a POST request or not first
+        $employee_id = $this->uri->segment('3');
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span> You can\'t do that operation!');
+            $this->session->set_flashdata('site_wide_msg_type', 'danger');
+            redirect(base_url() . 'employee/detail/'.$employee_id);
+        }
+
+        // get location ids
+        $locs = $this->input->post('location_id', TRUE);
+        $locs_id = explode(',',$locs);
+        $location_id = $locs_id[0];
+        $first_sub_location_id = $locs_id[1];
+        $second_sub_location_id = $locs_id[2];
+        $prev_location_id = $this->input->post('prev_location_id', TRUE);
+        $prev_first_sub_location_id = $this->input->post('prev_first_sub_location_id', TRUE);
+        $prev_second_sub_location_id = $this->input->post('prev_second_sub_location_id', TRUE);
+
+        $employee_id = $this->input->post('employee_id', TRUE);
+        $prev_employee_id =$this->input->post('prev_employee_id', TRUE);
+
+        $mutation_date = date("Y-m-d", strtotime($this->input->post('mutation_date', TRUE)));
+
+        $item_ids = $this->input->post('item_ids', TRUE);
+
+//        echo json_encode($item_ids);
+
+        $this->db->trans_start(); # Starting Transaction
+
+        // for every item id
+        foreach($item_ids as $item_id){
+            $item_info = explode(',',$item_id);
+            $id = $item_info[0];
+            $assembled = $item_info[1];
+
+            if($assembled == 0){
+                // if item is not assembled item,
+                // first
+                // insert a new mutation
+                $data = [
+                    'item_id' => $id,
+                    'prev_employee_id' => $prev_employee_id,
+                    'employee_id' => $employee_id,
+                    'prev_location_id' => $prev_location_id,
+                    'prev_first_sub_location_id' => $prev_first_sub_location_id,
+                    'prev_second_sub_location_id' => $prev_second_sub_location_id,
+                    'location_id' => $location_id,
+                    'first_sub_location_id' => $first_sub_location_id,
+                    'second_sub_location_id' => $second_sub_location_id,
+                    'mutation_status_id' => $this->input->post('mutation_status_id', TRUE),
+                    'note' => $this->input->post('note', TRUE),
+                    'mutation_date' => $mutation_date
+                ];
+
+                // insert mutation data to db
+                $this->load->model('Mutation_model');
+                $this->Mutation_model->insert($data);
+
+                // now update item with the new employee id and location
+                $data2 = [
+                    'employee_id' => $this->input->post('employee_id', TRUE),
+                    'location_id' => $location_id,
+                    'first_sub_location_id' => $first_sub_location_id,
+                    'second_sub_location_id' => $second_sub_location_id,
+                ];
+
+                $this->load->model('Item_model');
+                $this->Item_model->update($data2, $id);
+
+            } else {
+                // if item is assembled item
+                // we have to iterate through every items inside as well
+
+                //first insert mutation record for the assembled item
+                $data = [
+                    'item_id' => $id,
+                    'prev_employee_id' => $prev_employee_id,
+                    'employee_id' => $employee_id,
+                    'prev_location_id' => $prev_location_id,
+                    'prev_first_sub_location_id' => $prev_first_sub_location_id,
+                    'prev_second_sub_location_id' => $prev_second_sub_location_id,
+                    'location_id' => $location_id,
+                    'first_sub_location_id' => $first_sub_location_id,
+                    'second_sub_location_id' => $second_sub_location_id,
+                    'mutation_status_id' => $this->input->post('mutation_status_id', TRUE),
+                    'note' => $this->input->post('note', TRUE),
+                    'mutation_date' => $mutation_date
+                ];
+
+                // insert mutation data to db
+                $this->load->model('Mutation_model');
+                $this->Mutation_model->insert($data);
+
+                // now update the assembled_item with the new employee id and location
+                $data2 = [
+                    'employee_id' => $this->input->post('employee_id', TRUE),
+                    'location_id' => $location_id,
+                    'first_sub_location_id' => $first_sub_location_id,
+                    'second_sub_location_id' => $second_sub_location_id,
+                ];
+                $this->load->model('Assembled_item_model');
+                $this->Assembled_item_model->update($data2, $id);
+
+                // now insert a mutation record for every item that is part of this assembled item as well
+                $this->db->reset_query();
+                $this->db->select('i.*');
+                $query = $this->db->get_where('items i', array('i.assembled_item_id' => $id));
+                $data['items'] = $query->result();
+
+                $this->load->model('Item_model');
+
+                foreach($data['items'] as $item) {
+                    // loop for each item in the assembled item
+                    // insert a mutation record
+                    $data = [
+                        'item_id' => $item->id,
+                        'prev_employee_id' => $prev_employee_id,
+                        'employee_id' => $employee_id,
+                        'prev_location_id' => $prev_location_id,
+                        'prev_first_sub_location_id' => $prev_first_sub_location_id,
+                        'prev_second_sub_location_id' => $prev_second_sub_location_id,
+                        'location_id' => $location_id,
+                        'first_sub_location_id' => $first_sub_location_id,
+                        'second_sub_location_id' => $second_sub_location_id,
+                        'mutation_status_id' => $this->input->post('mutation_status_id', TRUE),
+                        'note' => $this->input->post('note', TRUE),
+                        'mutation_date' => $mutation_date
+                    ];
+                    // insert the mutation record
+                    $this->Mutation_model->insert($data);
+
+                    // update the item holder information
+                    $data2 = [
+                        'employee_id' => $this->input->post('employee_id', TRUE),
+                        'location_id' => $location_id,
+                        'first_sub_location_id' => $first_sub_location_id,
+                        'second_sub_location_id' => $second_sub_location_id,
+                    ];
+                    $this->Item_model->update($data2, $item->id);
+                }
+            }
+        }
+
+        if ($this->db->trans_complete()) {
+            //Transaction succeeded! Both query is successfully executed
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> Mutation success!');
+            $this->session->set_flashdata('site_wide_msg_type', 'success');
+            redirect(base_url() . 'employee/detail/'.$employee_id);
+        } else {
+            //show errors
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span>An error occured!');
+            $this->session->set_flashdata('site_wide_msg_type', 'danger');
+            redirect(base_url() . 'employee/mutate/'.$employee_id);
+        }
+
+
     }
 }

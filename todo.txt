@@ -86,6 +86,8 @@ TODO:
         kalau barangnya tidak dibawa lari, ada 2 kemungkinan,
             barang sama dia di lokasi terakhir dia (masih tercover)
             barang di tempat lain (tak tercover, tidak tau lokasi barang)
+- Update help page! (DONE!)
+- Add feature to select multiple item from the same employee to mutate (DONE!)
 --- DONE ---
 
 - User management (roles permission) (not really necessary, I think?)
@@ -95,7 +97,14 @@ TODO:
     - Company (Edit, view)
     - Employee (Edit, view)
     - Mutation history (Edit, view)
+    (Remove UI, and check access when address is typed)
 
+    Create a table containing all the permissions that is possible to be had
+
+    Create another table to allow each user id to have relations to multiple permissions
+    Create an UI to edit user permssions
+
+- Optimize query (not really necessary)
 - dashboard with statistics as admin homepage (not really necessary)
 ==========
 
