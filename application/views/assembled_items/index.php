@@ -112,7 +112,7 @@
     </div>
     <div class="clearfix"></div>
     <br/>
-    <table class="table table-striped table-responsive data-table">
+    <table class="table table-striped table-responsive data-table-item">
         <!-- add the data-table class to tell the page to paginate this table -->
         <thead>
         <th> Id </th>
@@ -196,6 +196,70 @@
 
         $('#date_start').datepicker('update', '<?= $date_start ?>');
         $('#date_end').datepicker('update', '<?= $date_end ?>');
+
+        $('.data-table-item').DataTable({
+            "order": [[ 4, "desc" ], [0, "desc"]],
+            responsive: true,
+            colReorder: false,
+            dom: 'Bflrtip',
+            buttons: [
+                {
+                    extend: 'print',
+                    autoPrint: false,
+                    exportOptions: {
+                        columns: ':visible',
+                        pageSize: 'A4',
+                        stripHtml: false
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: ':visible',
+                        format: {
+                            body: function (data, column, row) {
+                                if (data.indexOf('-<br>') == 0 ){ return '-'; }
+                                data = data.replace(/<br\s*\/?>/i, "\r\nof\r\n"); //replace the first linebreak with 'of'
+                                data = data.replace(/<br\s*\/?>/i, "\r\nat\r\n"); //replace the second linebreak with 'at'
+                                data = data.replace(/\s*<span class="fa fa-arrow-right"><\/span>\s*/ig, ", "); //replace right arrow icons with comma
+                                data = data.replace(/\s+/ig, " "); //multiple spaces with 1 space
+                                var html = data;
+                                var div = document.createElement("div");
+                                div.innerHTML = html;
+                                var text = div.textContent || div.innerText || "";
+                                return text;
+                            }
+                        }
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: ':visible',
+                        format: {
+                            body: function (data, column, row) {
+                                if (data.indexOf('-<br>') == 0 ){ return '-'; }
+                                data = data.replace(/<br\s*\/?>/i, "\r\nof\r\n"); //replace the first linebreak with 'of'
+                                data = data.replace(/<br\s*\/?>/i, "\r\nat\r\n"); //replace the second linebreak with 'at'
+                                data = data.replace(/\s*<span class="fa fa-arrow-right"><\/span>\s*/ig, ", "); //replace right arrow icons with comma
+                                var html = data;
+                                var div = document.createElement("div");
+                                div.innerHTML = html;
+                                var text = div.textContent || div.innerText || "";
+                                return text;
+                            }
+                        },
+
+                    },
+                    sType: 'html',
+                    pageSize: 'A4',
+                    orientation: 'landscape'
+                },
+                'colvis'
+            ]
+        });
+
+
     });
 </script>
 

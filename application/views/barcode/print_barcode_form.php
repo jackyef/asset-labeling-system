@@ -25,7 +25,7 @@
             </div>
             <label class="control-label col-sm-2" for="name">Choose item codes to print:</label>
             <div class="col-sm-10">
-                <select class="form-control selectpicker"
+                <select class="form-control selectpicker" required
                         multiple="multiple" name="item_codes[]" id="item_codes[]" data-live-search="true">
                     <?php foreach($items as $item){ ?>
                         <option

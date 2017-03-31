@@ -201,6 +201,7 @@
                         columns: ':visible',
                         format: {
                             body: function (data, column, row) {
+                                if (data.indexOf('-<br>') == 0 ){ return '-'; }
                                 data = data.replace(/<br\s*\/?>/i, "\r\nof\r\n"); //replace the first linebreak with 'of'
                                 data = data.replace(/<br\s*\/?>/i, "\r\nat\r\n"); //replace the second linebreak with 'at'
                                 data = data.replace(/\s*<span class="fa fa-arrow-right"><\/span>\s*/ig, ", "); //replace right arrow icons with comma
@@ -209,6 +210,7 @@
                                 var div = document.createElement("div");
                                 div.innerHTML = html;
                                 var text = div.textContent || div.innerText || "";
+
                                 return text;
                             }
                         }
@@ -220,6 +222,7 @@
                         columns: ':visible',
                         format: {
                             body: function (data, column, row) {
+                                if (data.indexOf('-<br>') == 0 ){ return '-'; }
                                 data = data.replace(/<br\s*\/?>/i, "\r\nof\r\n"); //replace the first linebreak with 'of'
                                 data = data.replace(/<br\s*\/?>/i, "\r\nat\r\n"); //replace the second linebreak with 'at'
                                 data = data.replace(/\s*<span class="fa fa-arrow-right"><\/span>\s*/ig, ", "); //replace right arrow icons with comma
@@ -230,10 +233,11 @@
                                 return text;
                             }
                         },
-                        pageSize: 'A4'
 
                     },
-                    sType: 'html'
+                    sType: 'html',
+                    pageSize: 'A4',
+                    orientation: 'landscape'
                 },
                 'colvis'
             ]

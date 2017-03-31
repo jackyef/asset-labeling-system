@@ -9,9 +9,9 @@
 
 </div> <!-- /container -->
 <br/>
-<div class="footer" style="border-top: 1px solid #9d9d9d; background-color: white; color: #1a1a1a;
+<div class="footer page-fade" style="border-top: 1px solid #9d9d9d; background-color: white; color: #1a1a1a;
                             padding: .5em .5em .5em .5em; left: 0; right: 0;
-                            position: absolute; width: 100%; ">
+                            position: absolute; width: 100%; display: block;">
     <div class="container">
         <div class="pull-left">
             &copy; <?= date('Y') ?> jackyef. All rights reserved. <br/>

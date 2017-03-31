@@ -345,6 +345,8 @@ class Mutation_history extends CI_Controller
     public function mutation_history_update(){
         // this update an item in the database
 
+        $data = $this->get_session_data();
+
         // check if this is a POST request
         if ($this->input->method(TRUE) != 'POST'){
             // if not, just redirect
@@ -370,6 +372,24 @@ class Mutation_history extends CI_Controller
         }
     }
 
+//    public function mutation_history_delete(){
+//        // delete mutation from index page
+//        $data = $this->get_session_data();
+//
+//        $id = $this->uri->segment('3');
+//
+//        $this->load->model('Mutation_model');
+//        if ($this->Mutation_model->delete($id)) {
+//            //successfully deleted data
+//            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info-circle"></span> Successfully deleted mutation record!');
+//            $this->session->set_flashdata('site_wide_msg_type', 'success');
+//            redirect(base_url() . 'mutation-history');
+//        } else {
+//            //show errors
+//        }
+//
+//    }
+
     function fetch_mutation_history(){
         $this->load->model("Mutation_model");
         $fetch_data = $this->Mutation_model->make_datatables();
@@ -391,4 +411,6 @@ class Mutation_history extends CI_Controller
         );
         echo json_encode($output);
     }
+
+
 }
