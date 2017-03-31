@@ -281,6 +281,19 @@
                                             For that purpose, you can simply <strong>REMOVE</strong> (not delete) the item.
                                         </div>
                                     </div>
+
+                                    <div class="form-group">
+                                        <div class="col-sm-12">
+                                            <a href="<?= base_url().'assembled-item/power-edit/'.$record->id ?>">
+                                                <button class="btn btn-danger form-control">
+                                                    <span class="fa fa-bolt"></span>
+                                                    Power edit this assembled item
+                                                </button></a>
+                                            <div class="alert alert-warning">
+                                                NOTE: This allows you to edit the items' employee and location, without creating mutation record. Only use this to fix mis-inputs!
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -428,6 +441,10 @@
                         <a href="'. base_url(). 'mutation-history/edit/'.$mutation->id.'">
                         <button class="btn btn-xs btn-info" ><span class="fa fa-edit"></span> Edit</button>
                         </a>
+                        <a href="'. base_url(). 'assembled-item/delete-mutation/'.$record->id.'/'.$mutation->id.'">
+                        <button class="btn btn-xs btn-danger" 
+                        onclick="return confirm(\'Are you sure you want to delete this mutation record? \');"><span class="fa fa-trash"></span> Delete</button>
+                        </a>
                   </td>';
                     echo '</tr>';
                 }
@@ -481,6 +498,7 @@
                             columns: ':visible',
                             format: {
                                 body: function (data, column, row) {
+                                    if (data.indexOf('-<br>') == 0 ){ return '-'; }
                                     data = data.replace(/<br\s*\/?>/i, "\r\nof\r\n"); //replace the first linebreak with 'of'
                                     data = data.replace(/<br\s*\/?>/i, "\r\nat\r\n"); //replace the second linebreak with 'at'
                                     data = data.replace(/\s*<span class="fa fa-arrow-right"><\/span>\s*/ig, ", "); //replace right arrow icons with comma
@@ -500,6 +518,7 @@
                             columns: ':visible',
                             format: {
                                 body: function (data, column, row) {
+                                    if (data.indexOf('-<br>') == 0 ){ return '-'; }
                                     data = data.replace(/<br\s*\/?>/i, "\r\nof\r\n"); //replace the first linebreak with 'of'
                                     data = data.replace(/<br\s*\/?>/i, "\r\nat\r\n"); //replace the second linebreak with 'at'
                                     data = data.replace(/\s*<span class="fa fa-arrow-right"><\/span>\s*/ig, ", "); //replace right arrow icons with comma
@@ -510,10 +529,11 @@
                                     return text;
                                 }
                             },
-                            pageSize: 'A4'
 
                         },
-                        sType: 'html'
+                        sType: 'html',
+                        pageSize: 'A4',
+                        orientation: 'landscape'
                     },
                     'colvis'
                 ]

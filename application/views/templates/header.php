@@ -33,22 +33,54 @@
 
     <script>
         $(document).ready(function() {
-            $('.data-table').DataTable({
-                responsive: true,
+//            $('.page-loading').fadeOut(1500);
+            setTimeout(function(){
+                $('.page-fade').fadeIn(800);
+
+
+                $('.data-table').DataTable({
+                    responsive: true,
 //                fixedHeader: true,
 //                scrollX: true,
 //                scrollY: "300px",
-                colReorder: true
+                    colReorder: true
 //                dom: 'Blfrtip',
 //                buttons: ['print', 'colvis']
-            });
-//            $('.data-table').DataTable().buttons.exportData( {
-//                columns: ':visible'
-//            } );
+                });
+            }, 0);
+
 
 
         } );
     </script>
+    <style type="text/css">
+        .page-loading {
+            display: none;
+            position: relative;
+            width: 100%;
+            min-height: 100%;
+            margin: 0 auto;
+            z-index: 99999;
+            font-size: 3em;
+            text-align: center;
+            vertical-align: middle;
+            padding-top: 10%;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    </style>
+    <noscript>
+        <!-- shows page content if javascript is disabled -->
+        <style type="text/css">
+            .page-fade{
+                display: block;
+            }
+            .page-loading{
+                display: none;
+            }
+        </style>
+    </noscript>
 </head>
 <body style="overflow-x: hidden">
 <?//= json_encode($is_logged_in) ?>
@@ -57,7 +89,7 @@
 <?//= json_encode($session_username) ?>
 
 <nav class="navbar navbar-inverse navbar-static-top">
-    <div class="container">
+    <div class="container" >
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -150,7 +182,8 @@
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
-<div class="container">
+<div class="page-loading"><span class="fa fa-circle-o-notch fa-5x fa-spin"></span></div>
+<div class="container page-fade" style="display: block;">
     <!-- This is a placeholder to show site_wite_msg from any controller, just pass the value as a flashdata -->
     <?php if(isset($site_wide_msg)): ?>
         <div class="col-sm-12">

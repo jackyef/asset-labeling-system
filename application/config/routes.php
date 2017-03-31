@@ -151,10 +151,13 @@ $route['item'] = 'item/index';
 $route['item/new'] = 'item/item_insert_form';
 $route['item/new/submit'] = 'item/item_insert';
 $route['item/edit/:num'] = 'item/item_update_form/:num';
+$route['item/power-edit/:num'] = 'item/item_update_form_2/:num';
+$route['item/power-edit/submit/:num'] = 'item/item_update_2/:num';
 $route['item/edit/submit/:num'] = 'item/item_update/:num';
 $route['item/mutate/:num'] = 'item/item_mutate_form/:num';
 $route['item/mutate/submit/:num'] = 'item/item_mutate/:num';
 $route['item/delete/:num'] = 'item/item_delete/:num';
+$route['item/delete-mutation/:num/:num'] = 'item/delete_mutation/:num/:num';
 
 $route['assembled-item'] = 'assembled_item/index';
 $route['assembled-item/new'] = 'assembled_item/assembled_item_insert_form';
@@ -168,7 +171,9 @@ $route['assembled-item/mutate/:num'] = 'assembled_item/assembled_item_mutate_for
 $route['assembled-item/mutate/submit/:num'] = 'assembled_item/assembled_item_mutate/:num';
 $route['assembled-item/detail/:num'] = 'assembled_item/detail/:num';
 $route['assembled-item/delete/:num'] = 'assembled_item/assembled_item_delete/:num';
-
+$route['assembled-item/power-edit/:num'] = 'assembled_item/assembled_item_update_form_2/:num';
+$route['assembled-item/power-edit/submit/:num'] = 'assembled_item/assembled_item_update_2/:num';
+$route['assembled-item/delete-mutation/:num/:num'] = 'assembled_item/delete_mutation/:num/:num';
 
 $route['company'] = 'company/index';
 $route['company/edit/:num'] = 'company/company_update_form/:num';
@@ -184,6 +189,7 @@ $route['employee/mutate-multiple/:num'] = 'employee/mutate_multiple_items/:num';
 $route['mutation-history'] = 'mutation_history/index';
 $route['mutation-history/edit/:num'] = 'mutation_history/mutation_history_update_form/:num';
 $route['mutation-history/edit/submit/:num'] = 'mutation_history/mutation_history_update/:num';
+//$route['mutation-history/delete/:num'] = 'mutation_history/mutation_history_delete/:num';
 
 
 $route['barcode'] = 'barcode/index';

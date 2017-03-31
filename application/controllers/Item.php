@@ -518,6 +518,159 @@ class Item extends CI_Controller
         }
     }
 
+
+    public function item_update_form_2(){
+        // this shows the form for inserting a new mutation status
+        // this allows editing of employee and location directly! for Privileged user only!
+
+        $data = $this->get_session_data();
+
+        $data['title'] = 'ALS - Item';
+        $this->parser->parse('templates/header.php', $data);
+
+        $id = $this->uri->segment('3');
+
+        $this->db->select('i.*, it.name as item_type_name, it.id as item_type_id, 
+                            b.name as brand_name, m.name as model_name, 
+                            e.name as employee_name, e.location_id as employee_location_id, 
+                            e.first_sub_location_id as employee_first_sub_location_id, 
+                            e.second_sub_location_id as employee_second_sub_location_id');
+        $this->db->from('items i, item_types it, brands b, models m, employees e');
+        $this->db->where('i.model_id = m.id AND m.brand_id = b.id AND b.item_type_id = it.id AND
+                          i.employee_id = e.id ');
+
+        $query = $this->db->get_where('items', array('i.id' => $id));
+        $data['record'] = $query->result()[0];
+        $data['id'] = $id;
+
+        $this->db->reset_query();
+        $this->db->select('m.*, b.name as brand_name, it.name as item_type_name ');
+        $this->db->from('models m, brands b, item_types it');
+        $this->db->where('m.brand_id = b.id AND b.item_type_id = it.id');
+        $this->db->order_by('it.name, b.name, m.name asc');
+        foreach($this->db->get()->result() as $model){
+            $data['models'][$model->id] = $model;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('s.* ');
+        $this->db->from('suppliers s');
+        $this->db->order_by('s.name asc');
+        foreach($this->db->get()->result() as $supplier){
+            $data['suppliers'][$supplier->id] = $supplier;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('e.*, c.name as company_name');
+        $this->db->from('employees e, companies c');
+        $this->db->where('e.company_id = c.id');
+        $this->db->order_by('e.name asc');
+        foreach($this->db->get()->result() as $employee){
+            $data['employees'][$employee->id] = $employee;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('os.* ');
+        $this->db->from('operating_systems os');
+        $this->db->order_by('os.name asc');
+        foreach($this->db->get()->result() as $os){
+            $data['operating_systems'][$os->id] = $os;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('c.* ');
+        $this->db->from('companies c');
+        $this->db->order_by('c.name asc');
+        foreach($this->db->get()->result() as $company){
+            $data['companies'][$company->id] = $company;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('l.* ');
+        $this->db->from('locations l');
+        $this->db->order_by('l.name asc');
+        foreach($this->db->get()->result() as $location){
+            $data['locations'][$location->id] = $location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('f.* ');
+        $this->db->from('first_sub_locations f');
+        $this->db->order_by('f.name asc');
+        foreach($this->db->get()->result() as $first_sub_location){
+            $data['first_sub_locations'][$first_sub_location->id] = $first_sub_location;
+        }
+
+        $this->db->reset_query();
+        $this->db->select('s.* ');
+        $this->db->from('second_sub_locations s');
+        $this->db->order_by('s.name asc');
+        foreach($this->db->get()->result() as $second_sub_location){
+            $data['second_sub_locations'][$second_sub_location->id] = $second_sub_location;
+        }
+
+        $this->load->view('items/update_form_2.php', $data);
+
+        $this->load->view('templates/footer.php', $data);
+    }
+
+    public function item_update_2(){
+        // this update an item in the database
+        // this allows editing of employee and location directly! for Privileged user only!
+
+        // check if this is a POST request
+        if ($this->input->method(TRUE) != 'POST'){
+            // if not, just redirect
+            redirect(base_url() . 'item');
+        }
+        $this->load->model('Item_model');
+
+        $id = $this->uri->segment('4');
+
+        $is_used = ($this->input->post('is_used') != null) ? '1' : '0';
+
+        $date_of_purchase = date("Y-m-d", strtotime($this->input->post('date_of_purchase', TRUE)));
+        $warranty_expiry_date = date("Y-m-d", strtotime($this->input->post('warranty_expiry_date', TRUE)));
+
+        // final checking to ensure $warranty_expiry_date is not earlier than purchase date
+        // in case front end is breached
+        if($warranty_expiry_date < $date_of_purchase){
+            $warranty_expiry_date = $date_of_purchase;
+        }
+        // get location ids
+        $locs = $this->input->post('location_id', TRUE);
+        $locs_id = explode(',',$locs);
+        $location_id = $locs_id[0];
+        $first_sub_location_id = $locs_id[1];
+        $second_sub_location_id = $locs_id[2];
+
+        $data = [
+            'model_id' => $this->input->post('model_id', TRUE),
+            'supplier_id' => $this->input->post('supplier_id', TRUE),
+            'company_id' => $this->input->post('company_id', TRUE),
+            'operating_system_id' => $this->input->post('operating_system_id', TRUE),
+            'employee_id' => $this->input->post('employee_id', TRUE),
+            'location_id' => $location_id,
+            'first_sub_location_id' => $first_sub_location_id,
+            'second_sub_location_id' => $second_sub_location_id,
+            'is_used' => $is_used,
+            'note' => $this->input->post('note', TRUE),
+            'date_of_purchase' => $date_of_purchase,
+            'warranty_expiry_date' => $warranty_expiry_date
+        ];
+        // for debugging purposes
+//        echo json_encode($data);
+
+        if ($this->Item_model->update($data, $id)) {
+            //success updating data
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> Changes saved!');
+            $this->session->set_flashdata('site_wide_msg_type', 'success');
+            redirect(base_url() . 'item/detail/'.$id);
+        } else {
+            //show errors
+        }
+    }
+
     public function detail(){
         // this shows the form for inserting a new mutation status
 
@@ -910,6 +1063,23 @@ class Item extends CI_Controller
             $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span>An error occured! '. $db_error['code']);
             $this->session->set_flashdata('site_wide_msg_type', 'danger');
             redirect(base_url() . 'item/detail/'.$id);
+        }
+    }
+
+    public function delete_mutation(){
+        $data = $this->get_session_data();
+
+        $id = $this->uri->segment('3');
+        $mutation_id = $this->uri->segment('4');
+
+        $this->load->model('Mutation_model');
+        if ($this->Mutation_model->delete($mutation_id)) {
+            //successfully deleted data
+            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info-circle"></span> Successfully deleted mutation record!');
+            $this->session->set_flashdata('site_wide_msg_type', 'success');
+            redirect(base_url() . 'item/detail/'.$id);
+        } else {
+            //show errors
         }
     }
 }

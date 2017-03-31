@@ -86,23 +86,46 @@ TODO:
         kalau barangnya tidak dibawa lari, ada 2 kemungkinan,
             barang sama dia di lokasi terakhir dia (masih tercover)
             barang di tempat lain (tak tercover, tidak tau lokasi barang)
+
+---- BELUM KE VM ----
 - Update help page! (DONE!)
 - Add feature to select multiple item from the same employee to mutate (DONE!)
---- DONE ---
+- Fix pdf and excel bug (DONE!)
+- Fitur print untuk item dan assembled item juga (DONE!)
 
+- Added power edit feature for item and assembled item (DONE!)
+- Added delete mutation feature in item and assembled item detail page (DONE!)
+--- DONE ---
 - User management (roles permission) (not really necessary, I think?)
-    - Masters (automatic access to everything)
-    - Item (Edit, view, delete, mutate)
-    - Assembled item (Edit, view, delete, mutate)
+    - Masters (automatic access to everything in master, except user)
+    - Item (Edit, view, delete, mutate, insert, edit location/employee without mutating)
+    - Assembled item (Edit, view, delete, mutate, insert, edit location/employee without mutating)
     - Company (Edit, view)
     - Employee (Edit, view)
-    - Mutation history (Edit, view)
+    - Mutation history (Edit, view, delete without altering item location (to be used with edit without mutating) )
     (Remove UI, and check access when address is typed)
 
-    Create a table containing all the permissions that is possible to be had
+- List of permission:
+    - Master data
+    - User management
+    - View item/assembled item
+    - Edit item/assembled item
+    - Power edit item/assembled item
+    - Delete item/assembled item
+    - Mutate item/assembled item
+    - Insert item/assembled item
+    - View company/employee/mutation
+    - Edit Company/employee/mutation
+    - Delete mutation
 
+    Create a table containing all the permissions that is possible to be had
     Create another table to allow each user id to have relations to multiple permissions
-    Create an UI to edit user permssions
+    Create an UI to edit user permissions
+    Modify create user to also add the respective permission for the user(form and logic)
+    Modify edit user to also edit the respective permission for the user(form and logic)
+    Modify login procedure to also store user's permission in session object
+    Add check session in every controller route to control access depending on the permission,
+        and also to show/hide UI based on permission
 
 - Optimize query (not really necessary)
 - dashboard with statistics as admin homepage (not really necessary)
