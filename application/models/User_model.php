@@ -23,6 +23,7 @@ class User_model extends CI_Model {
         $this->db->from('users u');
         $this->db->where('username', $username);
         $this->db->where('password', md5($password));
+//        $this->db->where('u.id', 'up.user_id');
         $user = $this->db->get()->result();
 
         if(sizeof($user) != 1){

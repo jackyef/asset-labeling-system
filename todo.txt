@@ -92,7 +92,6 @@ TODO:
 - Add feature to select multiple item from the same employee to mutate (DONE!)
 - Fix pdf and excel bug (DONE!)
 - Fitur print untuk item dan assembled item juga (DONE!)
-
 - Added power edit feature for item and assembled item (DONE!)
 - Added delete mutation feature in item and assembled item detail page (DONE!)
 --- DONE ---
@@ -106,26 +105,30 @@ TODO:
     (Remove UI, and check access when address is typed)
 
 - List of permission:
-    - Master data
-    - User management
-    - View item/assembled item
-    - Edit item/assembled item
-    - Power edit item/assembled item
-    - Delete item/assembled item
-    - Mutate item/assembled item
-    - Insert item/assembled item
-    - View company/employee/mutation
-    - Edit Company/employee/mutation
-    - Delete mutation
+    - 1 Master data
+    - 2 User management
+    - 3 Insert item/assembled item
+    - 4 Edit item/assembled item
+    - 5 Delete item/assembled item
+    - 6 Mutate item/assembled item
+    - 7 Power edit item/assembled item
+    - 8 Edit company
+    - 9 Edit employee
+    - 10 Edit mutation
+    - 11 Delete mutation
+    - View item/assembled item (default)
+    - View company/employee/mutation (default)
 
-    Create a table containing all the permissions that is possible to be had
-    Create another table to allow each user id to have relations to multiple permissions
-    Create an UI to edit user permissions
-    Modify create user to also add the respective permission for the user(form and logic)
-    Modify edit user to also edit the respective permission for the user(form and logic)
-    Modify login procedure to also store user's permission in session object
+    Create a table containing all the permissions that is possible to be had (DONE!)
+    Create another table to allow each user id to have relations to multiple permissions (DONE!)
+    Create an UI to edit user permissions (DONE!)
+    Modify create user to also add the respective permission for the user(form and logic) (DONE!)
+    Modify edit user to also edit the respective permission for the user(form and logic) (DONE!)
+    Modify login procedure to also store user's permission in session object (DONE!)
+
     Add check session in every controller route to control access depending on the permission,
         and also to show/hide UI based on permission
+    Set user index page to not show is_admin status anymore
 
 - Optimize query (not really necessary)
 - dashboard with statistics as admin homepage (not really necessary)

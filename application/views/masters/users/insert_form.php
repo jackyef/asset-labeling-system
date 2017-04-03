@@ -48,6 +48,23 @@
                 </div>
             </div>
         </div>
+
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="name">Permissions for this user:</label>
+            <div class="col-sm-10">
+                <select class="form-control selectpicker" required
+                        multiple="multiple" name="permission_ids[]" id="permission_ids[]" data-live-search="true">
+                    <?php foreach($permissions as $permission){ ?>
+                        <option
+                                value="<?= $permission->id ?>"
+                                <?= ((in_array($permission->id, $permission_ids)) ? 'selected' : '' )?>>
+                            <?= $permission->permission_name ?>
+                        </option>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
                 <!-- show errors message if there are errors -->
