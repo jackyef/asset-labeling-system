@@ -52,7 +52,7 @@
         <div class="form-group">
             <label class="control-label col-sm-2" for="name">Permissions for this user:</label>
             <div class="col-sm-10">
-                <select class="form-control selectpicker" required
+                <select class="form-control selectpicker"
                         multiple="multiple" name="permission_ids[]" id="permission_ids[]" data-live-search="true">
                     <?php foreach($permissions as $permission){ ?>
                         <option

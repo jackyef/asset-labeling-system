@@ -1314,6 +1314,7 @@ class Master extends CI_Controller
                 $this->db->reset_query();
                 $this->db->select('LAST_INSERT_ID() as last_user_id');
                 $user_id = $this->db->get()->result();
+                $user_id = $user_id[0]->last_user_id;
                 // next we're going to insert all the permissions
                 // get all avaiable permissions
                 $this->db->reset_query();
@@ -1322,12 +1323,16 @@ class Master extends CI_Controller
                 $this->db->order_by('permission_name asc');
                 $permissions = $this->db->get()->result();
 
+                $enabled_permissions = '';
                 $this->load->model('User_permission_model');
                 foreach ($permissions as $permission){
                     // for each permission, if they're part of the selected permission_ids, insert as enabled = 1
                     $enabled = 0;
+                    // if none are selected, just break out of the loop
+                    if (empty($permission_ids)){ break; };
                     if(in_array($permission->id, $permission_ids)){
                         $enabled = 1;
+                        $enabled_permissions .= ('<li>'.$permission->permission_name.'</li>');
                     }
                     $data2 = [
                         'user_id' => $user_id,
@@ -1337,9 +1342,14 @@ class Master extends CI_Controller
                     $this->User_permission_model->insert($data2);
                 }
 
+                if ($enabled_permissions == ''){
+                    $enabled_permissions = '<li>Can only view the web without making any changes</li>';
+                }
                 if ($this->db->trans_complete()) {
                     //Transaction succeeded! Both query is successfully executed
-                    $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> User successfully added!');
+                    $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> User \''.$username.'\' 
+                                                    successfully added! This user has the following permission(s): 
+                                                    <ul>'.$enabled_permissions.'</ul>');
                     $this->session->set_flashdata('site_wide_msg_type', 'success');
                     redirect(base_url() . 'master/user');
                 } else {
@@ -1468,11 +1478,15 @@ class Master extends CI_Controller
 
                 $user_id = $id;
                 $this->load->model('User_permission_model');
+                $enabled_permissions = '';
                 foreach ($permissions as $permission){
                     // for each permission, if they're part of the selected permission_ids, update as enabled = 1
                     $enabled = 0;
+                    // if none are selected, just break out of the loop
+                    if (empty($permission_ids)){ break; };
                     if(in_array($permission->id, $permission_ids)){
                         $enabled = 1;
+                        $enabled_permissions .= ('<li>'.$permission->permission_name.'</li>');
                     }
                     $data2 = [
                         'user_id' => $user_id,
@@ -1481,10 +1495,14 @@ class Master extends CI_Controller
                     ];
                     $this->User_permission_model->update($data2, $user_id, $permission->id);
                 }
-
+                if ($enabled_permissions == ''){
+                    $enabled_permissions = '<li>Can only view the web without making any changes</li>';
+                }
                 if ($this->db->trans_complete()) {
                     //Transaction succeeded! Both query is successfully executed
-                    $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> User information changes saved!');
+                    $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> User \''.$username.'\' 
+                                                    information saved! This user now has the following permission(s): 
+                                                    <ul>'.$enabled_permissions.'</ul>');
                     $this->session->set_flashdata('site_wide_msg_type', 'success');
                     redirect(base_url() . 'master/user');
                 } else {

@@ -56,6 +56,10 @@ class Home extends CI_Controller
         // get login error message (if any)
         $data['login_error'] = $this->session->flashdata('login_error');
 //        echo json_encode($this->session->userdata());
+        foreach($this->session->userdata() as $key => $value){
+            echo $key.': '.$value;
+            echo '<br/>';
+        }
 //        echo '<br/>';
 //        echo json_encode($data);
 //        echo '<br/>';
