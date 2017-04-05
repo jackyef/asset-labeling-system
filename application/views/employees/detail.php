@@ -69,6 +69,7 @@
 
                                 </div>
                             </div>
+                            <?php if($permission_employee_edit == 1): ?>
                             <div class="divider">&nbsp;</div>
                             <div class="form-group">
                                 <div class="col-sm-12">
@@ -80,10 +81,12 @@
                                     </a>
                                 </div>
                             </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
 
+                <?php if($permission_item_mutate == 1): ?>
                 <div class="col-md-7">
                     <div class="panel panel-danger" style="border-color: #d9534f;">
                         <div class="panel-heading" style="background-color: #d9534f;">
@@ -201,6 +204,7 @@
                         </div>
                     </div>
                 </div>
+                <?php endif; ?>
         </div>
     </div>
     <div class="row">
@@ -255,17 +259,21 @@
                         (($item->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$item->first_sub_location_id]->name) : '').
                         (($item->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$item->second_sub_location_id]->name) : '').
                         '</td>';
-                    echo '<td> 
-                    <a href="'. base_url(). 'item/edit/'.$item->id.'">
-                    <button class="btn btn-xs btn-info" ><span class="fa fa-edit"></span> Edit</button>
-                    </a>
-                    <a href="'. base_url(). 'item/detail/'.$item->id.'">
-                    <button class="btn btn-xs btn-warning" ><span class="fa fa-external-link"></span> View</button>
-                    </a>
-                    <a href="'. base_url(). 'item/mutate/'.$item->id.'">
-                    <button class="btn btn-xs btn-primary" ><span class="fa fa-refresh"></span> Mutate</button>
-                    </a>
-              </td>';
+                    echo '<td>';
+                    if ($permission_item_edit) {
+                        echo '<a href="' . base_url() . $link.'/edit/' . $item->id . '">
+                        <button class="btn btn-xs btn-info" ><span class="fa fa-edit"></span> Edit</button>
+                         </a>';
+                    }
+                    echo '<a href="'. base_url(). $link.'/detail/'.$item->id.'">
+                        <button class="btn btn-xs btn-warning" ><span class="fa fa-external-link"></span> View</button>
+                         </a>';
+                    if ($permission_item_mutate) {
+                        echo '<a href="' . base_url() . $link.'/mutate/' . $item->id . '">
+                        <button class="btn btn-xs btn-primary" ><span class="fa fa-refresh"></span> Mutate</button>
+                        </a>';
+                    }
+                    echo '</td>';
                     echo '</tr>';
                 }
                 ?>

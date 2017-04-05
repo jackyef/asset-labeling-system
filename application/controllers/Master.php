@@ -22,13 +22,28 @@ class Master extends CI_Controller
         $this->load->database();
         $this->output->enable_profiler(FALSE);
 
+        $section = $this->uri->segment('2');
         $data = $this->get_session_data();
-        if ($data['session_is_admin'] != 1){
-//            $this->session->set_flashdata('login_error', 'You don\'t have access to that page');
+
+        if ($section == 'user' && $data['permission_user_management'] == 1) {
+            // this user is accessing user, and has the appropriate permission
+            // do nothing
+        } elseif ($section != 'user' && $data['permission_master'] == 1) {
+            // this user is not accessing user, and has the appropriate permission to access master
+            // do nothing
+        } else {
+            // else, restrict access
             $this->session->set_flashdata('site_wide_msg', 'You don\'t have access to that page');
             $this->session->set_flashdata('site_wide_msg_type', 'danger');
             redirect(base_url());
         }
+
+//        if ($data['session_is_admin'] != 1){
+//            $this->session->set_flashdata('login_error', 'You don\'t have access to that page');
+//            $this->session->set_flashdata('site_wide_msg', 'You don\'t have access to that page');
+//            $this->session->set_flashdata('site_wide_msg_type', 'danger');
+//            redirect(base_url());
+//        }
 
     }
 
@@ -41,6 +56,17 @@ class Master extends CI_Controller
             $data['session_username'] = xss_clean($this->session->userdata('session_username'));
             $data['session_user_id'] = xss_clean($this->session->userdata('session_user_id'));
             $data['session_is_admin'] = xss_clean($this->session->userdata('session_is_admin'));
+            $data['permission_master'] = xss_clean($this->session->userdata('permission_master'));
+            $data['permission_user_management'] = xss_clean($this->session->userdata('permission_user_management'));
+            $data['permission_item_insert'] = xss_clean($this->session->userdata('permission_item_insert'));
+            $data['permission_item_edit'] = xss_clean($this->session->userdata('permission_item_edit'));
+            $data['permission_item_delete'] = xss_clean($this->session->userdata('permission_item_delete'));
+            $data['permission_item_mutate'] = xss_clean($this->session->userdata('permission_item_mutate'));
+            $data['permission_item_power_edit'] = xss_clean($this->session->userdata('permission_item_power_edit'));
+            $data['permission_company_edit'] = xss_clean($this->session->userdata('permission_company_edit'));
+            $data['permission_employee_edit'] = xss_clean($this->session->userdata('permission_employee_edit'));
+            $data['permission_mutation_edit'] = xss_clean($this->session->userdata('permission_mutation_edit'));
+            $data['permission_mutation_delete'] = xss_clean($this->session->userdata('permission_mutation_delete'));
             $data['is_logged_in'] = 1;
         } else {
             // else set is_logged_in = 0

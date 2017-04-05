@@ -28,11 +28,13 @@
             echo '<tr>';
             echo '<td>'.$company->id.'</td>';
             echo '<td><a href="'.base_url().'company/detail/'.$company->id.'">'.html_escape($company->name).'</a></td>';
-            echo '<td> 
-                        <a href="'. base_url(). 'company/edit/'.$company->id.'">
+            echo '<td>';
+            if($permission_company_edit == 1) {
+                echo '<a href="' . base_url() . 'company/edit/' . $company->id . '">
                         <button class="btn btn-xs btn-info"><span class="fa fa-edit"></span> Edit</button>
-                        </a>
-                  </td>';
+                        </a>';
+            }
+            echo '</td>';
             echo '</tr>';
         }
         ?>

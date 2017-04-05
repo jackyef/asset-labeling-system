@@ -23,6 +23,32 @@ class Company extends CI_Controller
         $this->output->enable_profiler(FALSE);
 
         $data = $this->get_session_data();
+
+        $section = $this->uri->segment('2') ?: '';
+        $company_id = $this->uri->segment('3') ?: 0;
+        if($company_id == 0){
+            $company_id = $this->uri->segment('4') ?: 0;
+        }
+
+        if ($section == 'edit' && $data['permission_company_edit'] == 1) {
+            // this user is trying to edit company, and has the appropriate permission
+            // do nothing
+        } elseif ($section == 'detail')  {
+            // this user is trying to access item detail, no permission needed
+            // do nothing
+        } elseif ($section == '')  {
+            // this user is trying to access item index, no permission needed
+            // do nothing
+        } else {
+            // else, restrict access
+            $this->session->set_flashdata('site_wide_msg', 'You don\'t have access to that page');
+            $this->session->set_flashdata('site_wide_msg_type', 'danger');
+            if($company_id != 0){
+                redirect(base_url().'company/detail/'.$company_id);
+            }
+            redirect(base_url().'company');
+        }
+
         if ($data['is_logged_in'] != 1){
 //            $this->session->set_flashdata('login_error', 'You don\'t have access to that page');
             $this->session->set_flashdata('site_wide_msg', 'You don\'t have access to that page');
@@ -40,11 +66,25 @@ class Company extends CI_Controller
             $data['session_username'] = xss_clean($this->session->userdata('session_username'));
             $data['session_user_id'] = xss_clean($this->session->userdata('session_user_id'));
             $data['session_is_admin'] = xss_clean($this->session->userdata('session_is_admin'));
+            $data['permission_master'] = xss_clean($this->session->userdata('permission_master'));
+            $data['permission_user_management'] = xss_clean($this->session->userdata('permission_user_management'));
+            $data['permission_item_insert'] = xss_clean($this->session->userdata('permission_item_insert'));
+            $data['permission_item_edit'] = xss_clean($this->session->userdata('permission_item_edit'));
+            $data['permission_item_delete'] = xss_clean($this->session->userdata('permission_item_delete'));
+            $data['permission_item_mutate'] = xss_clean($this->session->userdata('permission_item_mutate'));
+            $data['permission_item_power_edit'] = xss_clean($this->session->userdata('permission_item_power_edit'));
+            $data['permission_company_edit'] = xss_clean($this->session->userdata('permission_company_edit'));
+            $data['permission_employee_edit'] = xss_clean($this->session->userdata('permission_employee_edit'));
+            $data['permission_mutation_edit'] = xss_clean($this->session->userdata('permission_mutation_edit'));
+            $data['permission_mutation_delete'] = xss_clean($this->session->userdata('permission_mutation_delete'));
             $data['is_logged_in'] = 1;
         } else {
             // else set is_logged_in = 0
             $data['is_logged_in'] = 0;
         }
+        //get site_wide_msg, if exists
+        $data['site_wide_msg'] = $this->session->flashdata('site_wide_msg');
+        $data['site_wide_msg_type'] = $this->session->flashdata('site_wide_msg_type');
 
         return $data;
     }

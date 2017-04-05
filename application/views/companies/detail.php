@@ -41,11 +41,13 @@
                 (($employee->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$employee->first_sub_location_id]->name) : '').
                 (($employee->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$employee->second_sub_location_id]->name) : '').
                 '</td>';
-            echo '<td> 
-                    <a href="'. base_url(). 'employee/edit/'.$employee->id.'">
+            echo '<td>';
+            if($permission_employee_edit == 1) {
+                echo '<a href="' . base_url() . 'employee/edit/' . $employee->id . '">
                     <button class="btn btn-xs btn-info"><span class="fa fa-edit"></span> Edit</button>
-                    </a>
-              </td>';
+                    </a>';
+            }
+            echo '</td>';
             echo '</tr>';
         }
         ?>

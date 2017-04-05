@@ -136,6 +136,7 @@
                             <div class="divider">&nbsp;</div>
 
                             <div class="form-group">
+                            <?php if($permission_item_edit == 1): ?>
                                 <div class="col-sm-6">
                                     <a href="<?= base_url().'item/edit/'.$record->id ?>">
                                         <button class="btn btn-primary form-control">
@@ -150,6 +151,14 @@
                                         <button class="btn btn-primary form-control"><span class="fa fa-barcode"></span> Get barcode label for this item</button>
                                     </form>
                                 </div>
+                            <?php else: ?>
+                                <div class="col-sm-12">
+                                    <form action="<?= base_url().'barcode/print/submit' ?>" method="post">
+                                        <input type="hidden" name="item_codes[]" id="item_codes[]" value="<?= (str_pad($record->item_type_id, 2, '0', STR_PAD_LEFT).''.str_pad($record->id, 5, '0', STR_PAD_LEFT)) ?>"/>
+                                        <button class="btn btn-primary form-control"><span class="fa fa-barcode"></span> Get barcode label for this item</button>
+                                    </form>
+                                </div>
+                            <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -203,17 +212,20 @@
                                     ?>
                                 </div>
                             </div>
+
                             <div class="divider">&nbsp;</div>
 
                             <div class="form-group">
                                 <div class="col-sm-12">
                                     <?php if($record->assembled_item_id == 0): ?>
+                                    <?php if($permission_item_mutate == 1): ?>
                                         <a href="<?= base_url().'item/mutate/'.$record->id ?>">
                                             <button class="btn btn-primary form-control">
                                                 <span class="fa fa-refresh"></span>
                                                 Mutate item
                                             </button>
                                         </a>
+                                    <?php endif; ?>
                                     <?php else: ?>
                                             <div class="alert alert-danger">
                                                 <span class="fa fa-times"></span>
@@ -232,10 +244,11 @@
                         </div>
                     </div>
 
-                    <?php if ($session_is_admin == 1): ?>
+                    <?php if ($permission_item_delete == 1 || $permission_item_power_edit == 1): ?>
                     <div class="panel panel-danger" >
                         <div class="panel-heading"><span class="fa fa-info-circle"></span> Admin's area</div>
                         <div class="panel-body">
+                            <?php if ($permission_item_delete == 1): ?>
                             <div class="form-group">
                                 <div class="col-sm-12">
                                     <a href="<?= base_url().'item/delete/'.$record->id ?>">
@@ -248,7 +261,9 @@
                                         </button></a>
                                 </div>
                             </div>
-                            <div class="divider">&nbsp;</div>
+                            <?php endif; ?>
+
+                            <?php if ($permission_item_power_edit == 1): ?>
                             <div class="form-group">
                                 <div class="col-sm-12">
                                     <a href="<?= base_url().'item/power-edit/'.$record->id ?>">
@@ -261,6 +276,7 @@
                                     </div>
                                 </div>
                             </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <?php endif; ?>
@@ -402,15 +418,19 @@
                         echo html_escape($mutation_statuses[$mutation->mutation_status_id]->name);
                     }
                     echo '</td>';
-                    echo '<td> 
-                        <a href="'. base_url(). 'mutation-history/edit/'.$mutation->id.'">
-                        <button class="btn btn-xs btn-info" ><span class="fa fa-edit"></span> Edit</button>
-                        </a>
-                        <a href="'. base_url(). 'item/delete-mutation/'.$record->id.'/'.$mutation->id.'">
-                        <button class="btn btn-xs btn-danger" 
-                        onclick="return confirm(\'Are you sure you want to delete this mutation record? \');"><span class="fa fa-trash"></span> Delete</button>
-                        </a>
-                  </td>';
+                    echo '<td>';
+                    if($permission_mutation_edit == 1) {
+                        echo '<a href="'. base_url(). 'mutation-history/edit/'.$mutation->id.'">
+                            <button class="btn btn-xs btn-info" ><span class="fa fa-edit"></span> Edit</button>
+                            </a>';
+                    }
+                    if($permission_mutation_delete == 1) {
+                        echo '<a href="' . base_url() . 'item/delete-mutation/' . $record->id . '/' . $mutation->id . '">
+                            <button class="btn btn-xs btn-danger" 
+                            onclick="return confirm(\'Are you sure you want to delete this mutation record? \');"><span class="fa fa-trash"></span> Delete</button>
+                            </a>';
+                    }
+                    echo '</td>';
                     echo '</tr>';
                 }
                 ?>

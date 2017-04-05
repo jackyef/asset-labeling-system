@@ -94,12 +94,12 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <div class="col-sm-4">Is admin?</div>
-                    <div class="col-sm-8">
-                        <?= (($session_is_admin == 1) ? 'Yes' : 'No') ?>
-                    </div>
-                </div>
+<!--                <div class="form-group">-->
+<!--                    <div class="col-sm-4">Is admin?</div>-->
+<!--                    <div class="col-sm-8">-->
+<!--                        --><?//= (($session_is_admin == 1) ? 'Yes' : 'No') ?>
+<!--                    </div>-->
+<!--                </div>-->
             </div>
             <div class="panel-footer">
                 <p class="h6 pull-right">

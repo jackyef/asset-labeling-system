@@ -158,11 +158,13 @@
             }
             echo '</td>';
 
-            echo '<td>
-                        <a href="'. base_url(). 'mutation-history/edit/'.$mutation->id.'">
+            echo '<td>';
+            if($permission_mutation_edit == 1) {
+                echo '<a href="' . base_url() . 'mutation-history/edit/' . $mutation->id . '">
                         <button class="btn btn-xs btn-info" ><span class="fa fa-edit"></span> Edit</button>
-                        </a>
-                  </td>';
+                        </a>';
+            }
+            echo '</td>';
             echo '</tr>';
         }
         ?>

@@ -105,19 +105,19 @@ TODO:
     (Remove UI, and check access when address is typed)
 
 - List of permission:
-    - 1 Master data
-    - 2 User management
-    - 3 Insert item/assembled item
-    - 4 Edit item/assembled item
-    - 5 Delete item/assembled item
-    - 6 Mutate item/assembled item
-    - 7 Power edit item/assembled item
-    - 8 Edit company
-    - 9 Edit employee
-    - 10 Edit mutation
-    - 11 Delete mutation
-    - View item/assembled item (default)
-    - View company/employee/mutation (default)
+    - 1 Master data (DONE!)
+    - 2 User management (DONE!)
+    - 3 Insert item/assembled item (DONE! item/aitem index page UI, detail pageUI, employee detail page UI)
+    - 4 Edit item/assembled item (DONE! item/aitem index page UI, detail pageUI, employee detail page UI)
+    - 5 Delete item/assembled item (DONE! item/aitem index page UI, detail pageUI, employee detail page UI)
+    - 6 Mutate item/assembled item (DONE! item/aitem index page UI, detail pageUI, employee detail page UI)
+    - 7 Power edit item/assembled item (DONE! item/aitem index page UI, detail pageUI, employee detail page UI)
+    - 8 Edit company (DONE! company index page UI)
+    - 9 Edit employee (DONE! employee index page UI, detail page UI, company detail page UI)
+    - 10 Edit mutation (DONE! mutation index page UI, item/aitem detail page UI)
+    - 11 Delete mutation (DONE! item/aitem detail page UI)
+    - View item/assembled item (default permission)
+    - View company/employee/mutation (default permission)
 
     Create a table containing all the permissions that is possible to be had (DONE!)
     Create another table to allow each user id to have relations to multiple permissions (DONE!)
@@ -129,6 +129,9 @@ TODO:
     Add check session in every controller route to control access depending on the permission,
         and also to show/hide UI based on permission
     Set user index page to not show is_admin status anymore
+
+- User management and access control (DONE!)
+- NEXT: Cleanup usage of session_is_admin
 
 - Optimize query (not really necessary)
 - dashboard with statistics as admin homepage (not really necessary)
