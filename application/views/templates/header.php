@@ -114,10 +114,11 @@
             <ul class="nav navbar-nav" style="margin-top: 0em; margin-bottom: 0em">
                 <!-- this Masters dropdown is admin-only -->
                 <?php if ($is_logged_in == 1): ?>
-                <?php if ($session_is_admin == 1): ?>
+                <?php if ($permission_master == 1 || $permission_user_management == 1): ?>
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Masters <span class="caret"></span></a>
                     <ul class="dropdown-menu">
+                    <?php if ($permission_master == 1): ?>
                         <li><a href="<?= base_url()?>master/supplier">Supplier</a></li>
                         <li><a href="<?= base_url()?>master/company">Company</a></li>
                         <li><a href="<?= base_url()?>master/employee">Employee</a></li>
@@ -133,7 +134,10 @@
                         <li role="separator" class="divider"></li>
                         <li><a href="<?= base_url()?>master/os">Operating System</a></li>
                         <li role="separator" class="divider"></li>
+                    <?php endif; ?>
+                    <?php if ($permission_user_management == 1): ?>
                         <li><a href="<?= base_url()?>master/user">User</a></li>
+                    <?php endif; ?>
                     </ul>
                 </li>
                 <?php endif; ?>

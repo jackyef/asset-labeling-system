@@ -15,9 +15,11 @@
             <li>Item</li>
         </ol>
     </div>
+    <?php if($permission_item_insert == 1): ?>
     <div class="pull-right">
         <a href="<?php echo base_url(); ?>item/new"><button class="btn btn-primary"><span class="fa fa-plus"></span> New Item</button> </a>
     </div>
+    <?php endif; ?>
     <div class="clearfix"></div>
 
     <div class="pull-right">
@@ -160,17 +162,21 @@
                 (($item->first_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($first_sub_locations[$item->first_sub_location_id]->name) : '').
                 (($item->second_sub_location_id != 0) ? ' <span class="fa fa-arrow-right"></span> '.html_escape($second_sub_locations[$item->second_sub_location_id]->name) : '').
               '</td>';
-            echo '<td> 
-                        <a href="'. base_url(). 'item/edit/'.$item->id.'">
+            echo '<td>';
+            if ($permission_item_edit) {
+                echo '<a href="' . base_url() . 'item/edit/' . $item->id . '">
                         <button class="btn btn-xs btn-info" ><span class="fa fa-edit"></span> Edit</button>
-                        </a>
-                        <a href="'. base_url(). 'item/detail/'.$item->id.'">
+                  </a>';
+            }
+            echo '<a href="'. base_url(). 'item/detail/'.$item->id.'">
                         <button class="btn btn-xs btn-warning" ><span class="fa fa-external-link"></span> View</button>
-                        </a>
-                        <a href="'. base_url(). 'item/mutate/'.$item->id.'">
+                  </a>';
+            if ($permission_item_mutate) {
+                echo '<a href="' . base_url() . 'item/mutate/' . $item->id . '">
                         <button class="btn btn-xs btn-primary" ><span class="fa fa-refresh"></span> Mutate</button>
-                        </a>
-                  </td>';
+                </a>';
+            }
+            echo '</td>';
             echo '</tr>';
         }
         ?>

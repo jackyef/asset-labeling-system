@@ -25,7 +25,7 @@
         <thead>
         <th> Id </th>
         <th> User </th>
-        <th> Is admin? </th>
+<!--        <th> Is admin? </th>-->
         <th style="min-width: 1em"> Action </th>
         </thead>
         <?php
@@ -33,7 +33,7 @@
             echo '<tr>';
             echo '<td>'.$user->id.'</td>';
             echo '<td>'.html_escape($user->username).'</td>';
-            echo '<td>'. (($user->is_admin == 1) ? 'Yes' : 'No') . '</td>';
+//            echo '<td>'. (($user->is_admin == 1) ? 'Yes' : 'No') . '</td>';
             echo '<td> 
                         <a href="'. base_url(). 'master/user/edit/'.$user->id.'">
                         <button class="btn btn-xs btn-info"><span class="fa fa-edit"></span> Edit</button>

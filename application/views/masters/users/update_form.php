@@ -32,27 +32,27 @@
                 <input type="password" class="form-control" id="password" name="password" placeholder="Type password here. Don't worry, it won't be saved as a plaintext." required>
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" id="is_admin" name="is_admin"
-                            <?php if(isset($is_admin)): ?>
-                                <?php if($is_admin == 1): ?>
-                                    checked
-                                <?php endif; ?>
-                            <?php elseif($record->is_admin == 1): ?>
-                                checked
-                            <?php endif; ?>
-                        > Assign this user as an admin?
-                    </label>
-                    <h5 class="alert alert-warning">
-                        All admins can access all the "Masters" section of the system. This means that they can make changes to the masters data. <br/>
-                        <strong>Make sure you can trust your admins!</strong>
-                    </h5>
-                </div>
-            </div>
-        </div>
+<!--        <div class="form-group">-->
+<!--            <div class="col-sm-offset-2 col-sm-10">-->
+<!--                <div class="checkbox">-->
+<!--                    <label>-->
+<!--                        <input type="checkbox" id="is_admin" name="is_admin"-->
+<!--                            --><?php //if(isset($is_admin)): ?>
+<!--                                --><?php //if($is_admin == 1): ?>
+<!--                                    checked-->
+<!--                                --><?php //endif; ?>
+<!--                            --><?php //elseif($record->is_admin == 1): ?>
+<!--                                checked-->
+<!--                            --><?php //endif; ?>
+<!--                        > Assign this user as an admin?-->
+<!--                    </label>-->
+<!--                    <h5 class="alert alert-warning">-->
+<!--                        All admins can access all the "Masters" section of the system. This means that they can make changes to the masters data. <br/>-->
+<!--                        <strong>Make sure you can trust your admins!</strong>-->
+<!--                    </h5>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
         <div class="form-group">
             <label class="control-label col-sm-2" for="name">Permissions for this user:</label>
             <div class="col-sm-10">
