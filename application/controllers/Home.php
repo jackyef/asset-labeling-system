@@ -55,7 +55,11 @@ class Home extends CI_Controller
 
         // get login error message (if any)
         $data['login_error'] = $this->session->flashdata('login_error');
-
+//        echo json_encode($this->session->userdata());
+        foreach($this->session->userdata() as $key => $value){
+            echo $key.': '.$value;
+            echo '<br/>';
+        }
 //        echo '<br/>';
 //        echo json_encode($data);
 //        echo '<br/>';
@@ -76,12 +80,30 @@ class Home extends CI_Controller
 
         if ($login != false) {
             // login succeeded
-            // unset previous session data
+
+            $this->load->model('User_permission_model');
+            $permissions = $this->User_permission_model->select_by_id($login[0]->id);
+
+            foreach($permissions as $user_permission){
+                $user_permissions[$user_permission->permission_id] = $user_permission;
+            }
+
             // set session data
             $this->session->set_userdata(array(
                 'session_user_id' => $login[0]->id,
                 'session_username' => $login[0]->username,
                 'session_is_admin' => $login[0]->is_admin,
+                'permission_master' => $user_permissions['1']->enabled,
+                'permission_user_management' => $user_permissions['2']->enabled,
+                'permission_item_insert' => $user_permissions['3']->enabled,
+                'permission_item_edit' => $user_permissions['4']->enabled,
+                'permission_item_delete' => $user_permissions['5']->enabled,
+                'permission_item_mutate' => $user_permissions['6']->enabled,
+                'permission_item_power_edit' => $user_permissions['7']->enabled,
+                'permission_company_edit' => $user_permissions['8']->enabled,
+                'permission_employee_edit' => $user_permissions['9']->enabled,
+                'permission_mutation_edit' => $user_permissions['10']->enabled,
+                'permission_mutation_delete' => $user_permissions['11']->enabled,
                 'is_logged_in' => 1));
 
             // redirect to home

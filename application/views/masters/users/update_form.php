@@ -54,6 +54,27 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="control-label col-sm-2" for="name">Permissions for this user:</label>
+            <div class="col-sm-10">
+                <select class="form-control selectpicker"
+                        multiple="multiple" name="permission_ids[]" id="permission_ids[]" data-live-search="true">
+                    <?php foreach($permissions as $permission){ ?>
+                        <option
+                                value="<?= $permission->id ?>"
+                            <?php if(in_array($permission->id, $permission_ids)){
+                                echo 'selected';
+                            } elseif(empty($permission_ids) AND $user_permissions[$permission->id]->enabled == 1){
+                                echo 'selected';
+                            }
+                            ?>
+                                >
+                            <?= $permission->permission_name ?>
+                        </option>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
                 <!-- show errors message if there are errors -->
                 <?php if(isset($errors)): ?>

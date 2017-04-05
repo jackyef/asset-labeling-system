@@ -53,6 +53,8 @@ class Master extends CI_Controller
 
         return $data;
     }
+
+
     public function index(){
         // master page doesn't have an index page
         // just show a big an error message
@@ -1233,6 +1235,18 @@ class Master extends CI_Controller
         $data['username'] = $username;
         $is_admin = $this->session->flashdata('is_admin');
         $data['is_admin'] = $is_admin;
+        $permission_ids = $this->session->flashdata('permission_ids');
+        $data['permission_ids'] = $permission_ids ?: array();
+
+//        echo json_encode($permission_ids);
+//        echo json_encode($is_admin);
+//        echo json_encode($username);
+//        echo json_encode($data['permission_ids']);
+
+        $this->db->select('*');
+        $this->db->from('permissions p');
+        $this->db->order_by('permission_name asc');
+        $data['permissions'] = $this->db->get()->result();
 
 
         $data['title'] = 'ALS - User';
@@ -1245,6 +1259,7 @@ class Master extends CI_Controller
     public function user_insert(){
         // this insert a new user to the database
         // and then redirect to /master/user
+        $data = $this->get_session_data();
         $method = $this->input->method();
 
         if($method == 'get') {
@@ -1257,6 +1272,7 @@ class Master extends CI_Controller
             $username = $this->input->post('username', TRUE);
             $password = $this->input->post('password', TRUE);
             $is_admin = ($this->input->post('is_admin') != null) ? 1 : 0;
+            $permission_ids = $this->input->post('permission_ids[]', TRUE);
 
             if (!ctype_alnum($username)){
                 array_push($errors, 'Username can only contains alphanumeric characters!');
@@ -1273,6 +1289,7 @@ class Master extends CI_Controller
             
             if (sizeof($errors) == 0){
                 //if there are still no errors at this point, try inserting
+                $this->db->trans_start(); # Starting Transaction
                 $data = [
                     'username' => $username,
                     'password' => md5($password),
@@ -1281,7 +1298,6 @@ class Master extends CI_Controller
                 $this->load->model('User_model');
                 if ($this->User_model->insert($data)) {
                     //success inserting data
-                    redirect(base_url() . 'master/user');
                 } else {
                     //errors!
                     $db_error = $this->db->error();
@@ -1294,15 +1310,65 @@ class Master extends CI_Controller
 //                    $error_msg .= 'Message: '.$db_error['message'];
 //                    array_push($errors, $error_msg);
                 }
+                // get the last inserted user_id
+                $this->db->reset_query();
+                $this->db->select('LAST_INSERT_ID() as last_user_id');
+                $user_id = $this->db->get()->result();
+                $user_id = $user_id[0]->last_user_id;
+                // next we're going to insert all the permissions
+                // get all avaiable permissions
+                $this->db->reset_query();
+                $this->db->select('*');
+                $this->db->from('permissions p');
+                $this->db->order_by('permission_name asc');
+                $permissions = $this->db->get()->result();
+
+                $enabled_permissions = '';
+                $this->load->model('User_permission_model');
+                foreach ($permissions as $permission){
+                    // for each permission, if they're part of the selected permission_ids, insert as enabled = 1
+                    $enabled = 0;
+                    // if none are selected, just break out of the loop
+                    if (empty($permission_ids)){ break; };
+                    if(in_array($permission->id, $permission_ids)){
+                        $enabled = 1;
+                        $enabled_permissions .= ('<li>'.$permission->permission_name.'</li>');
+                    }
+                    $data2 = [
+                        'user_id' => $user_id,
+                        'permission_id' => $permission->id,
+                        'enabled' => $enabled
+                    ];
+                    $this->User_permission_model->insert($data2);
+                }
+
+                if ($enabled_permissions == ''){
+                    $enabled_permissions = '<li>Can only view the web without making any changes</li>';
+                }
+                if ($this->db->trans_complete()) {
+                    //Transaction succeeded! Both query is successfully executed
+                    $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> User \''.$username.'\' 
+                                                    successfully added! This user has the following permission(s): 
+                                                    <ul>'.$enabled_permissions.'</ul>');
+                    $this->session->set_flashdata('site_wide_msg_type', 'success');
+                    redirect(base_url() . 'master/user');
+                } else {
+                    //errors!
+                    $db_error = $this->db->error();
+                    if ($db_error['code'] == 1062){
+                        //this means that there are duplicate entry
+                        array_push($errors, 'Username already exists! Please use a different username!');
+                    }
+                }
             }
 
             //if we reach this point, this means that there were still errors
             //so we show the input form again, while passing the error messages as flashdata.
-            $data = $this->get_session_data();
 
             $this->session->set_flashdata('errors', $errors);
             $this->session->set_flashdata('username', $username);
             $this->session->set_flashdata('is_admin', $is_admin);
+            $this->session->set_flashdata('permission_ids', $permission_ids);
             redirect(base_url().'master/user/new');
         }
     }
@@ -1320,14 +1386,25 @@ class Master extends CI_Controller
         $data['username'] = $username;
         $is_admin = $this->session->flashdata('is_admin');
         $data['is_admin'] = $is_admin;
+        $permission_ids = $this->session->flashdata('permission_ids');
+        $data['permission_ids'] = $permission_ids ?: array();
 
         $data['title'] = 'ALS - User';
         $this->parser->parse('templates/header.php', $data);
 
         $id = $this->uri->segment('4');
-
         $query = $this->db->get_where('users', array('id' => $id));
         $data['record'] = $query->result()[0];
+
+        $this->db->select('*');
+        $this->db->from('permissions p');
+        $this->db->order_by('permission_name asc');
+        $data['permissions'] = $this->db->get()->result();
+
+        $this->db->reset_query();
+        foreach($this->db->get_where('user_permissions', array('user_id' => $id))->result() as $user_permission){
+            $data['user_permissions'][$user_permission->permission_id] = $user_permission;
+        }
         $data['id'] = $id;
         $this->load->view('masters/users/update_form.php', $data);
 
@@ -1337,6 +1414,7 @@ class Master extends CI_Controller
     public function user_update(){
         // this updates a user in the database
         // and then redirect to /master/user
+        $data = $this->get_session_data();
         $method = $this->input->method();
 
         if($method == 'get') {
@@ -1349,6 +1427,7 @@ class Master extends CI_Controller
             $username = $this->input->post('username', TRUE);
             $password = $this->input->post('password', TRUE);
             $is_admin = ($this->input->post('is_admin') != null) ? 1 : 0;
+            $permission_ids = $this->input->post('permission_ids[]', TRUE);
             $id = $this->uri->segment('5');
 
             if (!ctype_alnum($username)){
@@ -1366,6 +1445,8 @@ class Master extends CI_Controller
 
             if (sizeof($errors) == 0){
                 //if there are still no errors at this point, try updating database
+
+                $this->db->trans_start(); # Starting Transaction
                 $data = [
                     'username' => $username,
                     'password' => md5($password),
@@ -1373,8 +1454,7 @@ class Master extends CI_Controller
                 ];
                 $this->load->model('User_model');
                 if ($this->User_model->update($data, $id)) {
-                    //success inserting data
-                    redirect(base_url() . 'master/user');
+                    //success updating data
                 } else {
                     //errors!
                     $db_error = $this->db->error();
@@ -1388,15 +1468,61 @@ class Master extends CI_Controller
 //                    $error_msg .= 'Message: '.$db_error['message'];
 //                    array_push($errors, $error_msg);
                 }
+                // next we're going to update all the permissions
+                // get all available permissions
+                $this->db->reset_query();
+                $this->db->select('*');
+                $this->db->from('permissions p');
+                $this->db->order_by('permission_name asc');
+                $permissions = $this->db->get()->result();
+
+                $user_id = $id;
+                $this->load->model('User_permission_model');
+                $enabled_permissions = '';
+                foreach ($permissions as $permission){
+                    // for each permission, if they're part of the selected permission_ids, update as enabled = 1
+                    $enabled = 0;
+                    // if none are selected, just break out of the loop
+                    if (empty($permission_ids)){ break; };
+                    if(in_array($permission->id, $permission_ids)){
+                        $enabled = 1;
+                        $enabled_permissions .= ('<li>'.$permission->permission_name.'</li>');
+                    }
+                    $data2 = [
+                        'user_id' => $user_id,
+                        'permission_id' => $permission->id,
+                        'enabled' => $enabled
+                    ];
+                    $this->User_permission_model->update($data2, $user_id, $permission->id);
+                }
+                if ($enabled_permissions == ''){
+                    $enabled_permissions = '<li>Can only view the web without making any changes</li>';
+                }
+                if ($this->db->trans_complete()) {
+                    //Transaction succeeded! Both query is successfully executed
+                    $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-info"></span> User \''.$username.'\' 
+                                                    information saved! This user now has the following permission(s): 
+                                                    <ul>'.$enabled_permissions.'</ul>');
+                    $this->session->set_flashdata('site_wide_msg_type', 'success');
+                    redirect(base_url() . 'master/user');
+                } else {
+                    //errors!
+                    $db_error = $this->db->error();
+                    if ($db_error['code'] == 1062){
+                        //this means that there are duplicate entry
+                        array_push($errors, 'Username already exists! Please use a different username!');
+                    }
+                }
             }
 
             //if we reach this point, this means that there were still errors
             //so we show the input form again, while passing the error messages as flashdata.
-            $data = $this->get_session_data();
+
 
             $this->session->set_flashdata('errors', $errors);
             $this->session->set_flashdata('username', $username);
             $this->session->set_flashdata('is_admin', $is_admin);
+            $this->session->set_flashdata('permission_ids', $permission_ids);
             redirect(base_url().'master/user/edit/'.$id);
         }
     }
