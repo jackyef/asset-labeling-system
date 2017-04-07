@@ -11,7 +11,8 @@ Check out the live-demo at: http://jackyefubuntu16.southeastasia.cloudapp.azure.
 Contact me
 ---
 [LinkedIn](https://www.linkedin.com/in/jacky-efendi-094643a1/)
-[Instagram]
+
+[Instagram](https://www.instagram.com/_u/jackyef_)
 
 [![alt text][2.1]][2]
 [![alt text][3.1]][3]
