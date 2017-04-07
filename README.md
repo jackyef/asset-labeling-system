@@ -118,7 +118,6 @@ the assembled item, every item inside of it will be mutated as well, and the mut
 of the item will also be recorded individually! This will ensure that you will still have the
 mutation records even after you remove the item to be an individual item.
 
-
 I see... I guess I need to try it out to learn more about it
 ---
 Glad to hear that! Go on, try!
