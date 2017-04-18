@@ -21,6 +21,12 @@
 <!--    <link rel="stylesheet" href="--><?//= base_url() ?><!--css/jquery.dataTables.css">-->
     <link rel="stylesheet" href="<?= base_url() ?>css/font-awesome.min.css">
     <link rel="stylesheet" href="<?= base_url() ?>css/sidenav.css">
+    <!-- Material Design fonts -->
+<!--    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700">-->
+<!--    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/icon?family=Material+Icons">-->
+<!--    <link rel="stylesheet" href="--><?//= base_url() ?><!--css/bootstrap-material-design.min.css">-->
+<!--    <link rel="stylesheet" href="--><?//= base_url() ?><!--css/material-kit.css">-->
+<!--    <link rel="stylesheet" href="--><?//= base_url() ?><!--css/ripples.min.css">-->
     <link rel="stylesheet" href="<?= base_url() ?>css/print.css">
     <script src="<?= base_url() ?>js/jquery.js"></script>
     <script src="<?= base_url() ?>js/bootstrap.min.js"></script>
@@ -30,10 +36,15 @@
     <script src="<?= base_url() ?>js/jquery.dataTables.min.js"></script>
     <script src="<?= base_url() ?>js/dataTables.bootstrap.min.js"></script>
     <script src="<?= base_url() ?>js/dataTables-ext2.min.js"></script>
+<!--    <script src="--><?//= base_url() ?><!--js/material.min.js"></script>-->
+<!--    <script src="--><?//= base_url() ?><!--js/material-kit.js"></script>-->
+<!--    <script src="--><?//= base_url() ?><!--js/nouislider.min.js"></script>-->
+<!--    <script src="--><?//= base_url() ?><!--js/ripples.min.js"></script>-->
 
     <script>
         $(document).ready(function() {
 //            $('.page-loading').fadeOut(1500);
+            $.material.init()
             setTimeout(function(){
                 $('.page-fade').fadeIn(800);
 
