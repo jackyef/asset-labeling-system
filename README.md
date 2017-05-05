@@ -6,7 +6,7 @@ This an Asset Labeling System developed as part of my internship.
 
 It is build on CodeIgniter PHP Framework.
 
-Check out the live-demo at: http://jackyefubuntu16.southeastasia.cloudapp.azure.com
+Check out the live-demo at: http://jackyefubuntu16.southeastasia.cloudapp.azure.com/als
 
 Contact me
 ---
