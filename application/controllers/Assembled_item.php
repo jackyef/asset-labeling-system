@@ -1504,12 +1504,12 @@ class Assembled_item extends CI_Controller
         // this should only be accessed by admins,
         // check for admin privileges
         $id = $this->uri->segment('3');
-        if($data['session_is_admin'] == 0) {
-            //not admin!
-            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span> You don\'t have access to do that!');
-            $this->session->set_flashdata('site_wide_msg_type', 'danger');
-            redirect(base_url() . 'assembled-item/detail/'.$id);
-        }
+//        if($data['session_is_admin'] == 0) {
+//            //not admin!
+//            $this->session->set_flashdata('site_wide_msg', '<span class="fa fa-warning"></span> You don\'t have access to do that!');
+//            $this->session->set_flashdata('site_wide_msg_type', 'danger');
+//            redirect(base_url() . 'assembled-item/detail/'.$id);
+//        }
 
         // we reached here, which means this user is indeed admin
         // so we delete the assembled_item with the id, and also the mutation records
