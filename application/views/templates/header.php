@@ -44,7 +44,7 @@
     <script>
         $(document).ready(function() {
 //            $('.page-loading').fadeOut(1500);
-            $.material.init()
+//            $.material.init();
             setTimeout(function(){
                 $('.page-fade').fadeIn(800);
 
